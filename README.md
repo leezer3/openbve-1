@@ -12,3 +12,21 @@ Here are some goals of this repository (they're not ordered):
 * Roadmap goals
 * Implement BVE 5 compatibility (if possible)
 * Implement OpenGL menu *(I hate WinForms on Linux)*
+* Implement multiplayer
+
+License
+-------
+See LICENSE.txt
+
+Homepage
+--------
+
+* Community webpages (OpenBVE Community):
+
+<https://sites.google.com/site/openbvesim/home>
+* Official webpages (Odakyufan):
+
+<http://odakyufan.zxq.net/openbve/>
+* Unofficial webpages of this project (may not be found)
+
+<http://jakubvanekpc.jecool.net/openbve/>
