@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Tao.OpenAl;
+using OpenTK.Audio.OpenAL;
 
 namespace OpenBve {
 	internal static partial class Sounds {
 
 		/// <summary>Updates the sound component. Should be called every frame.</summary>
 		/// <param name="timeElapsed">The time in seconds that elapsed since the last call to this function.</param>
-		/// <param name="mode">The sound model.</param>
+		/// <param name="model">The sound model.</param>
 		internal static void Update(double timeElapsed, SoundModels model) {
 			if (model == SoundModels.Linear) {
 				UpdateLinearModel(timeElapsed);
@@ -25,16 +25,24 @@ namespace OpenBve {
 			OpenBveApi.Math.Vector3 listenerPosition = World.AbsoluteCameraPosition;
 			OpenBveApi.Math.Orientation3 listenerOrientation = new OpenBveApi.Math.Orientation3(World.AbsoluteCameraSide, World.AbsoluteCameraUp, World.AbsoluteCameraDirection);
 			OpenBveApi.Math.Vector3 listenerVelocity;
-			if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead | World.CameraMode == World.CameraViewMode.Exterior) {
+			if (World.CameraMode == World.CameraViewMode.Interior || World.CameraMode == World.CameraViewMode.InteriorLookAhead || World.CameraMode == World.CameraViewMode.Exterior) {
 				TrainManager.Car car = TrainManager.PlayerTrain.Cars[TrainManager.PlayerTrain.DriverCar];
 				OpenBveApi.Math.Vector3 diff = car.FrontAxle.Follower.WorldPosition - car.RearAxle.Follower.WorldPosition;
 				listenerVelocity = car.Specs.CurrentSpeed * OpenBveApi.Math.Vector3.Normalize(diff) + World.CameraAlignmentSpeed.Position;
 			} else {
 				listenerVelocity = World.CameraAlignmentSpeed.Position;
 			}
-			Al.alListener3f(Al.AL_POSITION, 0.0f, 0.0f, 0.0f);
-			Al.alListener3f(Al.AL_VELOCITY, (float)listenerVelocity.X, (float)listenerVelocity.Y, (float)listenerVelocity.Z);
-			Al.alListenerfv(Al.AL_ORIENTATION, new float[] { (float)listenerOrientation.Z.X, (float)listenerOrientation.Z.Y, (float)listenerOrientation.Z.Z, -(float)listenerOrientation.Y.X, -(float)listenerOrientation.Y.Y, -(float)listenerOrientation.Y.Z });
+			float[] vectors = {
+				(float)listenerOrientation.Z.X,
+				(float)listenerOrientation.Z.Y,
+				(float)listenerOrientation.Z.Z,
+				-(float)listenerOrientation.Y.X,
+				-(float)listenerOrientation.Y.Y,
+				-(float)listenerOrientation.Y.Z
+			};
+			AL.Listener(ALListener3f.Position, 0.0f, 0.0f, 0.0f);
+			AL.Listener(ALListener3f.Velocity, (float)listenerVelocity.X, (float)listenerVelocity.Y, (float)listenerVelocity.Z);
+			AL.Listener(ALListenerfv.Orientation, ref vectors);
 			/*
 			 * Set up the atmospheric attributes
 			 * */
@@ -44,7 +52,7 @@ namespace OpenBve {
 			double airDensity = Game.GetAirDensity(airPressure, airTemperature);
 			double speedOfSound = Game.GetSpeedOfSound(airPressure, airTemperature);
 			try {
-				Al.alSpeedOfSound((float)speedOfSound);
+				AL.SpeedOfSound((float)speedOfSound);
 			} catch { }
 			/*
 			 * Update the sound sources
@@ -57,7 +65,7 @@ namespace OpenBve {
 					 * Stop the sound, then remove it from the list of
 					 * sound sources.
 					 * */
-					Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+					AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 					Sources[i].State = SoundSourceState.Stopped;
 					Sources[i].OpenAlSourceName = 0;
 					Sources[i] = Sources[SourceCount - 1];
@@ -79,7 +87,7 @@ namespace OpenBve {
 					 * of sound sources if the sound is not looping.
 					 * */
 					if (Sources[i].State == SoundSourceState.Playing) {
-						Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+						AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 						Sources[i].State = SoundSourceState.PlayPending;
 						Sources[i].OpenAlSourceName = 0;
 					}
@@ -112,7 +120,7 @@ namespace OpenBve {
 					} else {
 						double distance = positionDifference.Norm();
 						double innerRadius = Sources[i].Radius;
-						if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead) {
+						if (World.CameraMode == World.CameraViewMode.Interior || World.CameraMode == World.CameraViewMode.InteriorLookAhead) {
 							if (Sources[i].Train != TrainManager.PlayerTrain || Sources[i].Car != TrainManager.PlayerTrain.DriverCar) {
 								innerRadius *= 0.5;
 							}
@@ -137,7 +145,7 @@ namespace OpenBve {
 						 * then remove it from the list of sound sources.
 						 * */
 						if (Sources[i].State == SoundSourceState.Playing) {
-							Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+							AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 							Sources[i].State = SoundSourceState.PlayPending;
 							Sources[i].OpenAlSourceName = 0;
 						}
@@ -157,8 +165,8 @@ namespace OpenBve {
 						if (Sources[i].State != SoundSourceState.Playing) {
 							LoadBuffer(Sources[i].Buffer);
 							if (Sources[i].Buffer.Loaded) {
-								Al.alGenSources(1, out Sources[i].OpenAlSourceName);
-								Al.alSourcei(Sources[i].OpenAlSourceName, Al.AL_BUFFER, Sources[i].Buffer.OpenAlBufferName);
+								AL.GenSources(1, out Sources[i].OpenAlSourceName);
+								AL.Source(Sources[i].OpenAlSourceName, ALSourcei.Buffer, Sources[i].Buffer.OpenAlBufferName);
 							} else {
 								/*
 								 * We cannot play the sound because
@@ -168,24 +176,24 @@ namespace OpenBve {
 								continue;
 							}
 						}
-						Al.alSource3f(Sources[i].OpenAlSourceName, Al.AL_POSITION, (float)positionDifference.X, (float)positionDifference.Y, (float)positionDifference.Z);
-						Al.alSource3f(Sources[i].OpenAlSourceName, Al.AL_VELOCITY, (float)velocity.X, (float)velocity.Y, (float)velocity.Z);
-						Al.alSourcef(Sources[i].OpenAlSourceName, Al.AL_PITCH, (float)Sources[i].Pitch);
-						Al.alSourcef(Sources[i].OpenAlSourceName, Al.AL_GAIN, (float)gain);
+						AL.Source(Sources[i].OpenAlSourceName,ALSource3f.Position, (float)positionDifference.X, (float)positionDifference.Y, (float)positionDifference.Z);
+						AL.Source(Sources[i].OpenAlSourceName, ALSource3f.Velocity, (float)velocity.X, (float)velocity.Y, (float)velocity.Z);
+						AL.Source(Sources[i].OpenAlSourceName, ALSourcef.Pitch, (float)Sources[i].Pitch);
+						AL.Source(Sources[i].OpenAlSourceName, ALSourcef.Gain, (float)gain);
 						if (Sources[i].State != SoundSourceState.Playing) {
-							Al.alSourcei(Sources[i].OpenAlSourceName, Al.AL_LOOPING, Sources[i].Looped ? Al.AL_TRUE : Al.AL_FALSE);
-							Al.alSourcePlay(Sources[i].OpenAlSourceName);
+							AL.Source(Sources[i].OpenAlSourceName, ALSourceb.Looping, Sources[i].Looped);
+							AL.SourcePlay(Sources[i].OpenAlSourceName);
 							Sources[i].State = SoundSourceState.Playing;
 						}
 						if (!Sources[i].Looped) {
 							int state;
-							Al.alGetSourcei(Sources[i].OpenAlSourceName, Al.AL_SOURCE_STATE, out state);
-							if (state != Al.AL_INITIAL & state != Al.AL_PLAYING) {
+							AL.GetSource(Sources[i].OpenAlSourceName,ALGetSourcei.SourceState, out state);
+							if (state != ALSourceState.Initial && state != ALSourceState.Playing) {
 								/*
 								 * The sound is not playing any longer.
 								 * Remove it from the list of sound sources.
 								 * */
-								Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+								AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 								Sources[i].State = SoundSourceState.Stopped;
 								Sources[i].OpenAlSourceName = 0;
 								Sources[i] = Sources[SourceCount - 1];
@@ -271,7 +279,7 @@ namespace OpenBve {
 			OpenBveApi.Math.Vector3 listenerPosition = World.AbsoluteCameraPosition;
 			OpenBveApi.Math.Orientation3 listenerOrientation = new OpenBveApi.Math.Orientation3(World.AbsoluteCameraSide, World.AbsoluteCameraUp, World.AbsoluteCameraDirection);
 			OpenBveApi.Math.Vector3 listenerVelocity;
-			if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead | World.CameraMode == World.CameraViewMode.Exterior) {
+			if (World.CameraMode == World.CameraViewMode.Interior || World.CameraMode == World.CameraViewMode.InteriorLookAhead || World.CameraMode == World.CameraViewMode.Exterior) {
 				TrainManager.Car car = TrainManager.PlayerTrain.Cars[TrainManager.PlayerTrain.DriverCar];
 				OpenBveApi.Math.Vector3 diff = car.FrontAxle.Follower.WorldPosition - car.RearAxle.Follower.WorldPosition;
 				if (diff.IsNullVector()) {
@@ -282,9 +290,17 @@ namespace OpenBve {
 			} else {
 				listenerVelocity = OpenBveApi.Math.Vector3.Null;
 			}
-			Al.alListener3f(Al.AL_POSITION, 0.0f, 0.0f, 0.0f);
-			Al.alListener3f(Al.AL_VELOCITY, (float)listenerVelocity.X, (float)listenerVelocity.Y, (float)listenerVelocity.Z);
-			Al.alListenerfv(Al.AL_ORIENTATION, new float[] { (float)listenerOrientation.Z.X, (float)listenerOrientation.Z.Y, (float)listenerOrientation.Z.Z, -(float)listenerOrientation.Y.X, -(float)listenerOrientation.Y.Y, -(float)listenerOrientation.Y.Z });
+			float[] vectors = {
+				(float)listenerOrientation.Z.X,
+				(float)listenerOrientation.Z.Y,
+				(float)listenerOrientation.Z.Z,
+				-(float)listenerOrientation.Y.X,
+				-(float)listenerOrientation.Y.Y,
+				-(float)listenerOrientation.Y.Z
+			};
+			AL.Listener(ALListener3f.Position, 0.0f, 0.0f, 0.0f);
+			AL.Listener(ALListener3f.Velocity, (float)listenerVelocity.X, (float)listenerVelocity.Y, (float)listenerVelocity.Z);
+			AL.Listener(ALListenerfv.Orientation, ref vectors);
 			/*
 			 * Set up the atmospheric attributes.
 			 * */
@@ -294,7 +310,7 @@ namespace OpenBve {
 			double airDensity = Game.GetAirDensity(airPressure, airTemperature);
 			double speedOfSound = Game.GetSpeedOfSound(airPressure, airTemperature);
 			try {
-				Al.alSpeedOfSound((float)speedOfSound);
+				AL.SpeedOfSound((float)speedOfSound);
 			} catch { }
 			/*
 			 * Collect all sounds that are to be played
@@ -308,7 +324,7 @@ namespace OpenBve {
 					 * Stop the sound, then remove it from the list of
 					 * sound sources.
 					 * */
-					Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+					AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 					Sources[i].State = SoundSourceState.Stopped;
 					Sources[i].OpenAlSourceName = 0;
 					Sources[i] = Sources[SourceCount - 1];
@@ -330,7 +346,7 @@ namespace OpenBve {
 					 * of sound sources if the sound is not looping.
 					 * */
 					if (Sources[i].State == SoundSourceState.Playing) {
-						Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+						AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 						Sources[i].State = SoundSourceState.PlayPending;
 						Sources[i].OpenAlSourceName = 0;
 					}
@@ -347,13 +363,13 @@ namespace OpenBve {
 					 * */
 					if (Sources[i].State == SoundSourceState.Playing) {
 						int state;
-						Al.alGetSourcei(Sources[i].OpenAlSourceName, Al.AL_SOURCE_STATE, out state);
-						if (state != Al.AL_INITIAL & state != Al.AL_PLAYING) {
+						AL.GetSource(Sources[i].OpenAlSourceName, ALGetSourcei.SourceState, out state);
+						if (state != ALSourceState.Initial && state != ALSourceState.Playing) {
 							/*
 							 * The sound is not playing any longer.
 							 * Remove it from the list of sound sources.
 							 * */
-							Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+							AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 							Sources[i].State = SoundSourceState.Stopped;
 							Sources[i].OpenAlSourceName = 0;
 							Sources[i] = Sources[SourceCount - 1];
@@ -376,7 +392,7 @@ namespace OpenBve {
 					OpenBveApi.Math.Vector3 positionDifference = position - listenerPosition;
 					double distance = positionDifference.Norm();
 					double radius = Sources[i].Radius;
-					if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead) {
+					if (World.CameraMode == World.CameraViewMode.Interior || World.CameraMode == World.CameraViewMode.InteriorLookAhead) {
 						if (Sources[i].Train != TrainManager.PlayerTrain || Sources[i].Car != TrainManager.PlayerTrain.DriverCar) {
 							radius *= 0.5;
 						}
@@ -394,7 +410,7 @@ namespace OpenBve {
 						 * but keep looping sounds pending.
 						 * */
 						if (Sources[i].State == SoundSourceState.Playing) {
-							Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+							AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 							Sources[i].State = SoundSourceState.PlayPending;
 							Sources[i].OpenAlSourceName = 0;
 						}
@@ -471,7 +487,7 @@ namespace OpenBve {
 					 * Stop the sound.
 					 * */
 					if (source.State == SoundSourceState.Playing) {
-						Al.alDeleteSources(1, ref source.OpenAlSourceName);
+						AL.DeleteSources(1, ref source.OpenAlSourceName);
 						source.State = SoundSourceState.PlayPending;
 						source.OpenAlSourceName = 0;
 					}
@@ -486,8 +502,8 @@ namespace OpenBve {
 					if (source.State != SoundSourceState.Playing) {
 						LoadBuffer(source.Buffer);
 						if (source.Buffer.Loaded) {
-							Al.alGenSources(1, out source.OpenAlSourceName);
-							Al.alSourcei(source.OpenAlSourceName, Al.AL_BUFFER, source.Buffer.OpenAlBufferName);
+							AL.GenSources(1, out source.OpenAlSourceName);
+							AL.Source(source.OpenAlSourceName, ALSourcei.Buffer, source.Buffer.OpenAlBufferName);
 						} else {
 							/*
 							 * We cannot play the sound because
@@ -508,13 +524,13 @@ namespace OpenBve {
 						velocity = OpenBveApi.Math.Vector3.Null;
 					}
 					position -= listenerPosition;
-					Al.alSource3f(source.OpenAlSourceName, Al.AL_POSITION, (float)position.X, (float)position.Y, (float)position.Z);
-					Al.alSource3f(source.OpenAlSourceName, Al.AL_VELOCITY, (float)velocity.X, (float)velocity.Y, (float)velocity.Z);
-					Al.alSourcef(source.OpenAlSourceName, Al.AL_PITCH, (float)source.Pitch);
-					Al.alSourcef(source.OpenAlSourceName, Al.AL_GAIN, (float)gain);
+					AL.Source(source.OpenAlSourceName, ALSource3f.Position, (float)position.X, (float)position.Y, (float)position.Z);
+					AL.Source(source.OpenAlSourceName, ALSource3f.Velocity, (float)velocity.X, (float)velocity.Y, (float)velocity.Z);
+					AL.Source(source.OpenAlSourceName, ALSourcef.Pitch, (float)source.Pitch);
+					AL.Source(source.OpenAlSourceName, ALSourcef.Gain, (float)gain);
 					if (source.State != SoundSourceState.Playing) {
-						Al.alSourcei(source.OpenAlSourceName, Al.AL_LOOPING, source.Looped ? Al.AL_TRUE : Al.AL_FALSE);
-						Al.alSourcePlay(source.OpenAlSourceName);
+						AL.Source(source.OpenAlSourceName, ALSourceb.Looping, source.Looped );
+						AL.SourcePlay(source.OpenAlSourceName);
 						source.State = SoundSourceState.Playing;
 					}
 				}

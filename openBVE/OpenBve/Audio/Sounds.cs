@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Windows.Forms;
-using Tao.OpenAl;
+using OpenTK.Audio.OpenAL;
+using OpenTK;
 
 namespace OpenBve {
 	internal static partial class Sounds {
@@ -22,7 +22,7 @@ namespace OpenBve {
 		private static IntPtr OpenAlDevice = IntPtr.Zero;
 		
 		/// <summary>The current OpenAL context.</summary>
-		private static IntPtr OpenAlContext = IntPtr.Zero;
+		private static ContextHandle OpenAlContext = ContextHandle.Zero;
 		
 		/// <summary>A list of all sound buffers.</summary>
 		private static SoundBuffer[] Buffers = new SoundBuffer[16];
@@ -48,16 +48,16 @@ namespace OpenBve {
 		/// <summary>The factor by which the inner radius is multiplied to give the outer radius.</summary>
 		internal static double OuterRadiusFactor;
 		internal static double OuterRadiusFactorSpeed;
-		private static double OuterRadiusFactorMaximumSpeed;
+		private  static double OuterRadiusFactorMaximumSpeed;
 		internal static double OuterRadiusFactorMinimum;
 		internal static double OuterRadiusFactorMaximum;
 		
 		
 		// --- inverse distance clamp model ---
 		
-		internal static double LogClampFactor = -15.0;
-		internal const double MinLogClampFactor = -20.0;
-		internal const double MaxLogClampFactor = -1.0;
+		internal static double    LogClampFactor = -15.0;
+		internal const  double MinLogClampFactor = -20.0;
+		internal const  double MaxLogClampFactor = -1.0;
 
 		
 		// --- initialization and deinitialization ---
@@ -85,29 +85,29 @@ namespace OpenBve {
 			}
 			OuterRadiusFactor = Math.Sqrt(OuterRadiusFactorMinimum * OuterRadiusFactorMaximum);
 			OuterRadiusFactorSpeed = 0.0;
-			OpenAlDevice = Alc.alcOpenDevice(null);
+			OpenAlDevice = Alc.OpenDevice(null);
 			if (OpenAlDevice != IntPtr.Zero) {
-				OpenAlContext = Alc.alcCreateContext(OpenAlDevice, IntPtr.Zero);
+				OpenAlContext = Alc.CreateContext(OpenAlDevice, null);
 				if (OpenAlContext != IntPtr.Zero) {
-					Alc.alcMakeContextCurrent(OpenAlContext);
+					Alc.MakeContextCurrent(OpenAlContext);
 					try {
-						Al.alSpeedOfSound(343.0f);
+						AL.SpeedOfSound(343.0f);
 					} catch {
-						MessageBox.Show("OpenAL 1.1 is required. You seem to have OpenAL 1.0.", "openBVE", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+						Debug.InfoMessage("OpenAL 1.1 is required. You seem to have OpenAL 1.0.");
 					}
-					Al.alDistanceModel(Al.AL_NONE);
+					AL.DistanceModel(ALDistanceModel.None);
 					return true;
-				} else {
-					Alc.alcCloseDevice(OpenAlDevice);
-					OpenAlDevice = IntPtr.Zero;
-					MessageBox.Show("The OpenAL context could not be created.", "openBVE", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-					return false;
 				}
-			} else {
-				OpenAlContext = IntPtr.Zero;
-				MessageBox.Show("The OpenAL sound device could not be opened.", "openBVE", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+				AlcError error = Alc.GetError(OpenAlDevice);
+				Alc.CloseDevice(OpenAlDevice);
+				OpenAlDevice = IntPtr.Zero;
+				Debug.InfoMessage("The OpenAL context could not be created: {0}",error);
 				return false;
 			}
+			ALError devError = AL.GetError();
+			OpenAlContext = ContextHandle.Zero;
+			Debug.InfoMessage("The OpenAL sound device could not be opened: {0}",AL.GetErrorString(devError));
+			return false;
 		}
 		
 		/// <summary>Deinitializes audio.</summary>
@@ -115,12 +115,12 @@ namespace OpenBve {
 			StopAllSounds();
 			UnloadAllBuffers();
 			if (OpenAlContext != IntPtr.Zero) {
-				Alc.alcMakeContextCurrent(IntPtr.Zero);
-				Alc.alcDestroyContext(OpenAlContext);
-				OpenAlContext = IntPtr.Zero;
+				Alc.MakeContextCurrent(ContextHandle.Zero);
+				Alc.DestroyContext(OpenAlContext);
+				OpenAlContext = ContextHandle.Zero;
 			}
 			if (OpenAlDevice != IntPtr.Zero) {
-				Alc.alcCloseDevice(OpenAlDevice);
+				Alc.CloseDevice(OpenAlDevice);
 				OpenAlDevice = IntPtr.Zero;
 			}
 		}
@@ -134,10 +134,9 @@ namespace OpenBve {
 		/// <returns>The handle to the sound buffer.</returns>
 		internal static SoundBuffer RegisterBuffer(string path, double radius) {
 			for (int i = 0; i < BufferCount; i++) {
-				if (Buffers[i].Origin is PathOrigin) {
-					if (((PathOrigin)Buffers[i].Origin).Path == path) {
-						return Buffers[i];
-					}
+				PathOrigin pathOrigin = Buffers[i].Origin as PathOrigin;
+				if (pathOrigin != null && pathOrigin.Path == path) {
+					return Buffers[i];
 				}
 			}
 			if (Buffers.Length == BufferCount) {
@@ -168,22 +167,21 @@ namespace OpenBve {
 		/// <param name="buffer">The sound buffer.</param>
 		/// <returns>Whether loading the buffer was successful.</returns>
 		internal static bool LoadBuffer(SoundBuffer buffer) {
-			if (buffer.Loaded) {
+			if (buffer.Loaded)
 				return true;
-			} else if (buffer.Ignore) {
+			if (buffer.Ignore)
 				return false;
-			} else {
-				OpenBveApi.Sounds.Sound sound;
-				if (buffer.Origin.GetSound(out sound)) {
-					if (sound.BitsPerSample == 8 | sound.BitsPerSample == 16) {
-						byte[] bytes = GetMonoMix(sound);
-						Al.alGenBuffers(1, out buffer.OpenAlBufferName);
-						int format = sound.BitsPerSample == 8 ? Al.AL_FORMAT_MONO8 : Al.AL_FORMAT_MONO16;
-						Al.alBufferData(buffer.OpenAlBufferName, format, bytes, bytes.Length, sound.SampleRate);
-						buffer.Duration = sound.Duration;
-						buffer.Loaded = true;
-						return true;
-					}
+
+			OpenBveApi.Sounds.Sound sound;
+			if (buffer.Origin.GetSound(out sound)) {
+				if (sound.BitsPerSample == 8 || sound.BitsPerSample == 16) {
+					byte[] bytes = GetMonoMix(sound);
+					AL.GenBuffers(1, out buffer.OpenAlBufferName);
+					ALFormat format = sound.BitsPerSample == 8 ? ALFormat.Mono8 : ALFormat.Mono16;
+					AL.BufferData(buffer.OpenAlBufferName, format, bytes, bytes.Length, sound.SampleRate);
+					buffer.Duration = sound.Duration;
+					buffer.Loaded = true;
+					return true;
 				}
 			}
 			buffer.Ignore = true;
@@ -204,7 +202,7 @@ namespace OpenBve {
 		/// <param name="buffer"></param>
 		internal static void UnloadBuffer(SoundBuffer buffer) {
 			if (buffer.Loaded) {
-				Al.alDeleteBuffers(1, ref buffer.OpenAlBufferName);
+				AL.DeleteBuffers(1, ref buffer.OpenAlBufferName);
 				buffer.OpenAlBufferName = 0;
 				buffer.Loaded = false;
 				buffer.Ignore = false;
@@ -260,7 +258,7 @@ namespace OpenBve {
 		internal static void StopSound(SoundSource source) {
 			if (source != null) {
 				if (source.State == SoundSourceState.Playing) {
-					Al.alDeleteSources(1, ref source.OpenAlSourceName);
+					AL.DeleteSources(1, ref source.OpenAlSourceName);
 					source.OpenAlSourceName = 0;
 				}
 				source.State = SoundSourceState.Stopped;
@@ -271,7 +269,7 @@ namespace OpenBve {
 		internal static void StopAllSounds() {
 			for (int i = 0; i < SourceCount; i++) {
 				if (Sources[i].State == SoundSourceState.Playing) {
-					Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+					AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 					Sources[i].OpenAlSourceName = 0;
 				}
 				Sources[i].State = SoundSourceState.Stopped;
@@ -284,7 +282,7 @@ namespace OpenBve {
 			for (int i = 0; i < SourceCount; i++) {
 				if (Sources[i].Train == train) {
 					if (Sources[i].State == SoundSourceState.Playing) {
-						Al.alDeleteSources(1, ref Sources[i].OpenAlSourceName);
+						AL.DeleteSources(1, ref Sources[i].OpenAlSourceName);
 						Sources[i].OpenAlSourceName = 0;
 					}
 					Sources[i].State = SoundSourceState.Stopped;
@@ -299,24 +297,18 @@ namespace OpenBve {
 		/// <param name="source">The sound source, or a null reference.</param>
 		/// <returns>Whether the sound is playing or supposed to be playing.</returns>
 		internal static bool IsPlaying(SoundSource source) {
-			if (source != null) {
-				if (source.State == SoundSourceState.PlayPending | source.State == SoundSourceState.Playing) {
-					return true;
-				}
-			}
-			return false;
+			if(source == null)
+				return false;
+			return source.State == SoundSourceState.PlayPending || source.State == SoundSourceState.Playing;
 		}
 
 		/// <summary>Checks whether the specified sound is stopped or supposed to be stopped.</summary>
 		/// <param name="source">The sound source, or a null reference.</param>
 		/// <returns>Whether the sound is stopped or supposed to be stopped.</returns>
 		internal static bool IsStopped(SoundSource source) {
-			if (source != null) {
-				if (source.State == SoundSourceState.StopPending | source.State == SoundSourceState.Stopped) {
-					return true;
-				}
-			}
-			return false;
+			if (source == null)
+				return false;
+			return source.State == SoundSourceState.StopPending || source.State == SoundSourceState.Stopped;
 		}
 		
 		/// <summary>Gets the duration of the specified sound buffer in seconds.</summary>
@@ -365,6 +357,5 @@ namespace OpenBve {
 			}
 			return count;
 		}
-
 	}
 }
