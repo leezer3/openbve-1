@@ -54,7 +54,7 @@ namespace OpenBve {
 					SizeF physicalSize = graphics.MeasureString(char.ConvertFromUtf32(offset + i), font, int.MaxValue, StringFormat.GenericDefault);
 					SizeF typographicSize = graphics.MeasureString(char.ConvertFromUtf32(offset + i), font, int.MaxValue, StringFormat.GenericTypographic);
 					physicalSizes[i] = new Size((int)Math.Ceiling(physicalSize.Width), (int)Math.Ceiling(physicalSize.Height));
-					typographicSizes[i] = new Size((int)Math.Ceiling(typographicSize.Width == 0.0f ? physicalSize.Width : typographicSize.Width), (int)Math.Ceiling(typographicSize.Height == 0.0f ? physicalSize.Height : typographicSize.Height));
+					typographicSizes[i] = new Size((int)Math.Ceiling(typographicSize.Width.CompareTo(0.0f) == 0 ? physicalSize.Width : typographicSize.Width), (int)Math.Ceiling(typographicSize.Height == 0.0f ? physicalSize.Height : typographicSize.Height));
 				}
 				/*
 				 * Find suitable bitmap dimensions.
