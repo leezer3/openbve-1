@@ -27,7 +27,7 @@ namespace OpenBve {
 			/// <param name="b">The second origin.</param>
 			/// <returns>Whether the two origins are equal.</returns>
 			public static bool operator ==(TextureOrigin a, TextureOrigin b) {
-				if (a is PathOrigin & b is PathOrigin) {
+				if (a is PathOrigin && b is PathOrigin) {
 					return (PathOrigin)a == (PathOrigin)b;
 				} else {
 					return object.ReferenceEquals(a, b);
@@ -38,7 +38,7 @@ namespace OpenBve {
 			/// <param name="b">The second origin.</param>
 			/// <returns>Whether the two origins are unequal.</returns>
 			public static bool operator !=(TextureOrigin a, TextureOrigin b) {
-				if (a is PathOrigin & b is PathOrigin) {
+				if (a is PathOrigin && b is PathOrigin) {
 					return (PathOrigin)a != (PathOrigin)b;
 				} else {
 					return !object.ReferenceEquals(a, b);
@@ -48,7 +48,7 @@ namespace OpenBve {
 			/// <param name="obj">The object.</param>
 			/// <returns>Whether this instance is equal to the specified object.</returns>
 			public override bool Equals(object obj) {
-				if (this is PathOrigin & obj is PathOrigin) {
+				if (this is PathOrigin && obj is PathOrigin) {
 					return (PathOrigin)this == (PathOrigin)obj;
 				} else {
 					return object.ReferenceEquals(this, obj);

@@ -87,8 +87,8 @@ namespace OpenBve {
 			OuterRadiusFactorSpeed = 0.0;
 			OpenAlDevice = Alc.OpenDevice(null);
 			if (OpenAlDevice != IntPtr.Zero) {
-				OpenAlContext = Alc.CreateContext(OpenAlDevice, null);
-				if (OpenAlContext != IntPtr.Zero) {
+				OpenAlContext = Alc.CreateContext(OpenAlDevice,new int[0]);
+				if (OpenAlContext != ContextHandle.Zero) {
 					Alc.MakeContextCurrent(OpenAlContext);
 					try {
 						AL.SpeedOfSound(343.0f);
@@ -114,7 +114,7 @@ namespace OpenBve {
 		internal static void Deinitialize() {
 			StopAllSounds();
 			UnloadAllBuffers();
-			if (OpenAlContext != IntPtr.Zero) {
+			if (OpenAlContext != ContextHandle.Zero) {
 				Alc.MakeContextCurrent(ContextHandle.Zero);
 				Alc.DestroyContext(OpenAlContext);
 				OpenAlContext = ContextHandle.Zero;

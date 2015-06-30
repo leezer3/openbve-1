@@ -1,7 +1,6 @@
 ﻿using System;
 using OpenBveApi.Colors;
 using OpenBveApi.Math;
-using Tao.OpenGl;
 
 namespace OpenBve {
 	internal static partial class Renderer {

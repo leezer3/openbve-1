@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-using Tao.Sdl;
 
 namespace OpenBve {
 	internal partial class formMain : Form {

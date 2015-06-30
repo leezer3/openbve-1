@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using OpenBveApi.Math;
-using Tao.OpenGl;
-using Tao.Sdl;
 
 namespace OpenBve {
 	internal static class MainLoop {

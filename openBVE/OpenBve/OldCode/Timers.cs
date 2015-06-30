@@ -1,5 +1,4 @@
 ﻿using System;
-using Tao.Sdl;
 
 namespace OpenBve {
 	internal static class Timers {
@@ -9,12 +8,12 @@ namespace OpenBve {
 
 		// initialize
 		internal static void Initialize() {
-			SdlTime = 0.001 * (double)Sdl.SDL_GetTicks();
+			SdlTime = 0.001 * (double)Environment.TickCount;
 		}
 
 		// get elapsed time
 		internal static double GetElapsedTime() {
-			double a = 0.001 * (double)Sdl.SDL_GetTicks();
+			double a = 0.001 * (double)Environment.TickCount;
 			double d = a - SdlTime;
 			SdlTime = a;
 			return d;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using OpenBveApi.Colors;
-using Tao.Sdl;
 
 namespace OpenBve {
 	internal static class Interface {

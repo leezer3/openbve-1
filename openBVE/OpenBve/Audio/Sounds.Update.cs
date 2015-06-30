@@ -188,7 +188,7 @@ namespace OpenBve {
 						if (!Sources[i].Looped) {
 							int state;
 							AL.GetSource(Sources[i].OpenAlSourceName,ALGetSourcei.SourceState, out state);
-							if (state != ALSourceState.Initial && state != ALSourceState.Playing) {
+							if (state != (int)ALSourceState.Initial && state != (int)ALSourceState.Playing) {
 								/*
 								 * The sound is not playing any longer.
 								 * Remove it from the list of sound sources.
@@ -364,7 +364,7 @@ namespace OpenBve {
 					if (Sources[i].State == SoundSourceState.Playing) {
 						int state;
 						AL.GetSource(Sources[i].OpenAlSourceName, ALGetSourcei.SourceState, out state);
-						if (state != ALSourceState.Initial && state != ALSourceState.Playing) {
+						if (state != (int)ALSourceState.Initial && state != (int)ALSourceState.Playing) {
 							/*
 							 * The sound is not playing any longer.
 							 * Remove it from the list of sound sources.

@@ -15,8 +15,8 @@ namespace OpenBve
 		/// </summary>
 		/// <param name="text">Message box contents</param>
 		/// <param name="caption">Title </param>
-		public static void InfoMessage(string text, string caption = Application.ProductName){
-			MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+		public static void InfoMessage(string text){
+			MessageBox.Show(text, DialogTitle, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 		}
 		/// <summary>
 		/// Shows a message box with given text, caption is <see cref="DialogTitle"/>
