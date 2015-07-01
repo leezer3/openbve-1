@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenTK;
+using System.Collections.Generic;
 using OpenTK.Input;
 
 namespace OpenBve {
@@ -43,7 +43,6 @@ namespace OpenBve {
 			if (!Initialized) {
 				int count = Program.UI.Joysticks.Count;
 				AttachedJoysticks = new Joystick[count];
-
 				for (int i = 0; i < count; i++) {
 					AttachedJoysticks[i].Name = Program.UI.Joysticks[i].Description;
 					AttachedJoysticks[i].Index = i;

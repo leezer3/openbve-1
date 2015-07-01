@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using OpenBveApi.Colors;
+using OpenTK.Input;
 
 namespace OpenBve {
 	internal static class Interface {
@@ -1426,6 +1427,7 @@ namespace OpenBve {
 			Keyboard = 1,
 			Joystick = 2
 		}
+		[Flags]
 		internal enum KeyboardModifier {
 			None = 0,
 			Shift = 1,
@@ -1447,7 +1449,7 @@ namespace OpenBve {
 			internal int Device;
 			internal JoystickComponent Component;
 			internal int Element;
-			internal int Direction;
+			internal object Direction;
 			internal DigitalControlState DigitalState;
 			internal double AnalogState;
 		}
