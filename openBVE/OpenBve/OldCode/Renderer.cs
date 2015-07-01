@@ -1,7 +1,10 @@
-﻿using System;
+using System;
 using OpenBveApi.Colors;
 using OpenBveApi.Math;
-
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using Vector3 = OpenBveApi.Math.Vector3;
 namespace OpenBve {
 	internal static partial class Renderer {
 		
@@ -182,52 +185,54 @@ namespace OpenBve {
 		// initialize
 		internal static void Initialize() {
 			// opengl
-			Gl.glShadeModel(Gl.GL_SMOOTH);
-			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
-			Gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			Gl.glEnable(Gl.GL_DEPTH_TEST);
-			Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
-			Gl.glDepthFunc(Gl.GL_LEQUAL);
-			Gl.glHint(Gl.GL_FOG_HINT, Gl.GL_FASTEST);
-			Gl.glHint(Gl.GL_LINE_SMOOTH_HINT, Gl.GL_FASTEST);
-			Gl.glHint(Gl.GL_PERSPECTIVE_CORRECTION_HINT, Gl.GL_FASTEST);
-			Gl.glHint(Gl.GL_POINT_SMOOTH_HINT, Gl.GL_FASTEST);
-			Gl.glHint(Gl.GL_POLYGON_SMOOTH_HINT, Gl.GL_FASTEST);
-			Gl.glHint(Gl.GL_GENERATE_MIPMAP_HINT, Gl.GL_NICEST);
-			Gl.glDisable(Gl.GL_DITHER);
-			Gl.glCullFace(Gl.GL_FRONT);
-			Gl.glEnable(Gl.GL_CULL_FACE); CullEnabled = true;
-			Gl.glDisable(Gl.GL_LIGHTING); LightingEnabled = false;
-			Gl.glDisable(Gl.GL_TEXTURE_2D); TexturingEnabled = false;
+			GL.ShadeModel(ShadingModel.Smooth);
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			GL.Enable(EnableCap.DepthTest);
+			GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+			GL.DepthFunc(DepthFunction.Lequal);
+			GL.Hint(HintTarget.FogHint,HintMode.Fastest);
+			GL.Hint(HintTarget.LineSmoothHint,HintMode.Fastest);
+			GL.Hint(HintTarget.PerspectiveCorrectionHint,HintMode.Fastest);
+			GL.Hint(HintTarget.PointSmoothHint,HintMode.Fastest);
+			GL.Hint(HintTarget.PolygonSmoothHint,HintMode.Fastest);
+			GL.Hint(HintTarget.GenerateMipmapHint,HintMode.Nicest);
+			GL.Disable(EnableCap.Dither);
+			GL.CullFace(CullFaceMode.Front);
+			GL.Enable(EnableCap.CullFace); CullEnabled = true;
+			GL.Disable(EnableCap.Lighting); LightingEnabled = false;
+			GL.Disable(EnableCap.Texture2D); TexturingEnabled = false;
 			// hud
 			Interface.LoadHUD();
 			string Path = Program.FileSystem.GetDataFolder("In-game");
 			Textures.RegisterTexture(OpenBveApi.Path.CombineFile(Path, "logo.png"), out TextureLogo);
 			// opengl
-			Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
-			Gl.glPushMatrix();
-			Gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			Glu.gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0);
-			Gl.glPopMatrix();
+			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			GL.PushMatrix();
+			GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			Matrix4 lookat = Matrix4.LookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.LoadMatrix(ref lookat);
+			GL.PopMatrix();
 			// prepare rendering logo
-			Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
-			Gl.glEnable(Gl.GL_BLEND); BlendEnabled = true;
-			Gl.glDisable(Gl.GL_LIGHTING); LightingEnabled = false;
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glPushMatrix();
-			Gl.glLoadIdentity();
-			Gl.glOrtho(0.0, (double)Screen.Width, 0.0, (double)Screen.Height, -1.0, 1.0);
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Gl.glPushMatrix();
-			Gl.glLoadIdentity();
+			GL.BlendFunc(BlendingFactorSrc.SrcAlpha,BlendingFactorDest.OneMinusSrcAlpha);
+			GL.Enable(EnableCap.Blend); BlendEnabled = true;
+			GL.Disable(EnableCap.Lighting); LightingEnabled = false;
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.PushMatrix();
+			GL.LoadIdentity();
+			GL.Ortho(0.0, (double)Screen.Width, 0.0, (double)Screen.Height, -1.0, 1.0);
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.PushMatrix();
+			GL.LoadIdentity();
 			// render logo
 			DrawLoadingScreen();
 			// finalize
-			Gl.glPopMatrix();
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glPopMatrix();
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Gl.glDisable(Gl.GL_BLEND);
+			GL.PopMatrix();
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.PopMatrix();
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.Disable(EnableCap.Blend);
 		}
 		
 		// deinitialize
@@ -240,7 +245,7 @@ namespace OpenBve {
 			for (int i = 0; i < StaticOpaque.Length; i++) {
 				if (StaticOpaque[i] != null) {
 					if (StaticOpaque[i].OpenGlDisplayListAvailable) {
-						Gl.glDeleteLists(StaticOpaque[i].OpenGlDisplayList, 1);
+						GL.DeleteLists(StaticOpaque[i].OpenGlDisplayList, 1);
 						StaticOpaque[i].OpenGlDisplayListAvailable = false;
 					}
 				}

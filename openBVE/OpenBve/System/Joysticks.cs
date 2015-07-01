@@ -1,4 +1,6 @@
 ﻿using System;
+using OpenTK;
+using OpenTK.Input;
 
 namespace OpenBve {
 	/// <summary>Provides functions for dealing with joysticks.</summary>
@@ -12,14 +14,14 @@ namespace OpenBve {
 			/// <summary>The textual representation of the joystick.</summary>
 			internal string Name;
 			/// <summary>The SDL handle to the joystick.</summary>
-			internal IntPtr SdlHandle;
+			internal int Index;
 			// --- constructors ---
 			/// <summary>Creates a new joystick.</summary>
 			/// <param name="name">The textual representation of the joystick.</param>
 			/// <param name="sdlHandle">The SDL handle to the joystick.</param>
-			internal Joystick(string name, IntPtr sdlHandle) {
+			internal Joystick(string name, int index) {
 				this.Name = name;
-				this.SdlHandle = sdlHandle;
+				this.Index = index;
 			}
 		}
 		
@@ -39,33 +41,15 @@ namespace OpenBve {
 		/// <returns>Whether initializing joysticks was successful.</returns>
 		internal static bool Initialize() {
 			if (!Initialized) {
-				
-				/*
-				int count = Sdl.SDL_NumJoysticks();
+				int count = Program.UI.Joysticks.Count;
 				AttachedJoysticks = new Joystick[count];
+
 				for (int i = 0; i < count; i++) {
-					string name = Sdl.SDL_JoystickName(i);
-					// Due to an apparent bug in Tao or SDL, the joystick
-					//	  name returned is actually ASCII packed in UTF-16.
-					char[] characters = new char[2 * name.Length];
-					for (int j = 0; j < name.Length; j++) {
-						int value = (int)name[j];
-						characters[2 * j + 0] = (char)(value & 0xFF);
-						characters[2 * j + 1] = (char)(value >> 8);
-					}
-					AttachedJoysticks[i].Name = null;
-					for (int j = 0; j < characters.Length; j++) {
-						if (characters[j] == '\0') {
-							AttachedJoysticks[i].Name = new string(characters, 0, j);
-						}
-					}
-					if (AttachedJoysticks[i].Name == null) {
-						AttachedJoysticks[i].Name = new string(characters);
-					}
-					AttachedJoysticks[i].SdlHandle = Sdl.SDL_JoystickOpen(i);
+					AttachedJoysticks[i] = Program.UI.Joysticks[i].Description;
+					AttachedJoysticks[i].Index = i;
 				}
 				Initialized = true;
-				return true;*/
+				return true;
 			} else {
 				return true;
 			}
@@ -74,11 +58,7 @@ namespace OpenBve {
 		/// <summary>Deinitializes joysticks.</summary>
 		internal static void Deinitialize() {
 			if (Initialized) {
-				for (int i = 0; i < AttachedJoysticks.Length; i++) {
-					Sdl.SDL_JoystickClose(AttachedJoysticks[i].SdlHandle);
-				}
 				AttachedJoysticks = new Joystick[] { };
-				Sdl.SDL_QuitSubSystem(Sdl.SDL_INIT_JOYSTICK);
 				Initialized = false;
 			}
 		}

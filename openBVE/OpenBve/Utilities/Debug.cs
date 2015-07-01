@@ -8,8 +8,7 @@ namespace OpenBve
 	/// </summary>
     public static class Debug
 	{
-		public static string DialogTitle
-		{ get; set;} = Application.ProductName;
+		public static readonly string DialogTitle = Application.ProductName;
 		/// <summary>
 		/// Shows a message box with given text
 		/// </summary>
