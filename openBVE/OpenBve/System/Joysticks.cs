@@ -18,7 +18,7 @@ namespace OpenBve {
 			// --- constructors ---
 			/// <summary>Creates a new joystick.</summary>
 			/// <param name="name">The textual representation of the joystick.</param>
-			/// <param name="sdlHandle">The SDL handle to the joystick.</param>
+			/// <param name="index">The OpenTK index of the joystick.</param>
 			internal Joystick(string name, int index) {
 				this.Name = name;
 				this.Index = index;
@@ -45,7 +45,7 @@ namespace OpenBve {
 				AttachedJoysticks = new Joystick[count];
 
 				for (int i = 0; i < count; i++) {
-					AttachedJoysticks[i] = Program.UI.Joysticks[i].Description;
+					AttachedJoysticks[i].Name = Program.UI.Joysticks[i].Description;
 					AttachedJoysticks[i].Index = i;
 				}
 				Initialized = true;
