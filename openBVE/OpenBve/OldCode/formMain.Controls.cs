@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using OpenTK;
@@ -137,9 +137,9 @@ namespace OpenBve {
 					case Interface.JoystickComponent.Axis:
 						t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_axis").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
 						float pos = (float)Interface.CurrentControls[Index].Direction;
-						if (pos < 0) {
+						if (pos == -1) {
 							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_axis_negative");
-						} else if (pos > 0) {
+						} else if (pos == 1) {
 							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_axis_positive");
 						} else {
 							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_axis_invalid");
@@ -461,8 +461,8 @@ namespace OpenBve {
 								e.Graphics.DrawString(t, f, Brushes.Black, u + 0.5f * (g - s.Width), v + 0.5f * (g - s.Height));
 								var a = state.GetHat((JoystickHat)Enum.Parse(typeof(JoystickHat), "Hat" + j));
 								if (a.Position != HatPosition.Centered) {
-									double rx = a.IsLeft != 0 ? -1.0 : a.IsRight != 0 ? 1.0 : 0.0;
-									double ry = a.IsUp   != 0 ? -1.0 : a.IsDown  != 0 ? 1.0 : 0.0;
+									double rx = a.IsLeft ? -1.0 : a.IsRight ? 1.0 : 0.0;
+									double ry = a.IsUp   ? -1.0 : a.IsDown  ? 1.0 : 0.0;
 									double rt = rx * rx + ry * ry;
 									rt = 1.0 / Math.Sqrt(rt);
 									rx *= rt; ry *= rt;
@@ -471,9 +471,10 @@ namespace OpenBve {
 									e.Graphics.FillEllipse(Brushes.White, u + 0.5f * g + dx - 4.0f, v + 0.5f * g + dy - 4.0f, 8.0f, 8.0f);
 									e.Graphics.DrawEllipse(new Pen(Color.Firebrick, 2.0f), u + 0.5f * g + dx - 4.0f, v + 0.5f * g + dy - 4.0f, 8.0f, 8.0f);
 								}
+								var hatState = ((JoystickHatState)direction);
 								if (device == i & component == Interface.JoystickComponent.Hat & element == j) {
-									double rx = direction.IsLeft != 0 ? -1.0 : direction.IsRight != 0 ? 1.0 : 0.0;
-									double ry = direction.IsUp   != 0 ? -1.0 : direction.IsDown  != 0 ? 1.0 : 0.0;
+									double rx = hatState.IsLeft ? -1.0 : hatState.IsRight ? 1.0 : 0.0;
+									double ry = hatState.IsUp   ? -1.0 : hatState.IsDown  ? 1.0 : 0.0;
 									double rt = rx * rx + ry * ry;
 									rt = 1.0 / Math.Sqrt(rt);
 									rx *= rt; ry *= rt;
@@ -501,11 +502,12 @@ namespace OpenBve {
 								} else {
 									e.Graphics.FillRectangle(Brushes.Firebrick, u, v + 0.5f * g - 0.5f * r1 * g, 16.0f, 0.5f * g * (r1 - r0));
 								}
+							float pos = (float)direction;
 								if (device == i & component == Interface.JoystickComponent.Axis & element == j) {
-									if (direction == -1 & type != Interface.CommandType.AnalogFull) {
+									if (pos == -1 & type != Interface.CommandType.AnalogFull) {
 										e.Graphics.DrawRectangle(p, u, v, 16.0f, g);
 										e.Graphics.DrawRectangle(ps, u, v + 0.5f * g, 16.0f, 0.5f * g);
-									} else if (direction == 1 & type != Interface.CommandType.AnalogFull) {
+									} else if (pos == 1 & type != Interface.CommandType.AnalogFull) {
 										e.Graphics.DrawRectangle(p, u, v, 16.0f, g);
 										e.Graphics.DrawRectangle(ps, u, v, 16.0f, 0.5f * g);
 									} else {

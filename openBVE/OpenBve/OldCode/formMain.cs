@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Text;
+using OpenTK.Input;
 
 namespace OpenBve {
 	internal partial class formMain : Form {
@@ -1077,12 +1078,12 @@ namespace OpenBve {
 		private void timerEvents_Tick(object sender, EventArgs e) {
 			if (textboxJoystickGrab.Focused & this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int j = listviewControls.SelectedIndices[0];
-				Sdl.SDL_JoystickUpdate();
 				for (int k = 0; k < Joysticks.AttachedJoysticks.Length; k++) {
-					IntPtr handle = Joysticks.AttachedJoysticks[k].SdlHandle;
-					int axes = Sdl.SDL_JoystickNumAxes(handle);
+					var caps = OpenTK.Input.Joystick.GetCapabilities(Joysticks.AttachedJoysticks[k].Index);
+					var state = OpenTK.Input.Joystick.GetState(Joysticks.AttachedJoysticks[k].Index);
+					int axes = caps.AxisCount;
 					for (int i = 0; i < axes; i++) {
-						double a = (double)Sdl.SDL_JoystickGetAxis(handle, i) / 32768.0;
+						double a = state.GetAxis((JoystickAxis)Enum.Parse(typeof(JoystickAxis), "Axis" + i));
 						if (a < -0.75) {
 							Interface.CurrentControls[j].Device = k;
 							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Axis;
@@ -1103,9 +1104,12 @@ namespace OpenBve {
 							return;
 						}
 					}
-					int buttons = Sdl.SDL_JoystickNumButtons(handle);
+					int buttons = caps.ButtonCount;
 					for (int i = 0; i < buttons; i++) {
-						if (Sdl.SDL_JoystickGetButton(handle, i) == 1) {
+						bool press = state.GetButton(
+							(JoystickButton)Enum.Parse(
+							typeof(JoystickButton), "Button" + i)) == OpenTK.Input.ButtonState.Pressed;
+						if (press) {
 							Interface.CurrentControls[j].Device = k;
 							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Button;
 							Interface.CurrentControls[j].Element = i;
@@ -1116,14 +1120,14 @@ namespace OpenBve {
 							return;
 						}
 					}
-					int hats = Sdl.SDL_JoystickNumHats(handle);
+					int hats = caps.HatCount;
 					for (int i = 0; i < hats; i++) {
-						int hat = Sdl.SDL_JoystickGetHat(handle, i);
-						if (hat != 0) {
+					var hat = state.GetHat((JoystickHat)Enum.Parse(typeof(JoystickHat),"Hat"+i));
+						if (hat.Position != HatPosition.Centered) {
 							Interface.CurrentControls[j].Device = k;
 							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Hat;
 							Interface.CurrentControls[j].Element = i;
-							Interface.CurrentControls[j].Direction = hat;
+							Interface.CurrentControls[j].Direction = (object)hat;
 							radiobuttonJoystick.Focus();
 							UpdateJoystickDetails();
 							UpdateControlListElement(listviewControls.Items[j], j, true);
@@ -1132,8 +1136,6 @@ namespace OpenBve {
 					}
 				}
 			}
-			Sdl.SDL_Event Event;
-			while (Sdl.SDL_PollEvent(out Event) != 0) { }
 			pictureboxJoysticks.Invalidate();
 		}
 

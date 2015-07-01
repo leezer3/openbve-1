@@ -1276,7 +1276,7 @@ namespace OpenBve {
 
 		// key infos
 		internal struct KeyInfo {
-			internal int Value;
+			internal OpenTK.Input.Key Value;
 			internal string Name;
 			internal string Description;
 			internal KeyInfo(int Value, string Name, string Description) {
@@ -1286,16 +1286,16 @@ namespace OpenBve {
 			}
 		}
 		internal static KeyInfo[] Keys = new KeyInfo[] {
-			new KeyInfo(Sdl.SDLK_0, "0", "0"),
-			new KeyInfo(Sdl.SDLK_1, "1", "1"),
-			new KeyInfo(Sdl.SDLK_2, "2", "2"),
-			new KeyInfo(Sdl.SDLK_3, "3", "3"),
-			new KeyInfo(Sdl.SDLK_4, "4", "4"),
-			new KeyInfo(Sdl.SDLK_5, "5", "5"),
-			new KeyInfo(Sdl.SDLK_6, "6", "6"),
-			new KeyInfo(Sdl.SDLK_7, "7", "7"),
-			new KeyInfo(Sdl.SDLK_8, "8", "8"),
-			new KeyInfo(Sdl.SDLK_9, "9", "9"),
+			new KeyInfo(OpenTK.Input.Key.Number0, "0", "0"),
+			new KeyInfo(OpenTK.Input.Key.Number1, "1", "1"),
+			new KeyInfo(OpenTK.Input.Key.Number2, "2", "2"),
+			new KeyInfo(OpenTK.Input.Key.Number3, "3", "3"),
+			new KeyInfo(OpenTK.Input.Key.Number4, "4", "4"),
+			new KeyInfo(OpenTK.Input.Key.Number5, "5", "5"),
+			new KeyInfo(OpenTK.Input.Key.Number6, "6", "6"),
+			new KeyInfo(OpenTK.Input.Key.Number7, "7", "7"),
+			new KeyInfo(OpenTK.Input.Key.Number8, "8", "8"),
+			new KeyInfo(OpenTK.Input.Key.Number9, "9", "9"),
 			new KeyInfo(Sdl.SDLK_AMPERSAND, "AMPERSAND", "Ampersand"),
 			new KeyInfo(Sdl.SDLK_ASTERISK, "ASTERISK", "Asterisk"),
 			new KeyInfo(Sdl.SDLK_AT, "AT", "At"),
@@ -1434,7 +1434,7 @@ namespace OpenBve {
 			Ctrl = 2,
 			Alt = 4
 		}
-		internal enum JoystickComponent { Invalid, Axis, Ball, Hat, Button }
+		internal enum JoystickComponent { Invalid, Axis, Hat, Button }
 		internal enum DigitalControlState {
 			ReleasedAcknowledged = 0,
 			Released = 1,
@@ -1579,13 +1579,10 @@ namespace OpenBve {
 						Builder.Append("joystick, " + CurrentControls[i].Device.ToString(Culture) + ", ");
 						switch (CurrentControls[i].Component) {
 							case JoystickComponent.Axis:
-								Builder.Append("axis, " + CurrentControls[i].Element.ToString(Culture) + ", " + CurrentControls[i].Direction.ToString(Culture));
-								break;
-							case JoystickComponent.Ball:
-								Builder.Append("ball, " + CurrentControls[i].Element.ToString(Culture) + ", " + CurrentControls[i].Direction.ToString(Culture));
+								Builder.Append("axis, " + CurrentControls[i].Element.ToString(Culture) + ", " + CurrentControls[i].Direction.ToString());
 								break;
 							case JoystickComponent.Hat:
-								Builder.Append("hat, " + CurrentControls[i].Element.ToString(Culture) + ", " + CurrentControls[i].Direction.ToString(Culture));
+								Builder.Append("hat, " + CurrentControls[i].Element.ToString(Culture) + ", " + CurrentControls[i].Direction.ToString());
 								break;
 							case JoystickComponent.Button:
 								Builder.Append("button, " + CurrentControls[i].Element.ToString(Culture));
@@ -1678,19 +1675,6 @@ namespace OpenBve {
 													Controls[Length].Method = ControlMethod.Joystick;
 													Controls[Length].Device = Device;
 													Controls[Length].Component = JoystickComponent.Axis;
-													Controls[Length].Element = Element;
-													Controls[Length].Direction = Direction;
-													Controls[Length].Modifier = KeyboardModifier.None;
-													Valid = true;
-												}
-											}
-										} else if (Component == "ball" & Terms.Length == 6) {
-											int Element, Direction;
-											if (int.TryParse(Terms[4], NumberStyles.Integer, Culture, out Element)) {
-												if (int.TryParse(Terms[5], NumberStyles.Integer, Culture, out Direction)) {
-													Controls[Length].Method = ControlMethod.Joystick;
-													Controls[Length].Device = Device;
-													Controls[Length].Component = JoystickComponent.Ball;
 													Controls[Length].Element = Element;
 													Controls[Length].Direction = Direction;
 													Controls[Length].Modifier = KeyboardModifier.None;
