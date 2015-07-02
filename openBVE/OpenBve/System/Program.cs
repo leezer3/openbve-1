@@ -144,6 +144,7 @@ namespace OpenBve {
 				Game.Reset(false);
 			}
 			Screen.Initialize();
+			SetupEvents();
 			// --- show the main menu if necessary ---
 			if (result.RouteFile == null || result.TrainFolder == null) {
 				// begin HACK //
@@ -273,6 +274,13 @@ namespace OpenBve {
 				System.IO.File.AppendAllText(file, text + "\n", new System.Text.UTF8Encoding(false));
 			} catch { }
 		}
-
+		internal static void SetupEvents(){
+			UI.KeyDown += MainLoop.KeyDown;
+			UI.KeyUp += MainLoop.KeyUp;
+			UI.Closing += MainLoop.Closing;
+			UI.Resize += MainLoop.Resize;
+			UI.MouseDown += MainLoop.MouseDown;
+			UI.MouseMove += MainLoop.MouseMove;
+		}
 	}
 }

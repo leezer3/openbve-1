@@ -43,9 +43,15 @@ namespace OpenBve {
 			if (!Initialized) {
 				int count = Program.UI.Joysticks.Count;
 				AttachedJoysticks = new Joystick[count];
+				MainLoop.OldJoyStates = new MainLoop.JoyState[count];
 				for (int i = 0; i < count; i++) {
 					AttachedJoysticks[i].Name = Program.UI.Joysticks[i].Description;
 					AttachedJoysticks[i].Index = i;
+					var state = OpenTK.Input.Joystick.GetState(i);
+					int buttons = OpenTK.Input.Joystick.GetCapabilities(i).ButtonCount;
+					int axes = OpenTK.Input.Joystick.GetCapabilities(i).AxisCount;
+					int hats = OpenTK.Input.Joystick.GetCapabilities(i).HatCount;
+					MainLoop.OldJoyStates[i] = new MainLoop.JoyState(buttons,axes,hats);
 				}
 				Initialized = true;
 				return true;

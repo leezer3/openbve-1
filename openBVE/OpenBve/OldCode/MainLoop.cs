@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
 using OpenBveApi.Math;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
+using System.Collections.Generic;
+
 
 namespace OpenBve {
 	internal static class MainLoop {
@@ -16,24 +20,24 @@ namespace OpenBve {
 		internal static void StartLoopEx(formMain.MainDialogResult result) {
 			Renderer.Initialize();
 			Renderer.InitializeLighting();
-			Sdl.SDL_GL_SwapBuffers();
+			Program.UI.SwapBuffers();
 			MainLoop.UpdateViewport(MainLoop.ViewPortChangeMode.NoChange);
 			MainLoop.InitializeMotionBlur();
 			ProcessEvents();
-			Gl.glDisable(Gl.GL_FOG);
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glPushMatrix();
-			Gl.glLoadIdentity();
-			Gl.glOrtho(0.0, (double)Screen.Width, (double)Screen.Height, 0.0, -1.0, 1.0);
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Gl.glPushMatrix();
-			Gl.glLoadIdentity();
+			GL.Disable(EnableCap.Fog);
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.PushMatrix();
+			GL.LoadIdentity();
+			GL.Ortho(0.0, (double)Screen.Width, (double)Screen.Height, 0.0, -1.0, 1.0);
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.PushMatrix();
+			GL.LoadIdentity();
 			Renderer.DrawLoadingScreen();
-			Gl.glPopMatrix();
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glPopMatrix();
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Sdl.SDL_GL_SwapBuffers();
+			GL.PopMatrix();
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.PopMatrix();
+			GL.MatrixMode(MatrixMode.Modelview);
+			Program.UI.SwapBuffers();
 			Loading.LoadSynchronously(result.RouteFile, result.RouteEncoding, result.TrainFolder, result.TrainEncoding);
 			Timetable.CreateTimetable();
 			for (int i = 0; i < Interface.MessageCount; i++) {
@@ -339,7 +343,7 @@ namespace OpenBve {
 				Game.UpdateScoreMessages(TimeElapsed);
 				Sounds.Update(TimeElapsed, Interface.CurrentOptions.SoundModel);
 				Renderer.RenderScene(TimeElapsed);
-				Sdl.SDL_GL_SwapBuffers();
+				Program.UI.SwapBuffers();
 				Game.UpdateBlackBox();
 				// pause/menu
 				while (Game.CurrentInterface != Game.InterfaceType.Normal) {
@@ -351,7 +355,7 @@ namespace OpenBve {
 						System.Threading.Thread.Sleep(10);
 					}
 					Renderer.RenderScene(TimeElapsed);
-					Sdl.SDL_GL_SwapBuffers();
+					Program.UI.SwapBuffers();
 					TimeElapsed = Timers.GetElapsedTime();
 				}
 				// limit framerate
@@ -415,28 +419,31 @@ namespace OpenBve {
 		// process events
 		private static Interface.KeyboardModifier CurrentKeyboardModifier = Interface.KeyboardModifier.None;
 		private static void ProcessEvents() {
-			Sdl.SDL_Event Event;
-			while (Sdl.SDL_PollEvent(out Event) != 0) {
-				switch (Event.type) {
-						// quit
-					case Sdl.SDL_QUIT:
+			JoystickPoll();
+			while (events.Count > 0) {
+				InputEvent ev = events.Dequeue();
+				switch (ev.Type) {
+				// quit
+					case InputType.Quit:
 						Quit = true;
 						return;
-						// resize
-					case Sdl.SDL_VIDEORESIZE:
-						Screen.Width = Event.resize.w;
-						Screen.Height = Event.resize.h;
+				// resize
+					case InputType.Resize:
 						UpdateViewport(MainLoop.ViewPortChangeMode.NoChange);
 						InitializeMotionBlur();
 						break;
-						// key down
-					case Sdl.SDL_KEYDOWN:
-						if (Event.key.keysym.sym == Sdl.SDLK_LSHIFT | Event.key.keysym.sym == Sdl.SDLK_RSHIFT) CurrentKeyboardModifier |= Interface.KeyboardModifier.Shift;
-						if (Event.key.keysym.sym == Sdl.SDLK_LCTRL | Event.key.keysym.sym == Sdl.SDLK_RCTRL) CurrentKeyboardModifier |= Interface.KeyboardModifier.Ctrl;
-						if (Event.key.keysym.sym == Sdl.SDLK_LALT | Event.key.keysym.sym == Sdl.SDLK_RALT) CurrentKeyboardModifier |= Interface.KeyboardModifier.Alt;
+				// key down
+					case InputType.KeyDown:
+						KeyEventArgs keyDownData = (KeyEventArgs)ev.Data;
+						if ((keyDownData.Modifiers & Keys.Control) != 0)
+							CurrentKeyboardModifier |= Interface.KeyboardModifier.Shift;
+						if ((keyDownData.Modifiers & Keys.Shift) != 0)
+							CurrentKeyboardModifier |= Interface.KeyboardModifier.Ctrl;
+						if ((keyDownData.Modifiers & Keys.Alt) != 0)
+							CurrentKeyboardModifier |= Interface.KeyboardModifier.Alt;
 						for (int i = 0; i < Interface.CurrentControls.Length; i++) {
 							if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Keyboard) {
-								if (Interface.CurrentControls[i].Element == Event.key.keysym.sym & Interface.CurrentControls[i].Modifier == CurrentKeyboardModifier) {
+								if (Interface.CurrentControls[i].Element == (int)keyDownData.KeyCode && Interface.CurrentControls[i].Modifier == CurrentKeyboardModifier) {
 									Interface.CurrentControls[i].AnalogState = 1.0;
 									Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Pressed;
 									AddControlRepeat(i);
@@ -444,14 +451,18 @@ namespace OpenBve {
 							}
 						}
 						break;
-						// key up
-					case Sdl.SDL_KEYUP:
-						if (Event.key.keysym.sym == Sdl.SDLK_LSHIFT | Event.key.keysym.sym == Sdl.SDLK_RSHIFT) CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Shift;
-						if (Event.key.keysym.sym == Sdl.SDLK_LCTRL | Event.key.keysym.sym == Sdl.SDLK_RCTRL) CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Ctrl;
-						if (Event.key.keysym.sym == Sdl.SDLK_LALT | Event.key.keysym.sym == Sdl.SDLK_RALT) CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Alt;
+				// key up
+					case InputType.KeyUp:
+						KeyEventArgs keyUpData = (KeyEventArgs)ev.Data;
+						if ((keyUpData.Modifiers & Keys.Control) != 0)
+							CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Shift;
+						if ((keyUpData.Modifiers & Keys.Shift) != 0)
+							CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Ctrl;
+						if ((keyUpData.Modifiers & Keys.Alt) != 0)
+							CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Alt;
 						for (int i = 0; i < Interface.CurrentControls.Length; i++) {
 							if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Keyboard) {
-								if (Interface.CurrentControls[i].Element == Event.key.keysym.sym) {
+								if (Interface.CurrentControls[i].Element == (int)keyUpData.KeyCode) {
 									Interface.CurrentControls[i].AnalogState = 0.0;
 									Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Released;
 									RemoveControlRepeat(i);
@@ -459,13 +470,14 @@ namespace OpenBve {
 							}
 						}
 						break;
-						// joystick button down
-					case Sdl.SDL_JOYBUTTONDOWN:
+				// joystick button down
+					case InputType.JoyButtonDown:
+						ButtonEventArgs buttonDownData = (ButtonEventArgs)ev.Data;
 						if (Interface.CurrentOptions.UseJoysticks) {
 							for (int i = 0; i < Interface.CurrentControls.Length; i++) {
 								if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Joystick) {
 									if (Interface.CurrentControls[i].Component == Interface.JoystickComponent.Button) {
-										if (Interface.CurrentControls[i].Device == (int)Event.jbutton.which & Interface.CurrentControls[i].Element == (int)Event.jbutton.button) {
+										if (Interface.CurrentControls[i].Device == (int)buttonDownData.Index & Interface.CurrentControls[i].Element == (int)buttonDownData.Button) {
 											Interface.CurrentControls[i].AnalogState = 1.0;
 											Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Pressed;
 											AddControlRepeat(i);
@@ -473,14 +485,16 @@ namespace OpenBve {
 									}
 								}
 							}
-						} break;
-						// joystick button up
-					case Sdl.SDL_JOYBUTTONUP:
+						}
+						break;
+				// joystick button up
+					case InputType.JoyButtonUp:
+						ButtonEventArgs buttonUpData = (ButtonEventArgs)ev.Data;
 						if (Interface.CurrentOptions.UseJoysticks) {
 							for (int i = 0; i < Interface.CurrentControls.Length; i++) {
 								if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Joystick) {
 									if (Interface.CurrentControls[i].Component == Interface.JoystickComponent.Button) {
-										if (Interface.CurrentControls[i].Device == (int)Event.jbutton.which & Interface.CurrentControls[i].Element == (int)Event.jbutton.button) {
+										if (Interface.CurrentControls[i].Device == (int)buttonUpData.Index & Interface.CurrentControls[i].Element == (int)buttonUpData.Button) {
 											Interface.CurrentControls[i].AnalogState = 0.0;
 											Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Released;
 											RemoveControlRepeat(i);
@@ -488,16 +502,18 @@ namespace OpenBve {
 									}
 								}
 							}
-						} break;
-						// joystick hat
-					case Sdl.SDL_JOYHATMOTION:
+						}
+						break;
+				// joystick hat
+					case InputType.JoyHatMotion:
+						HatEventArgs hatData = (HatEventArgs)ev.Data;
 						if (Interface.CurrentOptions.UseJoysticks) {
 							for (int i = 0; i < Interface.CurrentControls.Length; i++) {
 								if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Joystick) {
 									if (Interface.CurrentControls[i].Component == Interface.JoystickComponent.Hat) {
-										if (Interface.CurrentControls[i].Device == (int)Event.jhat.which) {
-											if (Interface.CurrentControls[i].Element == (int)Event.jhat.hat) {
-												if (Interface.CurrentControls[i].Direction == (int)Event.jhat.val) {
+										if (Interface.CurrentControls[i].Device == (int)hatData.Index) {
+											if (Interface.CurrentControls[i].Element == (int)hatData.Hat) {
+												if ((int)Interface.CurrentControls[i].Direction == (int)hatData.Position) {
 													Interface.CurrentControls[i].AnalogState = 1.0;
 													Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Pressed;
 												} else {
@@ -509,17 +525,19 @@ namespace OpenBve {
 									}
 								}
 							}
-						} break;
-						// joystick axis
-					case Sdl.SDL_JOYAXISMOTION:
+						}
+						break;
+				// joystick axis
+					case InputType.JoyAxisMotion:
+						AxisEventArgs axisData = (AxisEventArgs)ev.Data;
 						if (Interface.CurrentOptions.UseJoysticks) {
 							for (int i = 0; i < Interface.CurrentControls.Length; i++) {
 								if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Joystick) {
 									if (Interface.CurrentControls[i].Component == Interface.JoystickComponent.Axis) {
-										if (Interface.CurrentControls[i].Device == (int)Event.jaxis.which & Interface.CurrentControls[i].Element == (int)Event.jaxis.axis) {
-											double a = (double)Event.jaxis.val / 32768.0;
+										if (Interface.CurrentControls[i].Device == (int)axisData.Index & Interface.CurrentControls[i].Element == (int)axisData.Axis) {
+											double a = axisData.Value;
 											if (Interface.CurrentControls[i].InheritedType == Interface.CommandType.AnalogHalf) {
-												if (Math.Sign(a) == Math.Sign(Interface.CurrentControls[i].Direction)) {
+												if (Math.Sign(a) == Math.Sign((float)Interface.CurrentControls[i].Direction)) {
 													a = Math.Abs(a);
 													if (a < Interface.CurrentOptions.JoystickAxisThreshold) {
 														Interface.CurrentControls[i].AnalogState = 0.0;
@@ -545,7 +563,7 @@ namespace OpenBve {
 													Interface.CurrentControls[i].AnalogState = (double)Math.Sign(a);
 												}
 											} else {
-												if (Math.Sign(a) == Math.Sign(Interface.CurrentControls[i].Direction)) {
+												if (Math.Sign(a) == Math.Sign((float)Interface.CurrentControls[i].Direction)) {
 													a = Math.Abs(a);
 													if (a < Interface.CurrentOptions.JoystickAxisThreshold) {
 														a = 0.0;
@@ -555,9 +573,11 @@ namespace OpenBve {
 														a = 1.0;
 													}
 													if (Interface.CurrentControls[i].DigitalState == Interface.DigitalControlState.Released | Interface.CurrentControls[i].DigitalState == Interface.DigitalControlState.ReleasedAcknowledged) {
-														if (a > 0.67) Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Pressed;
+														if (a > 0.67)
+															Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Pressed;
 													} else {
-														if (a < 0.33) Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Released;
+														if (a < 0.33)
+															Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Released;
 													}
 												}
 											}
@@ -565,28 +585,29 @@ namespace OpenBve {
 									}
 								}
 							}
-						} break;
-					case Sdl.SDL_MOUSEBUTTONDOWN:
+						}
+						break;
+						case InputType.MouseButtonDown:
+							MouseButtonEventArgs mouseButtonData = (MouseButtonEventArgs)ev.Data;
 						// mouse button down
-						if (Event.button.button == Sdl.SDL_BUTTON_RIGHT) {
+						if (mouseButtonData.Button == MouseButton.Right) {
 							// mouse grab
 							World.MouseGrabEnabled = !World.MouseGrabEnabled;
 							if (World.MouseGrabEnabled) {
 								World.MouseGrabTarget = new World.Vector2D(0.0, 0.0);
-								Sdl.SDL_WM_GrabInput(Sdl.SDL_GRAB_ON);
 								Game.AddMessage(Interface.GetInterfaceString("notification_mousegrab_on"), Game.MessageDependency.None, Interface.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 							} else {
-								Sdl.SDL_WM_GrabInput(Sdl.SDL_GRAB_OFF);
 								Game.AddMessage(Interface.GetInterfaceString("notification_mousegrab_off"), Game.MessageDependency.None, Interface.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 							}
 						}
 						break;
-					case Sdl.SDL_MOUSEMOTION:
+					case InputType.MouseMotion:
+						MouseMoveEventArgs mouseMotionData = (MouseMoveEventArgs)ev.Data;
 						// mouse motion
 						if (World.MouseGrabIgnoreOnce) {
 							World.MouseGrabIgnoreOnce = false;
 						} else if (World.MouseGrabEnabled) {
-							World.MouseGrabTarget = new World.Vector2D((double)Event.motion.xrel, (double)Event.motion.yrel);
+							World.MouseGrabTarget = new World.Vector2D((double)mouseMotionData.XDelta, (double)mouseMotionData.YDelta);
 						}
 						break;
 				}
@@ -1542,9 +1563,9 @@ namespace OpenBve {
 										// option: wireframe
 										Renderer.OptionWireframe = !Renderer.OptionWireframe;
 										if (Renderer.OptionWireframe) {
-											Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_LINE);
+											GL.PolygonMode(MaterialFace.FrontAndBack,PolygonMode.Line);
 										} else {
-											Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL);
+											GL.PolygonMode(MaterialFace.FrontAndBack,PolygonMode.Fill);
 										}
 										Renderer.StaticOpaqueForceUpdate = true;
 										break;
@@ -1788,73 +1809,73 @@ namespace OpenBve {
 			NoChange = 2
 		}
 		internal static void UpdateViewport(ViewPortChangeMode Mode) {
-			if (Mode == ViewPortChangeMode.ChangeToCab) {
-				CurrentViewPortMode = ViewPortMode.Cab;
-			} else {
-				CurrentViewPortMode = ViewPortMode.Scenery;
-			}
-			Gl.glViewport(0, 0, Screen.Width, Screen.Height);
+			CurrentViewPortMode = Mode == ViewPortChangeMode.ChangeToCab ? ViewPortMode.Cab : ViewPortMode.Scenery;
+			GL.Viewport(0, 0, Screen.Width, Screen.Height);
 			World.AspectRatio = (double)Screen.Width / (double)Screen.Height;
 			World.HorizontalViewingAngle = 2.0 * Math.Atan(Math.Tan(0.5 * World.VerticalViewingAngle) * World.AspectRatio);
-			Gl.glMatrixMode(Gl.GL_PROJECTION);
-			Gl.glLoadIdentity();
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.LoadIdentity();
 			const double invdeg = 57.295779513082320877;
 			if (CurrentViewPortMode == ViewPortMode.Cab) {
-				Glu.gluPerspective(World.VerticalViewingAngle * invdeg, -World.AspectRatio, 0.025, 50.0);
+				OpenTK.Matrix4d persp = OpenTK.Matrix4d.CreatePerspectiveFieldOfView(World.VerticalViewingAngle * invdeg, -World.AspectRatio, 0.025, 50.0);
+				GL.MatrixMode(MatrixMode.Projection);
+				GL.LoadMatrix(ref persp);
 			} else {
-				Glu.gluPerspective(World.VerticalViewingAngle * invdeg, -World.AspectRatio, 0.5, World.BackgroundImageDistance);
+				OpenTK.Matrix4d persp = OpenTK.Matrix4d.CreatePerspectiveFieldOfView(World.VerticalViewingAngle * invdeg, -World.AspectRatio, 0.5, World.BackgroundImageDistance);
+				GL.MatrixMode(MatrixMode.Projection);
+				GL.LoadMatrix(ref persp);
 			}
-			Gl.glMatrixMode(Gl.GL_MODELVIEW);
-			Gl.glLoadIdentity();
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.LoadIdentity();
 		}
 
 		// initialize motion blur
 		internal static void InitializeMotionBlur() {
 			if (Interface.CurrentOptions.MotionBlur != Interface.MotionBlurMode.None) {
 				if (Renderer.PixelBufferOpenGlTextureIndex != 0) {
-					Gl.glDeleteTextures(1, new int[] { Renderer.PixelBufferOpenGlTextureIndex });
+					GL.DeleteTextures(1, new int[] { Renderer.PixelBufferOpenGlTextureIndex });
 					Renderer.PixelBufferOpenGlTextureIndex = 0;
 				}
 				int w = Interface.CurrentOptions.NoTextureResize ? Screen.Width : Textures.RoundUpToPowerOfTwo(Screen.Width);
 				int h = Interface.CurrentOptions.NoTextureResize ? Screen.Height : Textures.RoundUpToPowerOfTwo(Screen.Height);
 				Renderer.PixelBuffer = new byte[4 * w * h];
 				int[] a = new int[1];
-				Gl.glGenTextures(1, a);
-				Gl.glBindTexture(Gl.GL_TEXTURE_2D, a[0]);
-				Gl.glTexParameterf(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
-				Gl.glTexParameterf(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
-				Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB, w, h, 0, Gl.GL_RGB, Gl.GL_UNSIGNED_BYTE, Renderer.PixelBuffer);
+				GL.GenTextures(1, a);
+				GL.BindTexture(TextureTarget.Texture2D, a[0]);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Linear);
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Linear);
+				GL.TexImage2D(TextureTarget.Texture2D, 0,PixelInternalFormat.Rgb, w, h, 0,PixelFormat.Rgb,PixelType.UnsignedByte, Renderer.PixelBuffer);
 				Renderer.PixelBufferOpenGlTextureIndex = a[0];
-				Gl.glCopyTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB, 0, 0, w, h, 0);
+				GL.CopyTexImage2D(TextureTarget.Texture2D, 0,PixelInternalFormat.Rgb, 0, 0, w, h, 0);
 			}
 		}
 		
 		#if DEBUG
 		// check error
 		private static void CheckForOpenGlError(string Location) {
-			int error = Gl.glGetError();
-			if (error != Gl.GL_NO_ERROR) {
+			ErrorCode error = GL.GetError();
+			if (error != ErrorCode.NoError) {
 				string message = Location + ": ";
 				switch (error) {
-					case Gl.GL_INVALID_ENUM:
+					case ErrorCode.InvalidEnum:
 						message += "GL_INVALID_ENUM";
 						break;
-					case Gl.GL_INVALID_VALUE:
+					case ErrorCode.InvalidValue:
 						message += "GL_INVALID_VALUE";
 						break;
-					case Gl.GL_INVALID_OPERATION:
+					case ErrorCode.InvalidOperation:
 						message += "GL_INVALID_OPERATION";
 						break;
-					case Gl.GL_STACK_OVERFLOW:
+					case ErrorCode.StackOverflow:
 						message += "GL_STACK_OVERFLOW";
 						break;
-					case Gl.GL_STACK_UNDERFLOW:
+					case ErrorCode.StackUnderflow:
 						message += "GL_STACK_UNDERFLOW";
 						break;
-					case Gl.GL_OUT_OF_MEMORY:
+					case ErrorCode.OutOfMemory:
 						message += "GL_OUT_OF_MEMORY";
 						break;
-					case Gl.GL_TABLE_TOO_LARGE:
+					case ErrorCode.TableTooLarge:
 						message += "GL_TABLE_TOO_LARGE";
 						break;
 					default:
@@ -1866,5 +1887,139 @@ namespace OpenBve {
 		}
 		#endif
 
+		public enum InputType {
+			Quit,Resize,KeyDown,KeyUp,JoyButtonDown,JoyButtonUp,JoyHatMotion,JoyAxisMotion,MouseButtonDown,MouseMotion
+		}
+		internal struct InputEvent {
+			internal InputType Type;
+			internal EventArgs Data;
+			internal InputEvent(InputType type, EventArgs data){
+				this.Type = type;
+				this.Data = data;
+			}
+		}
+		internal static Queue<InputEvent> events;
+
+		internal static void KeyDown(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
+		{
+			events.Enqueue(new InputEvent(InputType.KeyDown,e));
+		}
+
+		internal static void KeyUp(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
+		{
+			events.Enqueue(new InputEvent(InputType.KeyUp,e));
+		}
+
+		internal static void Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			events.Enqueue(new InputEvent(InputType.Quit,e));
+		}
+
+		internal static void Resize(object sender, EventArgs e)
+		{
+			events.Enqueue(new InputEvent(InputType.Resize,e));
+		}
+
+		internal static void MouseDown(object sender, OpenTK.Input.MouseButtonEventArgs e)
+		{
+			events.Enqueue(new InputEvent(InputType.MouseButtonDown,e));
+		}
+
+		internal static void MouseMove(object sender, OpenTK.Input.MouseMoveEventArgs e)
+		{
+			events.Enqueue(new InputEvent(InputType.MouseMotion,e));
+		}
+		internal struct JoyState
+		{
+			internal bool[] buttonsPressed;
+			internal float[] axisValues;
+			internal HatPosition[] hatsPositions;
+			internal JoyState(int buttons, int axes, int hats){
+				buttonsPressed = new bool[buttons];
+				axisValues = new float[axes];
+				hatsPositions = new HatPosition[hats];
+			}
+		}
+		internal static JoyState[] OldJoyStates = new JoyState[Joysticks.AttachedJoysticks.Length];
+		internal static void JoystickPoll(){
+			for(int i = 0; i < Joysticks.AttachedJoysticks.Length;i++){
+				int index = Joysticks.AttachedJoysticks[i].Index;
+				var state = Joystick.GetState(index);
+				if (state.IsConnected) {
+					int buttons = Joystick.GetCapabilities(index).ButtonCount;
+					int axes = Joystick.GetCapabilities(index).AxisCount;
+					int hats = Joystick.GetCapabilities(index).HatCount;
+					// buttons
+					for (int k = 0; k < buttons; k++) {
+						JoystickButton but = (JoystickButton)Enum.Parse(typeof(JoystickButton), "Button" + k);
+						bool pressed = state.GetButton(but) == OpenTK.Input.ButtonState.Pressed;
+						if (OldJoyStates[i].buttonsPressed[k] != pressed) {
+							OldJoyStates[i].buttonsPressed[k] = pressed;
+							events.Enqueue(new InputEvent(
+								pressed ? InputType.JoyButtonDown : InputType.JoyButtonUp,
+								new ButtonEventArgs(k, but)));
+						}
+					}
+					// axes
+					for (int k = 0; k < axes; k++) {
+						JoystickAxis axis = (JoystickAxis)Enum.Parse(typeof(JoystickAxis), "Axis" + k);
+						float position = state.GetAxis(axis);
+						if (Math.Abs(OldJoyStates[i].axisValues[k] - position) > 0.001f) {
+							OldJoyStates[i].axisValues[k] = position;
+							events.Enqueue(new InputEvent(InputType.JoyAxisMotion,new AxisEventArgs(k, axis,position)));
+						}
+					}
+					// hats
+					for (int k = 0; k < hats; k++) {
+						JoystickHat hat = (JoystickHat)Enum.Parse(typeof(JoystickHat), "Hat" + k);
+						JoystickHatState position = state.GetHat(hat);
+						if (OldJoyStates[i].hatsPositions[k] != position.Position) {
+							OldJoyStates[i].hatsPositions[k] = position.Position;
+							events.Enqueue(new InputEvent(InputType.JoyAxisMotion,new HatEventArgs(k, hat,position.Position)));
+						}
+					}
+
+				} else {
+					// TODO handle joysticks relist
+				}
+			}
+		}
+		[Serializable]
+		internal sealed class ButtonEventArgs : EventArgs
+		{
+			internal int Index;
+			internal JoystickButton Button;
+			public ButtonEventArgs (int index, JoystickButton b)
+			{
+				Index = index;
+				Button = b;
+			}
+		}
+		[Serializable]
+		internal sealed class HatEventArgs : EventArgs
+		{
+			internal int Index;
+			internal JoystickHat Hat;
+			internal HatPosition Position;
+			public HatEventArgs (int index, JoystickHat h, HatPosition pos)
+			{
+				Index = index;
+				Hat = h;
+				Position = pos;
+			}
+		}
+		[Serializable]
+		internal sealed class AxisEventArgs : EventArgs
+		{
+			internal int Index;
+			internal JoystickAxis Axis;
+			internal float Value;
+			public AxisEventArgs (int index, JoystickAxis a, float v)
+			{
+				Index = index;
+				Axis = a;
+				Value = v;
+			}
+		}
 	}
 }
