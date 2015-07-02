@@ -60,7 +60,6 @@ namespace OpenBve {
 			Program.UI = new GameWindow(width,height,mode,title,flags,DisplayDevice.Default,1,5,GraphicsContextFlags.Default);
 			Program.UI.WindowBorder = Interface.CurrentOptions.FullscreenMode ? WindowBorder.Hidden : WindowBorder.Fixed;
 			Program.UI.Icon = new Icon(OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, "icon.ico"));
-			Program.UI.WindowBorder = WindowBorder.Fixed;
 			Program.UI.VSync = Interface.CurrentOptions.VerticalSynchronization ? VSyncMode.Adaptive /*is this ok?*/ : VSyncMode.Off;
 			Program.UI.CursorVisible = false;
 
@@ -97,7 +96,6 @@ namespace OpenBve {
 		
 		/// <summary>Changes to or from fullscreen mode.</summary>
 		internal static void ToggleFullscreen() {
-			Fullscreen = !Fullscreen;
 			Renderer.ClearDisplayLists();
 			GL.Disable(EnableCap.Fog);
 			Renderer.FogEnabled = false;
