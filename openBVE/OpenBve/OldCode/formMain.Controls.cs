@@ -40,7 +40,7 @@ namespace OpenBve {
 					panelKeyboard.Enabled = radiobuttonKeyboard.Checked;
 					if (radiobuttonKeyboard.Checked) {
 						int j; for (j = 0; j < Interface.Keys.Length; j++) {
-							if (Interface.Keys[j].Value == Interface.CurrentControls[i].Element) {
+							if (Interface.Keys[j].Value == (Key)Interface.CurrentControls[i].Element) {
 								comboboxKeyboardKey.SelectedIndex = j;
 								break;
 							}
@@ -123,7 +123,7 @@ namespace OpenBve {
 				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Ctrl) != 0) t += Interface.GetInterfaceString("controls_assignment_keyboard_ctrl");
 				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Alt) != 0) t += Interface.GetInterfaceString("controls_assignment_keyboard_alt");
 				int j; for (j = 0; j < Interface.Keys.Length; j++) {
-					if (Interface.Keys[j].Value == Interface.CurrentControls[Index].Element) {
+					if (Interface.Keys[j].Value == (Key)Interface.CurrentControls[Index].Element) {
 						t += Interface.Keys[j].Description;
 						break;
 					}
@@ -269,7 +269,7 @@ namespace OpenBve {
 				int i = listviewControls.SelectedIndices[0];
 				int j = comboboxKeyboardKey.SelectedIndex;
 				if (j >= 0) {
-					Interface.CurrentControls[i].Element = Interface.Keys[j].Value;
+					Interface.CurrentControls[i].Element = (int)Interface.Keys[j].Value;
 				}
 				UpdateControlListElement(listviewControls.Items[i], i, true);
 			}
