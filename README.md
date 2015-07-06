@@ -4,7 +4,7 @@ This is forked version of OpenBVE, created by 3-way diff from OpenBVE 1.4.2 and 
 
 Goals & notes
 -------------
-Here are some goals of this repository (they're not ordered):
+Here are some of future goals of this repository (they're not ordered):
 * Move from Tao and SDL to OpenTK
 * Centralized development
 * Code review
@@ -30,3 +30,7 @@ Homepage
 * Unofficial webpages of this project (may not be found)
 
 <http://jakubvanekpc.jecool.net/openbve/>
+
+Note
+----
+I'm not a full-time developer, but I'll try to make some time for this.
