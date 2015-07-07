@@ -128,11 +128,11 @@ namespace OpenBveApi {
 		/// <param name="relatives">The array of platform-independent relative paths.</param>
 		/// <exception cref="System.Exception">Raised when combining the paths failed, for example due to malformed paths or due to unauthorized access.</exception>
 		public static string CombineDirectoryParams(string absolute, params string[] relatives){
-			string path = absolute;
+			StringBuilder str = new StringBuilder();
 			foreach (var rel in relatives) {
-				path = CombineDirectory(path,rel);
+				str.Append(rel).Append('/');
 			}
-			return path;
+			return CombineDirectory(absolute,str.ToString());
 		}
 
 		/// <summary>Iteratively combines a platform-specific absolute path with an array of platform-independent relative paths that point to a file.</summary>
@@ -141,11 +141,13 @@ namespace OpenBveApi {
 		/// <returns>Whether the operation succeeded and the specified file was found.</returns>
 		/// <exception cref="System.Exception">Raised when combining the paths failed, for example due to malformed paths or due to unauthorized access.</exception>
 		public static string CombineFileParams(string absolute, params string[] relatives){
-			string path = absolute;
-			for(int i = 0; i < relatives.Length-1;i++)
-				path = CombineDirectory(path,relatives[i]);
-		path = CombineFile(path,relatives[relatives.Length-1]);
-			return path;
+			StringBuilder str = new StringBuilder();
+			for (int i = 0; i < relatives.Length; i++) {
+				str.Append(relatives[i]);
+				if (i < (relatives.Length - 1))
+					str.Append('/');
+			}
+			return CombineDirectory(absolute,str.ToString());
 		}
 
 		/// <summary>Combines a platform-specific absolute path with a platform-independent relative path that points to a file.</summary>
