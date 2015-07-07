@@ -45,10 +45,50 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="IO\" />
+    <Folder Include="System\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.cs" />
-    <Compile Include="IO\GameFiles.cs" />
+    <Compile Include="System\IO\GameFiles.cs" />
+    <Compile Include="System\IO\Gzip.cs" />
+    <Compile Include="System\IO\Tar.cs" />
+    <Compile Include="System\Host.cs" />
+    <Compile Include="System\ManagedContent.cs" />
+    <Compile Include="System\ManagedContent.Functions.cs">
+      <DependentUpon>ManagedContent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="System\ManagedContent.Install.cs">
+      <DependentUpon>ManagedContent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="System\ManagedContent.Remove.cs">
+      <DependentUpon>ManagedContent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="System\ManagedContent.Versions.cs">
+      <DependentUpon>ManagedContent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="System\IO\Internet.cs" />
+    <Compile Include="System\IO\Joysticks.cs" />
+    <Compile Include="System\Plugins.cs" />
+    <Compile Include="System\Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Audio\Sounds.Convert.cs">
+      <DependentUpon>..\..\OpenBve\Audio\Sounds.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Audio\Sounds.cs" />
+    <Compile Include="Audio\Sounds.SoundBuffer.cs">
+      <DependentUpon>..\..\OpenBve\Audio\Sounds.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Audio\Sounds.SoundOrigin.cs">
+      <DependentUpon>..\..\OpenBve\Audio\Sounds.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Audio\Sounds.SoundSource.cs">
+      <DependentUpon>..\..\OpenBve\Audio\Sounds.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Audio\Sounds.Update.cs">
+      <DependentUpon>..\..\OpenBve\Audio\Sounds.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ManagedContent-format.txt" />
   </ItemGroup>
 </Project>
