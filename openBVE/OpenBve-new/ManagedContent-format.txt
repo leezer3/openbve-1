@@ -1,5 +1,4 @@
-﻿This is rough description of OpenBVE's add-on list format.
-Note: little-endian byte order is used.
+﻿This is rough description of OpenBVE's add-on list format. All numeric values are using little-endian byte order.
 Contents:
     A. External envelope format
     B. Internal data format
@@ -14,7 +13,7 @@ This format consists of these:
     6. File footer, must be "_END"
 
 ### B. Internal data format ###
-This is a list of packages and their metadata. It contains roughly this:
+This is an encapsulation of list of packages. It contains roughly this:
     1. File header, must be "strt"
     2. 32bit signed integer indicating the package count
     3. Package list
@@ -23,7 +22,7 @@ This is a list of packages and their metadata. It contains roughly this:
 Single package entry consists of these:
     1. Package name string*
     2. 32bit signed integer indicating the number of versions
-    4. List of versions
+    3. List of versions
         I. Version number string*
         II. 32bit signed integer indicating the source count
         III. List of sources
@@ -46,6 +45,6 @@ Single package entry consists of these:
 
 
 
-Notes: *for details about writing strings and their lengths, look at documentation for BianryReader.ReadString. There's simplified version:
+Notes: *for details about writing strings and their lengths, look at documentation for BinaryReader.ReadString (https://msdn.microsoft.com/en-us/library/system.io.binaryreader.readstring(v=vs.100).aspx). There's simplified version:
     1. 7bit unsigned integer indicating the string length
     2. String itself encoded as UTF-8
