@@ -4,7 +4,8 @@ using OpenBveApi.Math;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.Collections.Generic;
-
+using OpenTK;
+using Vector3 = OpenBveApi.Math.Vector3;
 
 namespace OpenBve {
 	internal static class MainLoop {
@@ -18,6 +19,7 @@ namespace OpenBve {
 		// --------------------------------
 
 		internal static void StartLoopEx(formMain.MainDialogResult result) {
+			events = new Queue<InputEvent>();
 			Renderer.Initialize();
 			Renderer.InitializeLighting();
 			Program.UI.SwapBuffers();
@@ -200,9 +202,9 @@ namespace OpenBve {
 			// timer
 			Timers.Initialize();
 			// framerate display
-			double TotalTimeElapsedForInfo = 0.0;
-			double TotalTimeElapsedForSectionUpdate = 0.0;
-			int TotalFramesElapsed = 0;
+			TotalTimeElapsedForInfo = 0.0;
+			TotalTimeElapsedForSectionUpdate = 0.0;
+			TotalFramesElapsed = 0;
 			// signalling sections
 			for (int i = 0; i < TrainManager.Trains.Length; i++) {
 				int s = TrainManager.Trains[i].CurrentSectionIndex;
@@ -273,99 +275,9 @@ namespace OpenBve {
 //			}
 			// loop
 			World.InitializeCameraRestriction();
-			while (true) {
-				// timer
-				double RealTimeElapsed;
-				double TimeElapsed;
-				if (Game.SecondsSinceMidnight >= Game.StartupTime) {
-					RealTimeElapsed = Timers.GetElapsedTime();
-					TimeElapsed = RealTimeElapsed * (double)TimeFactor;
-				} else {
-					RealTimeElapsed = 0.0;
-					TimeElapsed = Game.StartupTime - Game.SecondsSinceMidnight;
-				}
-				TotalTimeElapsedForInfo += TimeElapsed;
-				TotalTimeElapsedForSectionUpdate += TimeElapsed;
-				TotalFramesElapsed++;
-				if (TotalTimeElapsedForSectionUpdate >= 1.0) {
-					if (Game.Sections.Length != 0) {
-						Game.UpdateSection(Game.Sections.Length - 1);
-					}
-					TotalTimeElapsedForSectionUpdate = 0.0;
-				}
-				if (TotalTimeElapsedForInfo >= 0.2) {
-					Game.InfoFrameRate = (double)TimeFactor * (double)TotalFramesElapsed / TotalTimeElapsedForInfo;
-					TotalTimeElapsedForInfo = 0.0;
-					TotalFramesElapsed = 0;
-				}
-				// events
-				UpdateControlRepeats(RealTimeElapsed);
-				ProcessEvents();
-				World.CameraAlignmentDirection = new World.CameraAlignment();
-				World.UpdateMouseGrab(TimeElapsed);
-				ProcessControls(TimeElapsed);
-				if (Quit) break;
-				// update simulation in chunks
-				{
-					const double chunkTime = 1.0 / 75.0;
-					if (TimeElapsed <= chunkTime) {
-						Game.SecondsSinceMidnight += TimeElapsed;
-						TrainManager.UpdateTrains(TimeElapsed);
-					} else {
-						const int maxChunks = 75;
-						int chunks = Math.Min((int)Math.Round(TimeElapsed / chunkTime), maxChunks);
-						double time = TimeElapsed / (double)chunks;
-						for (int i = 0; i < chunks; i++) {
-							Game.SecondsSinceMidnight += time;
-							TrainManager.UpdateTrains(time);
-						}
-					}
-				}
-				// update in one piece
-				ObjectManager.UpdateAnimatedWorldObjects(TimeElapsed, false);
-				if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead | World.CameraMode == World.CameraViewMode.Exterior) {
-					TrainManager.UpdateCamera(TrainManager.PlayerTrain);
-				}
-				if (World.CameraRestriction == World.CameraRestrictionMode.NotAvailable) {
-					World.UpdateDriverBody(TimeElapsed);
-				}
-				World.UpdateAbsoluteCamera(TimeElapsed);
-				TrainManager.UpdateTrainObjects(TimeElapsed, false);
-				if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead | World.CameraMode == World.CameraViewMode.Exterior) {
-					ObjectManager.UpdateVisibility(World.CameraTrackFollower.TrackPosition + World.CameraCurrentAlignment.Position.Z);
-					int d = TrainManager.PlayerTrain.DriverCar;
-					World.CameraSpeed = TrainManager.PlayerTrain.Cars[d].Specs.CurrentSpeed;
-				} else {
-					World.CameraSpeed = 0.0;
-				}
-				Game.UpdateScore(TimeElapsed);
-				Game.UpdateMessages();
-				Game.UpdateScoreMessages(TimeElapsed);
-				Sounds.Update(TimeElapsed, Interface.CurrentOptions.SoundModel);
-				Renderer.RenderScene(TimeElapsed);
-				Program.UI.SwapBuffers();
-				Game.UpdateBlackBox();
-				// pause/menu
-				while (Game.CurrentInterface != Game.InterfaceType.Normal) {
-					UpdateControlRepeats(RealTimeElapsed);
-					ProcessEvents();
-					ProcessControls(0.0);
-					if (Quit) break;
-					if (Game.CurrentInterface == Game.InterfaceType.Pause) {
-						System.Threading.Thread.Sleep(10);
-					}
-					Renderer.RenderScene(TimeElapsed);
-					Program.UI.SwapBuffers();
-					TimeElapsed = Timers.GetElapsedTime();
-				}
-				// limit framerate
-				if (LimitFramerate) {
-					System.Threading.Thread.Sleep(10);
-				}
-				#if DEBUG
-				CheckForOpenGlError("MainLoop");
-				#endif
-			}
+			Program.UI.UpdateFrame += UpdateEvent;
+			Program.UI.RenderFrame += RenderEvent;
+			Program.UI.Run();
 			// finish
 			try {
 				Interface.SaveLogs();
@@ -375,6 +287,100 @@ namespace OpenBve {
 			} catch { }
 		}
 
+		static void RenderEvent (object sender, FrameEventArgs e)
+		{
+			Renderer.RenderScene(TimeElapsed);
+			Program.UI.SwapBuffers();
+		}
+		private static double TotalTimeElapsedForInfo;
+		private static double TotalTimeElapsedForSectionUpdate;
+		private static int TotalFramesElapsed;
+		private static double TimeElapsed = 0;
+		private static void UpdateEvent(object sender, FrameEventArgs e){
+
+			// timer
+			double RealTimeElapsed;
+			if (Game.SecondsSinceMidnight >= Game.StartupTime) {
+				RealTimeElapsed = Timers.GetElapsedTime();
+				TimeElapsed = RealTimeElapsed * (double)TimeFactor;
+			} else {
+				RealTimeElapsed = 0.0;
+				TimeElapsed = Game.StartupTime - Game.SecondsSinceMidnight;
+			}
+			TotalTimeElapsedForInfo += TimeElapsed;
+			TotalTimeElapsedForSectionUpdate += TimeElapsed;
+			TotalFramesElapsed++;
+			if (TotalTimeElapsedForSectionUpdate >= 1.0) {
+				if (Game.Sections.Length != 0) {
+					Game.UpdateSection(Game.Sections.Length - 1);
+				}
+				TotalTimeElapsedForSectionUpdate = 0.0;
+			}
+			if (TotalTimeElapsedForInfo >= 0.2) {
+				Game.InfoFrameRate = (double)TimeFactor * (double)TotalFramesElapsed / TotalTimeElapsedForInfo;
+				TotalTimeElapsedForInfo = 0.0;
+				TotalFramesElapsed = 0;
+			}
+			// events
+			UpdateControlRepeats(RealTimeElapsed);
+			ProcessEvents();
+			World.CameraAlignmentDirection = new World.CameraAlignment();
+			World.UpdateMouseGrab(TimeElapsed);
+			ProcessControls(TimeElapsed);
+			if (Quit) Program.UI.Exit();
+			// update simulation in chunks
+			{
+				const double chunkTime = 1.0 / 75.0;
+				if (TimeElapsed <= chunkTime) {
+					Game.SecondsSinceMidnight += TimeElapsed;
+					TrainManager.UpdateTrains(TimeElapsed);
+				} else {
+					const int maxChunks = 75;
+					int chunks = Math.Min((int)Math.Round(TimeElapsed / chunkTime), maxChunks);
+					double time = TimeElapsed / (double)chunks;
+					for (int i = 0; i < chunks; i++) {
+						Game.SecondsSinceMidnight += time;
+						TrainManager.UpdateTrains(time);
+					}
+				}
+			}
+			// update in one piece
+			ObjectManager.UpdateAnimatedWorldObjects(TimeElapsed, false);
+			if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead | World.CameraMode == World.CameraViewMode.Exterior) {
+				TrainManager.UpdateCamera(TrainManager.PlayerTrain);
+			}
+			if (World.CameraRestriction == World.CameraRestrictionMode.NotAvailable) {
+				World.UpdateDriverBody(TimeElapsed);
+			}
+			World.UpdateAbsoluteCamera(TimeElapsed);
+			TrainManager.UpdateTrainObjects(TimeElapsed, false);
+			if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead | World.CameraMode == World.CameraViewMode.Exterior) {
+				ObjectManager.UpdateVisibility(World.CameraTrackFollower.TrackPosition + World.CameraCurrentAlignment.Position.Z);
+				int d = TrainManager.PlayerTrain.DriverCar;
+				World.CameraSpeed = TrainManager.PlayerTrain.Cars[d].Specs.CurrentSpeed;
+			} else {
+				World.CameraSpeed = 0.0;
+			}
+			Game.UpdateScore(TimeElapsed);
+			Game.UpdateMessages();
+			Game.UpdateScoreMessages(TimeElapsed);
+			Sounds.Update(TimeElapsed, Interface.CurrentOptions.SoundModel);
+			Game.UpdateBlackBox();
+			// pause/menu
+			while (Game.CurrentInterface != Game.InterfaceType.Normal) {
+				UpdateControlRepeats(RealTimeElapsed);
+				ProcessEvents();
+				ProcessControls(0.0);
+				if (Quit) break;
+				if (Game.CurrentInterface == Game.InterfaceType.Pause) {
+					System.Threading.Thread.Sleep(10);
+				}
+				TimeElapsed = Timers.GetElapsedTime();
+			}
+			#if DEBUG
+			CheckForOpenGlError("MainLoop");
+			#endif
+		}
 		// --------------------------------
 
 		// repeats
@@ -434,16 +440,16 @@ namespace OpenBve {
 						break;
 				// key down
 					case InputType.KeyDown:
-						KeyEventArgs keyDownData = (KeyEventArgs)ev.Data;
-						if ((keyDownData.Modifiers & Keys.Control) != 0)
+						OpenTK.Input.KeyboardKeyEventArgs keyDownData = (OpenTK.Input.KeyboardKeyEventArgs)ev.Data;
+						if ((keyDownData.Modifiers & KeyModifiers.Control) != 0)
 							CurrentKeyboardModifier |= Interface.KeyboardModifier.Shift;
-						if ((keyDownData.Modifiers & Keys.Shift) != 0)
+						if ((keyDownData.Modifiers & KeyModifiers.Shift) != 0)
 							CurrentKeyboardModifier |= Interface.KeyboardModifier.Ctrl;
-						if ((keyDownData.Modifiers & Keys.Alt) != 0)
+						if ((keyDownData.Modifiers & KeyModifiers.Alt) != 0)
 							CurrentKeyboardModifier |= Interface.KeyboardModifier.Alt;
 						for (int i = 0; i < Interface.CurrentControls.Length; i++) {
 							if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Keyboard) {
-								if (Interface.CurrentControls[i].Element == (int)keyDownData.KeyCode && Interface.CurrentControls[i].Modifier == CurrentKeyboardModifier) {
+								if (Interface.CurrentControls[i].Element == (int)keyDownData.Key && Interface.CurrentControls[i].Modifier == CurrentKeyboardModifier) {
 									Interface.CurrentControls[i].AnalogState = 1.0;
 									Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Pressed;
 									AddControlRepeat(i);
@@ -453,16 +459,16 @@ namespace OpenBve {
 						break;
 				// key up
 					case InputType.KeyUp:
-						KeyEventArgs keyUpData = (KeyEventArgs)ev.Data;
-						if ((keyUpData.Modifiers & Keys.Control) != 0)
+						OpenTK.Input.KeyboardKeyEventArgs keyUpData = (OpenTK.Input.KeyboardKeyEventArgs)ev.Data;
+						if ((keyUpData.Modifiers & KeyModifiers.Control) != 0)
 							CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Shift;
-						if ((keyUpData.Modifiers & Keys.Shift) != 0)
+						if ((keyUpData.Modifiers & KeyModifiers.Shift) != 0)
 							CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Ctrl;
-						if ((keyUpData.Modifiers & Keys.Alt) != 0)
+						if ((keyUpData.Modifiers & KeyModifiers.Alt) != 0)
 							CurrentKeyboardModifier &= ~Interface.KeyboardModifier.Alt;
 						for (int i = 0; i < Interface.CurrentControls.Length; i++) {
 							if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Keyboard) {
-								if (Interface.CurrentControls[i].Element == (int)keyUpData.KeyCode) {
+								if (Interface.CurrentControls[i].Element == (int)keyUpData.Key) {
 									Interface.CurrentControls[i].AnalogState = 0.0;
 									Interface.CurrentControls[i].DigitalState = Interface.DigitalControlState.Released;
 									RemoveControlRepeat(i);
@@ -1817,11 +1823,11 @@ namespace OpenBve {
 			GL.LoadIdentity();
 			const double invdeg = 57.295779513082320877;
 			if (CurrentViewPortMode == ViewPortMode.Cab) {
-				OpenTK.Matrix4d persp = OpenTK.Matrix4d.CreatePerspectiveFieldOfView(World.VerticalViewingAngle * invdeg, -World.AspectRatio, 0.025, 50.0);
+				OpenTK.Matrix4d persp = OpenTK.Matrix4d.CreatePerspectiveFieldOfView(World.VerticalViewingAngle * invdeg * Math.PI / 180, World.AspectRatio, 0.025, 50.0);
 				GL.MatrixMode(MatrixMode.Projection);
 				GL.LoadMatrix(ref persp);
 			} else {
-				OpenTK.Matrix4d persp = OpenTK.Matrix4d.CreatePerspectiveFieldOfView(World.VerticalViewingAngle * invdeg, -World.AspectRatio, 0.5, World.BackgroundImageDistance);
+				OpenTK.Matrix4d persp = OpenTK.Matrix4d.CreatePerspectiveFieldOfView(World.VerticalViewingAngle * invdeg * Math.PI / 180, World.AspectRatio, 0.5, World.BackgroundImageDistance);
 				GL.MatrixMode(MatrixMode.Projection);
 				GL.LoadMatrix(ref persp);
 			}

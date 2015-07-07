@@ -1,0 +1,18 @@
+﻿<Properties StartupItem="OpenBve/OpenBve.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="OpenBve-new/IO/GameFiles.cs">
+    <Files>
+      <File FileName="OpenBve/OldCode/Renderer.cs" Line="1" Column="1" />
+      <File FileName="OpenBve/OldCode/MainLoop.cs" Line="1" Column="1" />
+      <File FileName="OpenBve/OldCode/Game.cs" Line="1" Column="1" />
+      <File FileName="OpenBve/Graphics/Screen.cs" Line="1" Column="1" />
+      <File FileName="OpenBve-new/IO/GameFiles.cs" Line="79" Column="27" />
+      <File FileName="OpenBve-new/Configuration.cs" Line="1" Column="1" />
+      <File FileName="OpenBveApi/Path.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

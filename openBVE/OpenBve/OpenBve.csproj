@@ -199,12 +199,6 @@
     <Compile Include="Utilities\Debug.cs" />
     <Compile Include="Graphics\Screen.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\OpenBveApi\OpenBveApi.csproj">
-      <Project>{27134980-4415-4375-A564-40A9014DFA5F}</Project>
-      <Name>OpenBveApi</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -215,5 +209,11 @@
   -->
   <ItemGroup>
     <Folder Include="Utilities\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenBveApi\OpenBveApi.csproj">
+      <Project>{27134980-4415-4375-A564-40A9014DFA5F}</Project>
+      <Name>OpenBveApi</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

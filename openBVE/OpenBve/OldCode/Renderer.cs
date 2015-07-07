@@ -351,14 +351,14 @@ namespace OpenBve {
 			GL.Disable(EnableCap.DepthTest);
 			RenderBackground(dx, dy, dz, TimeElapsed);
 			// fog
-			double aa = Game.CurrentFog.Start;
-			double bb = Game.CurrentFog.End;
-			if (Game.CurrentFog.Start < Game.CurrentFog.End & Game.CurrentFog.Start < World.BackgroundImageDistance) {
+			float aa = Game.CurrentFog.Start;
+			float bb = Game.CurrentFog.End;
+			if (aa < bb & aa < World.BackgroundImageDistance) {
 				if (!FogEnabled) {
 					GL.Fog(FogParameter.FogMode, (int)FogMode.Linear);
 				}
-				GL.Fog(FogParameter.FogStart, Game.CurrentFog.Start);
-				GL.Fog(FogParameter.FogEnd, Game.CurrentFog.End);
+				GL.Fog(FogParameter.FogStart, aa);
+				GL.Fog(FogParameter.FogEnd, bb);
 				GL.Fog(FogParameter.FogColor, new float[] { inv255 * (float)Game.CurrentFog.Color.R, inv255 * (float)Game.CurrentFog.Color.G, inv255 * (float)Game.CurrentFog.Color.B, 1.0f });
 				if (!FogEnabled) {
 					GL.Enable(EnableCap.Fog); FogEnabled = true;

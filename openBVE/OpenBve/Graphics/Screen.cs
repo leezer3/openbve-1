@@ -60,7 +60,7 @@ namespace OpenBve {
 			Program.UI = new GameWindow(width,height,mode,title,flags,DisplayDevice.Default,1,5,GraphicsContextFlags.Default);
 			Program.UI.WindowBorder = Interface.CurrentOptions.FullscreenMode ? WindowBorder.Hidden : WindowBorder.Fixed;
 			Program.UI.Icon = new Icon(OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, "icon.ico"));
-			Program.UI.VSync = Interface.CurrentOptions.VerticalSynchronization ? VSyncMode.Adaptive /*is this ok?*/ : VSyncMode.Off;
+			Program.UI.VSync = Interface.CurrentOptions.VerticalSynchronization ? VSyncMode.On /*Adaptive?*/ : VSyncMode.Off;
 			Program.UI.CursorVisible = false;
 
 

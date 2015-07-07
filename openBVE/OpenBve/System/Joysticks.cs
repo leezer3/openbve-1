@@ -41,17 +41,21 @@ namespace OpenBve {
 		/// <returns>Whether initializing joysticks was successful.</returns>
 		internal static bool Initialize() {
 			if (!Initialized) {
-				int count = Program.UI.Joysticks.Count;
-				AttachedJoysticks = new Joystick[count];
-				MainLoop.OldJoyStates = new MainLoop.JoyState[count];
-				for (int i = 0; i < count; i++) {
-					AttachedJoysticks[i].Name = Program.UI.Joysticks[i].Description;
-					AttachedJoysticks[i].Index = i;
+				List<Joystick> joys = new List<Joystick>();
+				for (int i = 0; i < 8; i++) {
 					var state = OpenTK.Input.Joystick.GetState(i);
-					int buttons = OpenTK.Input.Joystick.GetCapabilities(i).ButtonCount;
-					int axes = OpenTK.Input.Joystick.GetCapabilities(i).AxisCount;
-					int hats = OpenTK.Input.Joystick.GetCapabilities(i).HatCount;
-					MainLoop.OldJoyStates[i] = new MainLoop.JoyState(buttons,axes,hats);
+					if (state.IsConnected) {
+						joys.Add(new Joystick("Joystick "+(joys.Count+1),i));
+					}
+				}
+				AttachedJoysticks = joys.ToArray();
+				MainLoop.OldJoyStates = new MainLoop.JoyState[joys.Count];
+				for(int j = 0; j < joys.Count; j++){
+					var caps = OpenTK.Input.Joystick.GetCapabilities(joys[j].Index);
+					int buttons	= caps.ButtonCount;
+					int axes	= caps.AxisCount;
+					int hats	= caps.HatCount;
+					MainLoop.OldJoyStates[j] = new MainLoop.JoyState(buttons,axes,hats);
 				}
 				Initialized = true;
 				return true;
