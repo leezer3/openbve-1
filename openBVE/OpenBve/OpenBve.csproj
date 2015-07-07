@@ -196,7 +196,6 @@
       <DependentUpon>formMain.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="OldParsers\TrainDatParser.cs" />
-    <Compile Include="Utilities\Debug.cs" />
     <Compile Include="Graphics\Screen.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -207,9 +206,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Utilities\" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenBveApi\OpenBveApi.csproj">
       <Project>{27134980-4415-4375-A564-40A9014DFA5F}</Project>

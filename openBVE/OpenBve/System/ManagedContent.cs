@@ -13,7 +13,7 @@ namespace OpenBve {
 			/// <summary>The size of the package.</summary>
 			internal int Size;
 			/// <summary>The MD5 of the package.</summary>
-			internal byte[] Md5;
+			internal byte[] MD5;
 			/// <summary>The URL to the download.</summary>
 			internal string Url;
 		}
@@ -90,7 +90,7 @@ namespace OpenBve {
 			// --- functions ---
 			/// <summary>Gets the value associated to the specified key.</summary>
 			/// <param name="key">The key without the language code.</param>
-			/// <param name="preferredLanguage">The preferred language code, or null if no language-specific value is expected.</param>
+			/// <param name="languageCode">The preferred language code, or null if no language-specific value is expected.</param>
 			/// <param name="defaultValue">The default value in case the key is not found.</param>
 			/// <returns>The value.</returns>
 			internal string GetMetadata(string key, string languageCode, string defaultValue) {
@@ -130,13 +130,14 @@ namespace OpenBve {
 			internal static Database Load(byte[] bytes) {
 				/*
 				 * Parse the enclosing file format that holds the
-				 * compressed data and then decompress the data.
+				 * compressed (gzip) data and then decompress the data.
 				 * */
 				int version;
 				byte[] compressed;
 				byte[] md5;
 				using (MemoryStream stream = new MemoryStream(bytes)) {
 					using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8)) {
+						// 0x5453494C5F46535 = "TSF_LIST"
 						if (reader.ReadUInt64() != 0x5453494C5F465354) {
 							throw new InvalidDataException("The identifier in the header is invalid.");
 						}
@@ -147,6 +148,7 @@ namespace OpenBve {
 						md5 = reader.ReadBytes(16);
 						int length = reader.ReadInt32();
 						compressed = reader.ReadBytes(length);
+						// 0x444E455F = "_END"
 						if (reader.ReadUInt32() != 0x444E455F) {
 							throw new InvalidDataException("The identifier in the footer is invalid.");
 						}
@@ -165,6 +167,7 @@ namespace OpenBve {
 				Database database = new Database();
 				using (MemoryStream stream = new MemoryStream(decompressed)) {
 					using (BinaryReader reader = new BinaryReader(stream)) {
+						// 0x74727473 = "strt"
 						if (reader.ReadUInt32() != 0x74727473) {
 							throw new InvalidDataException("The uncompressed stream is invalid.");
 						}
@@ -180,7 +183,7 @@ namespace OpenBve {
 								database.Packages[i].Versions[j].Sources = new Source[reader.ReadInt32()];
 								for (int k = 0; k < database.Packages[i].Versions[j].Sources.Length; k++) {
 									database.Packages[i].Versions[j].Sources[k].Size = reader.ReadInt32();
-									database.Packages[i].Versions[j].Sources[k].Md5 = reader.ReadBytes(16);
+									database.Packages[i].Versions[j].Sources[k].MD5 = reader.ReadBytes(16);
 									database.Packages[i].Versions[j].Sources[k].Url = reader.ReadString();
 								}
 								database.Packages[i].Versions[j].Dependencies = new Dependency[reader.ReadInt32()];

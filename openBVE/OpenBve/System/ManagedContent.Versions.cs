@@ -66,11 +66,7 @@ namespace OpenBve {
 					}
 				}
 			}
-			if (start < version.Length) {
-				suffix = version.Substring(start);
-			} else {
-				suffix = string.Empty;
-			}
+			suffix = start < version.Length ? version.Substring(start) : string.Empty;
 			Array.Resize<int>(ref digits, digitCount);
 		}
 		

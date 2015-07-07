@@ -24,8 +24,8 @@ namespace OpenBve {
 						foreach (string packageDirectory in packageDirectories) {
 							string package = System.IO.Path.GetFileName(packageDirectory);
 							if (
-								!packages.Exists((string item) => { return item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase); }) &&
-								!results.Exists((string item) => { return item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase); })
+								!packages.Exists(item => item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase)) &&
+								!results.Exists(item => item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase))
 							) {
 								string file = OpenBveApi.Path.CombineFile(packageDirectory, "package.cfg");
 								if (System.IO.File.Exists(file)) {
@@ -44,12 +44,8 @@ namespace OpenBve {
 														if (bracket >= 0 && (values[j][values[j].Length - 1] == ')' | values[j][values[j].Length - 1] == ']')) {
 															values[j] = values[j].Substring(0, bracket).TrimEnd();
 														}
-														if (
-															packages.Exists((string item) => { return item != null && item.Equals(values[j], StringComparison.OrdinalIgnoreCase); }) ||
-															results.Exists((string item) => { return item != null && item.Equals(values[j], StringComparison.OrdinalIgnoreCase); })
-														) {
-															add = true;
-														}
+														add = packages.Exists(item => item != null && item.Equals(values[j], StringComparison.OrdinalIgnoreCase)) ||
+																results.Exists(item => item != null && item.Equals(values[j], StringComparison.OrdinalIgnoreCase));
 													}
 												}
 												if (add) {
@@ -77,8 +73,8 @@ namespace OpenBve {
 							string package = System.IO.Path.GetFileName(packageDirectory);
 							if (!IsInstalledPackageProtected(package)) {
 								if (
-									!packages.Exists((string item) => { return item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase); }) &&
-									!results.Exists((string item) => { return item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase); })
+									!packages.Exists(item => item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase)) &&
+									!results.Exists(item => item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase))
 								) {
 									string file = OpenBveApi.Path.CombineFile(packageDirectory, "package.cfg");
 									if (System.IO.File.Exists(file)) {
@@ -91,7 +87,7 @@ namespace OpenBve {
 												if (key.Equals("type", StringComparison.OrdinalIgnoreCase)) {
 													string value = line.Substring(equals + 1).Trim();
 													if (value.Equals("library", StringComparison.OrdinalIgnoreCase) | value.Equals("shared library", StringComparison.OrdinalIgnoreCase)) {
-														add = !dependencies.Exists((string item) => { return item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase); });
+														add = !dependencies.Exists(item => item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase));
 														break;
 													}
 												}

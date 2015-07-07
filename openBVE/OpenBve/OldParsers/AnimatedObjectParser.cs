@@ -39,38 +39,29 @@ namespace OpenBve {
 							{
 								i++;
 								Vector3 position = new Vector3(0.0, 0.0, 0.0);
-								ObjectManager.UnifiedObject[] obj = new OpenBve.ObjectManager.UnifiedObject[4];
+								ObjectManager.UnifiedObject[] obj = new ObjectManager.UnifiedObject[4];
 								int objCount = 0;
-								while (i < Lines.Length && !(Lines[i].StartsWith("[", StringComparison.Ordinal) & Lines[i].EndsWith("]", StringComparison.Ordinal))) {
+								while (i < Lines.Length && !(Lines[i].StartsWith("[", StringComparison.Ordinal) && Lines[i].EndsWith("]", StringComparison.Ordinal))) {
 									if (Lines[i].Length != 0) {
-										int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
-										if (j > 0) {
-											string a = Lines[i].Substring(0, j).TrimEnd();
-											string b = Lines[i].Substring(j + 1).TrimStart();
-											switch (a.ToLowerInvariant()) {
+										int equals = Lines[i].IndexOf("=", StringComparison.Ordinal);
+										if (equals > 0) {
+											/*
+											 * Process key-value pair, the only supported key is position.
+											 */
+											string before = Lines[i].Substring(0, equals).TrimEnd();
+											string after = Lines[i].Substring(equals + 1).TrimStart();
+											switch (before.ToLowerInvariant()) {
 												case "position":
-													{
-														string[] s = b.Split(',');
-														if (s.Length == 3) {
-															double x, y, z;
-															if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-															} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-															} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-															} else {
-																position = new Vector3(x, y, z);
-															}
-														} else {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-														}
-													} break;
+													ParsePosition(after, out position, before, FileName, (i + 1).ToString(Culture), Culture);
+													break;
 												default:
-													Interface.AddMessage(Interface.MessageType.Error, false, "The attribute " + a + " is not supported at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+													Interface.AddMessage(Interface.MessageType.Error, false, "The attribute " + before + " is not supported at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													break;
 											}
 										} else {
+											/*
+											 * Process object with file name relative to the location of this ANIMATED file.
+											 */
 											string Folder = System.IO.Path.GetDirectoryName(FileName);
 											if (Interface.ContainsInvalidPathChars(Lines[i])) {
 												Interface.AddMessage(Interface.MessageType.Error, false, Lines[i] + " contains illegal characters at line " + (i + 1).ToString(Culture) + " in file " + FileName);
@@ -103,7 +94,7 @@ namespace OpenBve {
 											ObjectManager.AnimatedObjectState aos = new ObjectManager.AnimatedObjectState();
 											aos.Object = s;
 											aos.Position = position;
-											a.States = new ObjectManager.AnimatedObjectState[] { aos };
+											a.States = new[] { aos };
 											Result.Objects[ObjectCount] = a;
 											ObjectCount++;
 										} else if (obj[j] is ObjectManager.AnimatedObjectCollection) {
@@ -151,83 +142,68 @@ namespace OpenBve {
 								int StateFunctionLine = -1;
 								while (i < Lines.Length && !(Lines[i].StartsWith("[", StringComparison.Ordinal) & Lines[i].EndsWith("]", StringComparison.Ordinal))) {
 									if (Lines[i].Length != 0) {
-										int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
-										if (j > 0) {
-											string a = Lines[i].Substring(0, j).TrimEnd();
-											string b = Lines[i].Substring(j + 1).TrimStart();
-											switch (a.ToLowerInvariant()) {
+										int equals = Lines[i].IndexOf("=", StringComparison.Ordinal);
+										if (equals > 0) {
+											string before = Lines[i].Substring(0, equals).TrimEnd();
+											string after = Lines[i].Substring(equals + 1).TrimStart();
+											switch (before.ToLowerInvariant()) {
 												case "position":
-													{
-														string[] s = b.Split(',');
-														if (s.Length == 3) {
-															double x, y, z;
-															if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-															} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-															} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-															} else {
-																Position = new Vector3(x, y, z);
-															}
-														} else {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-														}
-													} break;
+													ParsePosition(after, out Position, before, FileName, (i + 1).ToString(Culture));
+													break;
 												case "states":
 													{
-														string[] s = b.Split(',');
+														string[] s = after.Split(',');
 														if (s.Length >= 1) {
 															string Folder = System.IO.Path.GetDirectoryName(FileName);
 															StateFiles = new string[s.Length];
 															for (int k = 0; k < s.Length; k++) {
 																s[k] = s[k].Trim();
 																if (s[k].Length == 0) {
-																	Interface.AddMessage(Interface.MessageType.Error, false, "File" + k.ToString(Culture) + " is an empty string - did you mean something else? - in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																	Interface.AddMessage(Interface.MessageType.Error, false, "File" + k.ToString(Culture) + " is an empty string - did you mean something else? - in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 																	StateFiles[k] = null;
 																} else if (Interface.ContainsInvalidPathChars(s[k])) {
-																	Interface.AddMessage(Interface.MessageType.Error, false, "File" + k.ToString(Culture) + " contains illegal characters in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																	Interface.AddMessage(Interface.MessageType.Error, false, "File" + k.ToString(Culture) + " contains illegal characters in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 																	StateFiles[k] = null;
 																} else {
 																	StateFiles[k] = OpenBveApi.Path.CombineFile(Folder, s[k]);
 																	if (!System.IO.File.Exists(StateFiles[k])) {
-																		Interface.AddMessage(Interface.MessageType.Error, true, "File " + StateFiles[k] + " not found in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																		Interface.AddMessage(Interface.MessageType.Error, true, "File " + StateFiles[k] + " not found in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 																		StateFiles[k] = null;
 																	}
 																}
 															}
 														} else {
-															Interface.AddMessage(Interface.MessageType.Error, false, "At least one argument is expected in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Interface.AddMessage(Interface.MessageType.Error, false, "At least one argument is expected in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															return null;
 														}
 													} break;
 												case "statefunction":
 													try {
 														StateFunctionLine = i;
-														StateFunctionRpn = FunctionScripts.GetPostfixNotationFromInfixNotation(b);
+														StateFunctionRpn = FunctionScripts.GetPostfixNotationFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "statefunctionrpn":
 													{
 														StateFunctionLine = i;
-														StateFunctionRpn = b;
+														StateFunctionRpn = after;
 													} break;
 												case "translatexdirection":
 												case "translateydirection":
 												case "translatezdirection":
 													{
-														string[] s = b.Split(',');
+														string[] s = after.Split(',');
 														if (s.Length == 3) {
 															double x, y, z;
 															if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else {
-																switch (a.ToLowerInvariant()) {
+																switch (before.ToLowerInvariant()) {
 																	case "translatexdirection":
 																		Result.Objects[ObjectCount].TranslateXDirection = new Vector3(x, y, z);
 																		break;
@@ -240,62 +216,62 @@ namespace OpenBve {
 																}
 															}
 														} else {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 														}
 													} break;
 												case "translatexfunction":
 													try {
-														Result.Objects[ObjectCount].TranslateXFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(b);
+														Result.Objects[ObjectCount].TranslateXFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "translateyfunction":
 													try {
-														Result.Objects[ObjectCount].TranslateYFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(b);
+														Result.Objects[ObjectCount].TranslateYFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "translatezfunction":
 													try {
-														Result.Objects[ObjectCount].TranslateZFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(b);
+														Result.Objects[ObjectCount].TranslateZFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "translatexfunctionrpn":
 													try {
-														Result.Objects[ObjectCount].TranslateXFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(b);
+														Result.Objects[ObjectCount].TranslateXFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "translateyfunctionrpn":
 													try {
-														Result.Objects[ObjectCount].TranslateYFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(b);
+														Result.Objects[ObjectCount].TranslateYFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "translatezfunctionrpn":
 													try {
-														Result.Objects[ObjectCount].TranslateZFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(b);
+														Result.Objects[ObjectCount].TranslateZFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "rotatexdirection":
 												case "rotateydirection":
 												case "rotatezdirection":
 													{
-														string[] s = b.Split(',');
+														string[] s = after.Split(',');
 														if (s.Length == 3) {
 															double x, y, z;
 															if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (x == 0.0 & y == 0.0 & z == 0.0) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "The direction indicated by X, Y and Z is expected to be non-zero in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "The direction indicated by X, Y and Z is expected to be non-zero in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else {
-																switch (a.ToLowerInvariant()) {
+																switch (before.ToLowerInvariant()) {
 																	case "rotatexdirection":
 																		Result.Objects[ObjectCount].RotateXDirection = new Vector3(x, y, z);
 																		break;
@@ -308,62 +284,62 @@ namespace OpenBve {
 																}
 															}
 														} else {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 														}
 													} break;
 												case "rotatexfunction":
 													try {
-														Result.Objects[ObjectCount].RotateXFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(b);
+														Result.Objects[ObjectCount].RotateXFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "rotateyfunction":
 													try {
-														Result.Objects[ObjectCount].RotateYFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(b);
+														Result.Objects[ObjectCount].RotateYFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "rotatezfunction":
 													try {
-														Result.Objects[ObjectCount].RotateZFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(b);
+														Result.Objects[ObjectCount].RotateZFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "rotatexfunctionrpn":
 													try {
-														Result.Objects[ObjectCount].RotateXFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(b);
+														Result.Objects[ObjectCount].RotateXFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "rotateyfunctionrpn":
 													try {
-														Result.Objects[ObjectCount].RotateYFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(b);
+														Result.Objects[ObjectCount].RotateYFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "rotatezfunctionrpn":
 													try {
-														Result.Objects[ObjectCount].RotateZFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(b);
+														Result.Objects[ObjectCount].RotateZFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "rotatexdamping":
 												case "rotateydamping":
 												case "rotatezdamping":
 													{
-														string[] s = b.Split(',');
+														string[] s = after.Split(',');
 														if (s.Length == 2) {
 															double nf, dr;
 															if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out nf)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "NaturalFrequency is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "NaturalFrequency is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out dr)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "DampingRatio is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "DampingRatio is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (nf <= 0.0) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "NaturalFrequency is expected to be positive in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "NaturalFrequency is expected to be positive in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (dr <= 0.0) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "DampingRatio is expected to be positive in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "DampingRatio is expected to be positive in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else {
-																switch (a.ToLowerInvariant()) {
+																switch (before.ToLowerInvariant()) {
 																	case "rotatexdamping":
 																		Result.Objects[ObjectCount].RotateXDamping = new ObjectManager.Damping(nf, dr);
 																		break;
@@ -376,21 +352,21 @@ namespace OpenBve {
 																}
 															}
 														} else {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 2 arguments are expected in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 2 arguments are expected in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 														}
 													} break;
 												case "textureshiftxdirection":
 												case "textureshiftydirection":
 													{
-														string[] s = b.Split(',');
+														string[] s = after.Split(',');
 														if (s.Length == 2) {
 															double x, y;
 															if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-																Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+																Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															} else {
-																switch (a.ToLowerInvariant()) {
+																switch (before.ToLowerInvariant()) {
 																	case "textureshiftxdirection":
 																		Result.Objects[ObjectCount].TextureShiftXDirection = new World.Vector2D(x, y);
 																		break;
@@ -400,35 +376,35 @@ namespace OpenBve {
 																}
 															}
 														} else {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 2 arguments are expected in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 2 arguments are expected in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 														}
 													} break;
 												case "textureshiftxfunction":
 													try {
-														Result.Objects[ObjectCount].TextureShiftXFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(b);
+														Result.Objects[ObjectCount].TextureShiftXFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "textureshiftyfunction":
 													try {
-														Result.Objects[ObjectCount].TextureShiftYFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(b);
+														Result.Objects[ObjectCount].TextureShiftYFunction = FunctionScripts.GetFunctionScriptFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "textureshiftxfunctionrpn":
 													try {
-														Result.Objects[ObjectCount].TextureShiftXFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(b);
+														Result.Objects[ObjectCount].TextureShiftXFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "textureshiftyfunctionrpn":
 													try {
-														Result.Objects[ObjectCount].TextureShiftYFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(b);
+														Result.Objects[ObjectCount].TextureShiftYFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "textureoverride":
-													switch (b.ToLowerInvariant()) {
+													switch (after.ToLowerInvariant()) {
 														case "none":
 															break;
 														case "timetable":
@@ -438,23 +414,23 @@ namespace OpenBve {
 															}
 															break;
 														default:
-															Interface.AddMessage(Interface.MessageType.Error, false, "Unrecognized value in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Interface.AddMessage(Interface.MessageType.Error, false, "Unrecognized value in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															break;
 													}
 													break;
 												case "refreshrate":
 													{
 														double r;
-														if (!double.TryParse(b, System.Globalization.NumberStyles.Float, Culture, out r)) {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Value is invalid in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														if (!double.TryParse(after, System.Globalization.NumberStyles.Float, Culture, out r)) {
+															Interface.AddMessage(Interface.MessageType.Error, false, "Value is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 														} else if (r < 0.0) {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Value is expected to be non-negative in " + a + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Interface.AddMessage(Interface.MessageType.Error, false, "Value is expected to be non-negative in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 														} else {
 															Result.Objects[ObjectCount].RefreshRate = r;
 														}
 													} break;
 												default:
-													Interface.AddMessage(Interface.MessageType.Error, false, "The attribute " + a + " is not supported at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+													Interface.AddMessage(Interface.MessageType.Error, false, "The attribute " + before + " is not supported at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													break;
 											}
 										} else {
@@ -516,5 +492,31 @@ namespace OpenBve {
 			return Result;
 		}
 
+		/// <summary>
+		/// Parse the Vector3 position string consisting of comma separated double values. Error messages are written when necessary.
+		/// </summary>
+		/// <param name="text">x,y,z.</param>
+		/// <param name="position">Parsed position.</param>
+		/// <param name="field">Actual field name.</param>
+		/// <param name="file">File name.</param>
+		/// <param name="line">Actual line number string.</param>
+		/// <param name="culture">Parsing culture.</param>
+		private static void ParsePosition(string text, out Vector3 position, string field, string file, string line, System.Globalization.CultureInfo culture){
+			string[] s = text.Split(',');
+			if (s.Length == 3) {
+				double x, y, z;
+				if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, culture, out x)) {
+					Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + field + " at line " + line + " in file " + file);
+				} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, culture, out y)) {
+					Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + field + " at line " + line + " in file " + file);
+				} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, culture, out z)) {
+					Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + field + " at line " + line + " in file " + file);
+				} else {
+					position = new Vector3(x, y, z);
+				}
+			} else {
+				Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line + " in file " + file);
+			}
+		}
 	}
 }
