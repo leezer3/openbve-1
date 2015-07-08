@@ -87,13 +87,13 @@ namespace OpenBve {
 			OuterRadiusFactorSpeed = 0.0;
 			OpenAlDevice = Alc.OpenDevice(null);
 			if (OpenAlDevice != IntPtr.Zero) {
-				OpenAlContext = Alc.CreateContext(OpenAlDevice,new int[0]);
+				OpenAlContext = Alc.CreateContext(OpenAlDevice, new int[0]);
 				if (OpenAlContext != ContextHandle.Zero) {
 					Alc.MakeContextCurrent(OpenAlContext);
 					try {
 						AL.SpeedOfSound(343.0f);
 					} catch {
-						Debug.InfoMessage("OpenAL 1.1 is required. You seem to have OpenAL 1.0.");
+						Interface.AddMessage(Interface.MessageType.Error, false, "OpenAL 1.1 is required. You seem to have OpenAL 1.0.");
 					}
 					AL.DistanceModel(ALDistanceModel.None);
 					return true;
@@ -101,12 +101,12 @@ namespace OpenBve {
 				AlcError error = Alc.GetError(OpenAlDevice);
 				Alc.CloseDevice(OpenAlDevice);
 				OpenAlDevice = IntPtr.Zero;
-				Debug.InfoMessage("The OpenAL context could not be created: {0}",error);
+				Interface.AddMessage(Interface.MessageType.Error, false, "The OpenAL context could not be created: " + error);
 				return false;
 			}
 			ALError devError = AL.GetError();
 			OpenAlContext = ContextHandle.Zero;
-			Debug.InfoMessage("The OpenAL sound device could not be opened: {0}",AL.GetErrorString(devError));
+			Interface.AddMessage(Interface.MessageType.Error, false, "The OpenAL sound device could not be opened: " + AL.GetErrorString(devError));
 			return false;
 		}
 		
