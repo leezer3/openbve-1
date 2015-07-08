@@ -6,7 +6,14 @@ namespace OpenBve {
 	internal static partial class Sounds {
 		
 		// --- enumerations ---
-
+		/// <summary>
+		/// Sound range.
+		/// </summary>
+		internal enum SoundRange {
+			Low = 0,
+			Medium = 1,
+			High = 2
+		}
 		/// <summary>Represents different sound distance attenuation models.</summary>
 		internal enum SoundModels {
 			/// <summary>Represents the new Inverse Distance Clamped Model.</summary>
@@ -66,18 +73,18 @@ namespace OpenBve {
 		/// <returns>Whether initializing audio was successful.</returns>
 		internal static bool Initialize() {
 			Deinitialize();
-			switch (Interface.CurrentOptions.SoundRange) {
-				case Interface.SoundRange.Low:
+			switch (Options.Current.SoundRange) {
+				case SoundRange.Low:
 					OuterRadiusFactorMinimum = 2.0;
 					OuterRadiusFactorMaximum = 8.0;
 					OuterRadiusFactorMaximumSpeed = 1.0;
 					break;
-				case Interface.SoundRange.Medium:
+				case SoundRange.Medium:
 					OuterRadiusFactorMinimum = 4.0;
 					OuterRadiusFactorMaximum = 16.0;
 					OuterRadiusFactorMaximumSpeed = 2.0;
 					break;
-				case Interface.SoundRange.High:
+				case SoundRange.High:
 					OuterRadiusFactorMinimum = 6.0;
 					OuterRadiusFactorMaximum = 24.0;
 					OuterRadiusFactorMaximumSpeed = 3.0;
@@ -93,7 +100,7 @@ namespace OpenBve {
 					try {
 						AL.SpeedOfSound(343.0f);
 					} catch {
-						Interface.AddMessage(Interface.MessageType.Error, false, "OpenAL 1.1 is required. You seem to have OpenAL 1.0.");
+						Debug.AddMessage(Debug.MessageType.Error, false, "OpenAL 1.1 is required. You seem to have OpenAL 1.0.");
 					}
 					AL.DistanceModel(ALDistanceModel.None);
 					return true;
@@ -101,12 +108,12 @@ namespace OpenBve {
 				AlcError error = Alc.GetError(OpenAlDevice);
 				Alc.CloseDevice(OpenAlDevice);
 				OpenAlDevice = IntPtr.Zero;
-				Interface.AddMessage(Interface.MessageType.Error, false, "The OpenAL context could not be created: " + error);
+				Debug.AddMessage(Debug.MessageType.Error, false, "The OpenAL context could not be created: " + error);
 				return false;
 			}
 			ALError devError = AL.GetError();
 			OpenAlContext = ContextHandle.Zero;
-			Interface.AddMessage(Interface.MessageType.Error, false, "The OpenAL sound device could not be opened: " + AL.GetErrorString(devError));
+			Debug.AddMessage(Debug.MessageType.Error, false, "The OpenAL sound device could not be opened: " + AL.GetErrorString(devError));
 			return false;
 		}
 		

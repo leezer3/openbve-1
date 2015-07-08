@@ -922,7 +922,7 @@ namespace OpenBve {
 			int v = Prototype.Mesh.Vertices.Length;
 			int m = Prototype.Mesh.Materials.Length;
 			int f = Prototype.Mesh.Faces.Length;
-			if (f >= Interface.CurrentOptions.ObjectOptimizationBasicThreshold) return;
+			if (f >= Options.Current.ObjectOptimizationBasicThreshold) return;
 			// eliminate invalid faces and reduce incomplete faces
 			for (int i = 0; i < f; i++) {
 				int type = Prototype.Mesh.Faces[i].Flags & World.MeshFace.FaceTypeMask;
@@ -1056,7 +1056,7 @@ namespace OpenBve {
 				}
 			}
 			// structure optimization
-			if (!PreserveVertices & f < Interface.CurrentOptions.ObjectOptimizationFullThreshold) {
+			if (!PreserveVertices & f < Options.Current.ObjectOptimizationFullThreshold) {
 				// create TRIANGLES and QUADS from POLYGON
 				for (int i = 0; i < f; i++) {
 					int type = Prototype.Mesh.Faces[i].Flags & World.MeshFace.FaceTypeMask;
@@ -1498,7 +1498,7 @@ namespace OpenBve {
 			}
 			if (BlockLength != 0.0) {
 				checked {
-					Object.GroupIndex = (short)Mod(Math.Floor(Object.StartingDistance / BlockLength), Math.Ceiling(Interface.CurrentOptions.ViewingDistance / BlockLength));
+					Object.GroupIndex = (short)Mod(Math.Floor(Object.StartingDistance / BlockLength), Math.Ceiling(Options.Current.ViewingDistance / BlockLength));
 				}
 			}
 		}

@@ -211,7 +211,7 @@ namespace OpenBve {
 			/*
 			 * Adjust the outer radius factor / the clamp factor.
 			 * */
-			if (actuallyPlaying >= Interface.CurrentOptions.SoundNumber - 2) {
+			if (actuallyPlaying >= Options.Current.SoundNumber - 2) {
 				/*
 				 * Too many sounds are playing.
 				 * Reduce the outer radius factor.
@@ -220,7 +220,7 @@ namespace OpenBve {
 				if (OuterRadiusFactorSpeed < -OuterRadiusFactorMaximumSpeed) {
 					OuterRadiusFactorSpeed = -OuterRadiusFactorMaximumSpeed;
 				}
-			} else if (actuallyPlaying <= Interface.CurrentOptions.SoundNumber - 6) {
+			} else if (actuallyPlaying <= Options.Current.SoundNumber - 6) {
 				/*
 				 * Only few sounds are playing.
 				 * Increase the outer radius factor.
@@ -443,7 +443,7 @@ namespace OpenBve {
 				toBePlayed[i].Gain += clampFactor * toBePlayed[i].Distance * toBePlayed[i].Distance;
 			}
 			double desiredLogClampFactor;
-			int index = Interface.CurrentOptions.SoundNumber;
+			int index = Options.Current.SoundNumber;
 			if (toBePlayed.Count <= index) {
 				desiredLogClampFactor = MinLogClampFactor;
 			} else {

@@ -29,7 +29,7 @@ namespace OpenBve {
 				#if !DEBUG
 				try {
 					#endif
-					string Flag = Interface.GetInterfaceString("language_flag");
+					string Flag = Strings.GetInterfaceString("language_flag");
 					string File = OpenBveApi.Path.CombineFile(Folder, Flag);
 					if (!System.IO.File.Exists(File)) {
 						File = OpenBveApi.Path.CombineFile(Folder, "unknown.png");

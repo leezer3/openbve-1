@@ -88,9 +88,9 @@ namespace OpenBve {
 			Interface.TryGetCommandInfo(Interface.CurrentControls[Index].Command, out Info);
 			Item.SubItems[0].Text = Info.Name;
 			switch (Info.Type) {
-					case Interface.CommandType.Digital: Item.SubItems[1].Text = Interface.GetInterfaceString("controls_list_type_digital"); break;
-					case Interface.CommandType.AnalogHalf: Item.SubItems[1].Text = Interface.GetInterfaceString("controls_list_type_analoghalf"); break;
-					case Interface.CommandType.AnalogFull: Item.SubItems[1].Text = Interface.GetInterfaceString("controls_list_type_analogfull"); break;
+					case Interface.CommandType.Digital: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_digital"); break;
+					case Interface.CommandType.AnalogHalf: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_analoghalf"); break;
+					case Interface.CommandType.AnalogFull: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_analogfull"); break;
 					default: Item.SubItems[1].Text = Info.Type.ToString(); break;
 			}
 			Item.SubItems[2].Text = Info.Description;
@@ -116,12 +116,12 @@ namespace OpenBve {
 			Interface.CommandInfo Info;
 			Interface.TryGetCommandInfo(Interface.CurrentControls[Index].Command, out Info);
 			System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
-			string Separator = Interface.GetInterfaceString("controls_assignment_separator");
+			string Separator = Strings.GetInterfaceString("controls_assignment_separator");
 			if (Interface.CurrentControls[Index].Method == Interface.ControlMethod.Keyboard) {
-				string t = Interface.GetInterfaceString("controls_assignment_keyboard") + Separator;
-				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Shift) != 0) t += Interface.GetInterfaceString("controls_assignment_keyboard_shift");
-				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Ctrl) != 0) t += Interface.GetInterfaceString("controls_assignment_keyboard_ctrl");
-				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Alt) != 0) t += Interface.GetInterfaceString("controls_assignment_keyboard_alt");
+				string t = Strings.GetInterfaceString("controls_assignment_keyboard") + Separator;
+				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Shift) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_shift");
+				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Ctrl) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_ctrl");
+				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Alt) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_alt");
 				int j; for (j = 0; j < Interface.Keys.Length; j++) {
 					if (Interface.Keys[j].Value == (Key)Interface.CurrentControls[Index].Element) {
 						t += Interface.Keys[j].Description;
@@ -132,49 +132,49 @@ namespace OpenBve {
 				}
 				return t;
 			} else if (Interface.CurrentControls[Index].Method == Interface.ControlMethod.Joystick) {
-				string t = Interface.GetInterfaceString("controls_assignment_joystick").Replace("[index]", (Interface.CurrentControls[Index].Device + 1).ToString(Culture));
+				string t = Strings.GetInterfaceString("controls_assignment_joystick").Replace("[index]", (Interface.CurrentControls[Index].Device + 1).ToString(Culture));
 				switch (Interface.CurrentControls[Index].Component) {
 					case Interface.JoystickComponent.Axis:
-						t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_axis").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
+						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_axis").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
 						float pos = (float)Interface.CurrentControls[Index].Direction;
 						if (pos == -1) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_axis_negative");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_axis_negative");
 						} else if (pos == 1) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_axis_positive");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_axis_positive");
 						} else {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_axis_invalid");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_axis_invalid");
 						} break;
 					case Interface.JoystickComponent.Button:
-						t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_button").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
+						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_button").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
 						break;
 					case Interface.JoystickComponent.Hat:
-						t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
+						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
 						JoystickHatState state = (JoystickHatState)Interface.CurrentControls[Index].Direction;
 						if (state.Position == HatPosition.Left) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_left");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_left");
 						} else if (state.Position == HatPosition.UpLeft) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_upleft");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_upleft");
 						} else if (state.Position == HatPosition.Up) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_up");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_up");
 						} else if (state.Position == HatPosition.UpRight) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_upright");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_upright");
 						} else if (state.Position == HatPosition.Right) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_right");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_right");
 						} else if (state.Position == HatPosition.DownRight) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_downright");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_downright");
 						} else if (state.Position == HatPosition.Down) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_down");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_down");
 						} else if (state.Position == HatPosition.DownLeft) {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_downleft");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_downleft");
 						} else {
-							t += Separator + Interface.GetInterfaceString("controls_assignment_joystick_hat_invalid");
+							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_invalid");
 						} break;
 					default:
 						break;
 				}
 				return t;
 			} else {
-				return Interface.GetInterfaceString("controls_assignment_invalid");
+				return Strings.GetInterfaceString("controls_assignment_invalid");
 			}
 		}
 
@@ -334,7 +334,7 @@ namespace OpenBve {
 			OpenFileDialog Dialog = new OpenFileDialog();
 			Dialog.CheckFileExists = true;
 			//Dialog.InitialDirectory = Interface.GetControlsFolder();
-			Dialog.Filter = Interface.GetInterfaceString("dialog_controlsfiles") + "|*.controls|" + Interface.GetInterfaceString("dialog_allfiles") + "|*";
+			Dialog.Filter = Strings.GetInterfaceString("dialog_controlsfiles") + "|*.controls|" + Strings.GetInterfaceString("dialog_allfiles") + "|*";
 			if (Dialog.ShowDialog() == DialogResult.OK) {
 				try {
 					Interface.LoadControls(Dialog.FileName, out Interface.CurrentControls);
@@ -360,7 +360,7 @@ namespace OpenBve {
 			SaveFileDialog Dialog = new SaveFileDialog();
 			Dialog.OverwritePrompt = true;
 			//Dialog.InitialDirectory = Interface.GetControlsFolder();
-			Dialog.Filter = Interface.GetInterfaceString("dialog_controlsfiles") + "|*.controls|" + Interface.GetInterfaceString("dialog_allfiles") + "|*";
+			Dialog.Filter = Strings.GetInterfaceString("dialog_controlsfiles") + "|*.controls|" + Strings.GetInterfaceString("dialog_allfiles") + "|*";
 			if (Dialog.ShowDialog() == DialogResult.OK) {
 				try {
 					Interface.SaveControls(Dialog.FileName);
@@ -380,15 +380,15 @@ namespace OpenBve {
 				}
 			}
 			if (FullAxis) {
-				textboxJoystickGrab.Text = Interface.GetInterfaceString("controls_selection_joystick_assignment_grab_fullaxis");
+				textboxJoystickGrab.Text = Strings.GetInterfaceString("controls_selection_joystick_assignment_grab_fullaxis");
 			} else {
-				textboxJoystickGrab.Text = Interface.GetInterfaceString("controls_selection_joystick_assignment_grab_normal");
+				textboxJoystickGrab.Text = Strings.GetInterfaceString("controls_selection_joystick_assignment_grab_normal");
 			}
 			textboxJoystickGrab.BackColor = Color.Crimson;
 			textboxJoystickGrab.ForeColor = Color.White;
 		}
 		private void textboxJoystickGrab_Leave(object sender, EventArgs e) {
-			textboxJoystickGrab.Text = Interface.GetInterfaceString("controls_selection_joystick_assignment_grab");
+			textboxJoystickGrab.Text = Strings.GetInterfaceString("controls_selection_joystick_assignment_grab");
 			textboxJoystickGrab.BackColor = panelControls.BackColor;
 			textboxJoystickGrab.ForeColor = Color.Black;
 		}

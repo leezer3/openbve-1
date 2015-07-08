@@ -63,7 +63,7 @@ namespace OpenBve {
 			// --- load language ---
 			{
 				string folder = Program.FileSystem.GetDataFolder("Languages");
-				string file = OpenBveApi.Path.CombineFile(folder, Interface.CurrentOptions.LanguageCode + ".cfg");
+				string file = OpenBveApi.Path.CombineFile(folder, Options.Current.LanguageCode + ".cfg");
 				if (!System.IO.File.Exists(file)) {
 					file = OpenBveApi.Path.CombineFile(folder, "en-US.cfg");
 				}
@@ -75,18 +75,18 @@ namespace OpenBve {
 				if (args[i].StartsWith("/route=", StringComparison.OrdinalIgnoreCase)) {
 					result.RouteFile = args[i].Substring(7);
 					result.RouteEncoding = System.Text.Encoding.UTF8;
-					for (int j = 0; j < Interface.CurrentOptions.RouteEncodings.Length; j++) {
-						if (string.Compare(Interface.CurrentOptions.RouteEncodings[j].Value, result.RouteFile, StringComparison.InvariantCultureIgnoreCase) == 0) {
-							result.RouteEncoding = System.Text.Encoding.GetEncoding(Interface.CurrentOptions.RouteEncodings[j].Codepage);
+					for (int j = 0; j < Options.Current.RouteEncodings.Length; j++) {
+						if (string.Compare(Options.Current.RouteEncodings[j].Value, result.RouteFile, StringComparison.InvariantCultureIgnoreCase) == 0) {
+							result.RouteEncoding = System.Text.Encoding.GetEncoding(Options.Current.RouteEncodings[j].Codepage);
 							break;
 						}
 					}
 				} else if (args[i].StartsWith("/train=", StringComparison.OrdinalIgnoreCase)) {
 					result.TrainFolder = args[i].Substring(7);
 					result.TrainEncoding = System.Text.Encoding.UTF8;
-					for (int j = 0; j < Interface.CurrentOptions.TrainEncodings.Length; j++) {
-						if (string.Compare(Interface.CurrentOptions.TrainEncodings[j].Value, result.TrainFolder, StringComparison.InvariantCultureIgnoreCase) == 0) {
-							result.TrainEncoding = System.Text.Encoding.GetEncoding(Interface.CurrentOptions.TrainEncodings[j].Codepage);
+					for (int j = 0; j < Options.Current.TrainEncodings.Length; j++) {
+						if (string.Compare(Options.Current.TrainEncodings[j].Value, result.TrainFolder, StringComparison.InvariantCultureIgnoreCase) == 0) {
+							result.TrainEncoding = System.Text.Encoding.GetEncoding(Options.Current.TrainEncodings[j].Codepage);
 							break;
 						}
 					}
@@ -118,9 +118,9 @@ namespace OpenBve {
 								if (System.IO.File.Exists(file)) {
 									result.TrainFolder = folder;
 									result.TrainEncoding = System.Text.Encoding.UTF8;
-									for (int j = 0; j < Interface.CurrentOptions.TrainEncodings.Length; j++) {
-										if (string.Compare(Interface.CurrentOptions.TrainEncodings[j].Value, result.TrainFolder, StringComparison.InvariantCultureIgnoreCase) == 0) {
-											result.TrainEncoding = System.Text.Encoding.GetEncoding(Interface.CurrentOptions.TrainEncodings[j].Codepage);
+									for (int j = 0; j < Options.Current.TrainEncodings.Length; j++) {
+										if (string.Compare(Options.Current.TrainEncodings[j].Value, result.TrainFolder, StringComparison.InvariantCultureIgnoreCase) == 0) {
+											result.TrainEncoding = System.Text.Encoding.GetEncoding(Options.Current.TrainEncodings[j].Codepage);
 											break;
 										}
 									}
@@ -214,9 +214,9 @@ namespace OpenBve {
 			World.HorizontalViewingAngle = 2.0 * Math.Atan(Math.Tan(0.5 * World.VerticalViewingAngle) * World.AspectRatio);
 			World.OriginalVerticalViewingAngle = World.VerticalViewingAngle;
 			World.ExtraViewingDistance = 50.0;
-			World.ForwardViewingDistance = (double)Interface.CurrentOptions.ViewingDistance;
+			World.ForwardViewingDistance = (double)Options.Current.ViewingDistance;
 			World.BackwardViewingDistance = 0.0;
-			World.BackgroundImageDistance = (double)Interface.CurrentOptions.ViewingDistance;
+			World.BackgroundImageDistance = (double)Options.Current.ViewingDistance;
 			// end HACK //
 			ClearLogFile();
 			return true;

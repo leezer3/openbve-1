@@ -30,13 +30,13 @@ namespace OpenBve {
 			string text;
 			if (routeProgress < 1.0) {
 				//text = "Loading route... " + (100.0 * routeProgress).ToString("0") + "%";
-				text = String.Format("{0} {1}%",Interface.GetInterfaceString("loading_loading_route"),100.0 * routeProgress);
+				text = String.Format("{0} {1}%",Strings.GetInterfaceString("loading_loading_route"),100.0 * routeProgress);
 			} else if (trainProgress < 1.0) {
 				//text = "Loading train... " + (100.0 * trainProgress).ToString("0") + "%";
-				text = String.Format("{0} {1}%",Interface.GetInterfaceString("loading_loading_train"),100.0 * trainProgress);
+				text = String.Format("{0} {1}%",Strings.GetInterfaceString("loading_loading_train"),100.0 * trainProgress);
 			} else {
 				//text = "Loading textures and sounds...";
-				text = Interface.GetInterfaceString("message_loading");
+				text = Strings.GetInterfaceString("message_loading");
 			}
 			DrawString(Fonts.SmallFont, text, new Point((Screen.Width - size) / 2 + 5, Screen.Height - (int)(Fonts.NormalFont.FontSize / 2) - 5), TextAlignment.CenterLeft, Color128.White);
 			// end HACK //
