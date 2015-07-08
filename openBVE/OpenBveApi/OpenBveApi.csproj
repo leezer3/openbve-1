@@ -77,5 +77,14 @@
     <Compile Include="Vector3.cs">
       <DependentUpon>Math.cs</DependentUpon>
     </Compile>
+    <Compile Include="Vector3f.cs">
+      <DependentUpon>Math.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vector2f.cs">
+      <DependentUpon>Math.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Orientation3f.cs">
+      <DependentUpon>Math.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -137,7 +137,7 @@ namespace OpenBveApi {
 
 		/// <summary>Iteratively combines a platform-specific absolute path with an array of platform-independent relative paths that point to a file.</summary>
 		/// <param name="absolute">The platform-specific absolute path.</param>
-		/// <param name="relative">The array of platform-independent relative paths.</param>
+		/// <param name="relatives">The array of platform-independent relative paths.</param>
 		/// <returns>Whether the operation succeeded and the specified file was found.</returns>
 		/// <exception cref="System.Exception">Raised when combining the paths failed, for example due to malformed paths or due to unauthorized access.</exception>
 		public static string CombineFileParams(string absolute, params string[] relatives){

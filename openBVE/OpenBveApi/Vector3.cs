@@ -3,7 +3,7 @@
 using System;
 
 namespace OpenBveApi.Math {
-	/// <summary>Represents a three-dimensional vector.</summary>
+	/// <summary>Represents a three-dimensional vector with double precision.</summary>
 	public struct Vector3 {
 		
 		// --- members ---
