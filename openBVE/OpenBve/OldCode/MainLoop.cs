@@ -6,6 +6,7 @@ using OpenTK.Input;
 using System.Collections.Generic;
 using OpenTK;
 using Vector3 = OpenBveApi.Math.Vector3;
+using Vector2 = OpenBveApi.Math.Vector2;
 
 namespace OpenBve {
 	internal static class MainLoop {
@@ -593,30 +594,38 @@ namespace OpenBve {
 							}
 						}
 						break;
-						case InputType.MouseButtonDown:
-							MouseButtonEventArgs mouseButtonData = (MouseButtonEventArgs)ev.Data;
+					case InputType.MouseButtonDown:
+						MouseButtonEventArgs mouseButtonData = (MouseButtonEventArgs)ev.Data;
 						// mouse button down
 						if (mouseButtonData.Button == MouseButton.Right) {
 							// mouse grab
 							World.MouseGrabEnabled = !World.MouseGrabEnabled;
 							if (World.MouseGrabEnabled) {
-								World.MouseGrabTarget = new World.Vector2D(0.0, 0.0);
+								Program.UI.CursorVisible = false;
+								World.MouseGrabTarget = new Vector2(0.0, 0.0);
 								Game.AddMessage(Interface.GetInterfaceString("notification_mousegrab_on"), Game.MessageDependency.None, Interface.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 							} else {
+								Program.UI.CursorVisible = true;
 								Game.AddMessage(Interface.GetInterfaceString("notification_mousegrab_off"), Game.MessageDependency.None, Interface.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 							}
 						}
-						break;
+						break;/*
 					case InputType.MouseMotion:
 						MouseMoveEventArgs mouseMotionData = (MouseMoveEventArgs)ev.Data;
 						// mouse motion
 						if (World.MouseGrabIgnoreOnce) {
 							World.MouseGrabIgnoreOnce = false;
 						} else if (World.MouseGrabEnabled) {
-							World.MouseGrabTarget = new World.Vector2D((double)mouseMotionData.XDelta, (double)mouseMotionData.YDelta);
+							World.MouseGrabTarget = new Vector2((double)Program.UI.Mouse.X - Screen.Width / 2, (double)Program.UI.Mouse.Y - Screen.Height / 2);
 						}
-						break;
+						break;*/
 				}
+			}
+			if (World.MouseGrabIgnoreOnce) {
+				World.MouseGrabIgnoreOnce = false;
+			} else if (World.MouseGrabEnabled) {
+				World.MouseGrabTarget = new Vector2(((double)Program.UI.Mouse.X - Screen.Width / 2)/-10, 
+					((double)Program.UI.Mouse.Y - Screen.Height / 2)/10);
 			}
 		}
 

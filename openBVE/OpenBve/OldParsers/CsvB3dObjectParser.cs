@@ -55,7 +55,8 @@ namespace OpenBve {
 		/// <param name="FileName">The text file to load the animated object from. Must be an absolute file name.</param>
 		/// <param name="Encoding">The encoding the file is saved in. If the file uses a byte order mark, the encoding indicated by the byte order mark is used and the Encoding parameter is ignored.</param>
 		/// <param name="LoadMode">The texture load mode.</param>
-		/// <param name="ForceTextureRepeat">Whether to force TextureWrapMode.Repeat for referenced textures.</param>
+		/// <param name="ForceTextureRepeatX">Whether to force TextureWrapMode.Repeat for X axis of referenced textures.</param>
+		/// <param name="ForceTextureRepeatY">Whether to force TextureWrapMode.Repeat for Y axis of referenced textures.</param>
 		/// <returns>The object loaded.</returns>
 		internal static ObjectManager.StaticObject ReadObject(string FileName, System.Text.Encoding Encoding, ObjectManager.ObjectLoadMode LoadMode, bool ForceTextureRepeatX, bool ForceTextureRepeatY) {
 			System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
@@ -69,7 +70,7 @@ namespace OpenBve {
 			string[] Lines = System.IO.File.ReadAllLines(FileName, Encoding);
 			// parse lines
 			MeshBuilder Builder = new MeshBuilder();
-			World.Vector3Df[] Normals = new World.Vector3Df[4];
+			Vector3f[] Normals = new Vector3f[4];
 			for (int i = 0; i < Lines.Length; i++) {
 				{
 					// strip away comments
@@ -95,10 +96,10 @@ namespace OpenBve {
 				string Command;
 				if (IsB3D & Arguments.Length != 0) {
 					// b3d
-					int j = Arguments[0].IndexOf(' ');
-					if (j >= 0) {
-						Command = Arguments[0].Substring(0, j).TrimEnd();
-						Arguments[0] = Arguments[0].Substring(j + 1).TrimStart();
+					int space = Arguments[0].IndexOf(' ');
+					if (space >= 0) {
+						Command = Arguments[0].Substring(0, space).TrimEnd();
+						Arguments[0] = Arguments[0].Substring(space + 1).TrimStart();
 					} else {
 						Command = Arguments[0];
 						if (Arguments.Length != 1) {
@@ -134,7 +135,7 @@ namespace OpenBve {
 								}
 								ApplyMeshBuilder(ref Object, Builder, LoadMode, ForceTextureRepeatX, ForceTextureRepeatY);
 								Builder = new MeshBuilder();
-								Normals = new World.Vector3Df[4];
+								Normals = new Vector3f[4];
 							} break;
 						case "addvertex":
 						case "vertex":
@@ -176,10 +177,10 @@ namespace OpenBve {
 								World.Normalize(ref nx, ref ny, ref nz);
 								Array.Resize<World.Vertex>(ref Builder.Vertices, Builder.Vertices.Length + 1);
 								while (Builder.Vertices.Length >= Normals.Length) {
-									Array.Resize<World.Vector3Df>(ref Normals, Normals.Length << 1);
+									Array.Resize<Vector3f>(ref Normals, Normals.Length << 1);
 								}
 								Builder.Vertices[Builder.Vertices.Length - 1].Coordinates = new Vector3(vx, vy, vz);
-								Normals[Builder.Vertices.Length - 1] = new World.Vector3Df((float)nx, (float)ny, (float)nz);
+								Normals[Builder.Vertices.Length - 1] = new Vector3f((float)nx, (float)ny, (float)nz);
 							} break;
 						case "addface":
 						case "addface2":
@@ -202,37 +203,37 @@ namespace OpenBve {
 								if (Arguments.Length < 3) {
 									Interface.AddMessage(Interface.MessageType.Error, false, "At least 3 arguments are required in " + Command + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 								} else {
-									bool q = true;
-									int[] a = new int[Arguments.Length];
+									bool valid = true;
+									int[] indices = new int[Arguments.Length];
 									for (int j = 0; j < Arguments.Length; j++) {
-										if (!Interface.TryParseIntVb6(Arguments[j], out a[j])) {
+										if (!Interface.TryParseIntVb6(Arguments[j], out indices[j])) {
 											Interface.AddMessage(Interface.MessageType.Error, false, "v" + j.ToString(Culture) + " is invalid in " + Command + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-											q = false;
+											valid = false;
 											break;
-										} else if (a[j] < 0 | a[j] >= Builder.Vertices.Length) {
+										} else if (indices[j] < 0 | indices[j] >= Builder.Vertices.Length) {
 											Interface.AddMessage(Interface.MessageType.Error, false, "v" + j.ToString(Culture) + " references a non-existing vertex in " + Command + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-											q = false;
+											valid = false;
 											break;
-										} else if (a[j] > 65535) {
+										} else if (indices[j] > 65535) {
 											Interface.AddMessage(Interface.MessageType.Error, false, "v" + j.ToString(Culture) + " indexes a vertex above 65535 which is not currently supported in " + Command + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
-											q = false;
+											valid = false;
 											break;
 										}
 									}
-									if (q) {
-										int f = Builder.Faces.Length;
-										Array.Resize<World.MeshFace>(ref Builder.Faces, f + 1);
-										Builder.Faces[f] = new World.MeshFace();
-										Builder.Faces[f].Vertices = new World.MeshFaceVertex[Arguments.Length];
+									if (valid) {
+										int last = Builder.Faces.Length;
+										Array.Resize<World.MeshFace>(ref Builder.Faces, last + 1);
+										Builder.Faces[last] = new World.MeshFace();
+										Builder.Faces[last].Vertices = new World.MeshFaceVertex[Arguments.Length];
 										while (Builder.Vertices.Length > Normals.Length) {
-											Array.Resize<World.Vector3Df>(ref Normals, Normals.Length << 1);
+											Array.Resize<Vector3f>(ref Normals, Normals.Length << 1);
 										}
 										for (int j = 0; j < Arguments.Length; j++) {
-											Builder.Faces[f].Vertices[j].Index = (ushort)a[j];
-											Builder.Faces[f].Vertices[j].Normal = Normals[a[j]];
+											Builder.Faces[last].Vertices[j].Index = (ushort)indices[j];
+											Builder.Faces[last].Vertices[j].Normal = Normals[indices[j]];
 										}
 										if (cmd == "addface2" | cmd == "face2") {
-											Builder.Faces[f].Flags = (byte)World.MeshFace.Face2Mask;
+											Builder.Faces[last].Flags = (byte)World.MeshFace.Face2Mask;
 										}
 									}
 								}
@@ -437,6 +438,7 @@ namespace OpenBve {
 							} else if (cmd == "[texture]" & !IsB3D) {
 								Interface.AddMessage(Interface.MessageType.Warning, false, "[Texture] is not a supported command - did you mean GenerateNormals? - at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 							}
+							// TODO do something?
 							break;
 						case "setcolor":
 						case "color":
@@ -696,7 +698,7 @@ namespace OpenBve {
 									y = 0.0f;
 								}
 								if (j >= 0 & j < Builder.Vertices.Length) {
-									Builder.Vertices[j].TextureCoordinates = new World.Vector2Df(x, y);
+									Builder.Vertices[j].TextureCoordinates = new Vector2f(x, y);
 								} else {
 									Interface.AddMessage(Interface.MessageType.Error, false, "VertexIndex references a non-existing vertex in " + Command + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 								}
@@ -749,7 +751,7 @@ namespace OpenBve {
 			// initialization
 			int v = Builder.Vertices.Length;
 			Array.Resize<World.Vertex>(ref Builder.Vertices, v + 2 * n);
-			World.Vector3Df[] Normals = new World.Vector3Df[2 * n];
+			Vector3f[] Normals = new Vector3f[2 * n];
 			double d = 2.0 * Math.PI / (double)n;
 			double g = 0.5 * h;
 			double t = 0.0;
@@ -770,8 +772,8 @@ namespace OpenBve {
 				double sx, sy, sz;
 				World.Cross(nx, ny, nz, 0.0, 1.0, 0.0, out sx, out sy, out sz);
 				World.Rotate(ref nx, ref ny, ref nz, sx, sy, sz, cosa, sina);
-				Normals[2 * i + 0] = new World.Vector3Df((float)nx, (float)ny, (float)nz);
-				Normals[2 * i + 1] = new World.Vector3Df((float)nx, (float)ny, (float)nz);
+				Normals[2 * i + 0] = new Vector3f((float)nx, (float)ny, (float)nz);
+				Normals[2 * i + 1] = new Vector3f((float)nx, (float)ny, (float)nz);
 				t += d;
 			}
 			// faces
@@ -982,13 +984,15 @@ namespace OpenBve {
 					Object.Mesh.Faces[mf + i].Material += (ushort)mm;
 				}
 				for (int i = 0; i < Builder.Materials.Length; i++) {
-					Object.Mesh.Materials[mm + i].Flags = (byte)((Builder.Materials[i].EmissiveColorUsed ? World.MeshMaterial.EmissiveColorMask : 0) | (Builder.Materials[i].TransparentColorUsed ? World.MeshMaterial.TransparentColorMask : 0));
+					Object.Mesh.Materials[mm + i].Flags = (byte)((Builder.Materials[i].EmissiveColorUsed ? World.MeshMaterial.EmissiveColorMask : 0) |
+						(Builder.Materials[i].TransparentColorUsed ? World.MeshMaterial.TransparentColorMask : 0));
 					Object.Mesh.Materials[mm + i].Color = Builder.Materials[i].Color;
 					Object.Mesh.Materials[mm + i].TransparentColor = Builder.Materials[i].TransparentColor;
 					if (Builder.Materials[i].DaytimeTexture != null) {
 						Textures.Texture tday;
 						if (Builder.Materials[i].TransparentColorUsed) {
-							Textures.RegisterTexture(Builder.Materials[i].DaytimeTexture, new OpenBveApi.Textures.TextureParameters(null, new Color24(Builder.Materials[i].TransparentColor.R, Builder.Materials[i].TransparentColor.G, Builder.Materials[i].TransparentColor.B)), out tday);
+							Textures.RegisterTexture(Builder.Materials[i].DaytimeTexture, new OpenBveApi.Textures.TextureParameters(null, 
+								new Color24(Builder.Materials[i].TransparentColor.R, Builder.Materials[i].TransparentColor.G, Builder.Materials[i].TransparentColor.B)), out tday);
 						} else {
 							Textures.RegisterTexture(Builder.Materials[i].DaytimeTexture, out tday);
 						}
@@ -1000,7 +1004,8 @@ namespace OpenBve {
 					if (Builder.Materials[i].NighttimeTexture != null) {
 						Textures.Texture tnight;
 						if (Builder.Materials[i].TransparentColorUsed) {
-							Textures.RegisterTexture(Builder.Materials[i].NighttimeTexture, new OpenBveApi.Textures.TextureParameters(null, new Color24(Builder.Materials[i].TransparentColor.R, Builder.Materials[i].TransparentColor.G, Builder.Materials[i].TransparentColor.B)), out tnight);
+							Textures.RegisterTexture(Builder.Materials[i].NighttimeTexture, new OpenBveApi.Textures.TextureParameters(null, 
+								new Color24(Builder.Materials[i].TransparentColor.R, Builder.Materials[i].TransparentColor.G, Builder.Materials[i].TransparentColor.B)), out tnight);
 						} else {
 							Textures.RegisterTexture(Builder.Materials[i].NighttimeTexture, out tnight);
 						}

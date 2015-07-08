@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-
+using Vector2 = OpenBveApi.Math.Vector2;
 namespace OpenBve {
 	internal static class Screen {
 		
@@ -61,7 +61,7 @@ namespace OpenBve {
 			Program.UI.WindowBorder = Interface.CurrentOptions.FullscreenMode ? WindowBorder.Hidden : WindowBorder.Fixed;
 			Program.UI.Icon = new Icon(OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, "icon.ico"));
 			Program.UI.VSync = Interface.CurrentOptions.VerticalSynchronization ? VSyncMode.On /*Adaptive?*/ : VSyncMode.Off;
-			Program.UI.CursorVisible = false;
+			Program.UI.CursorVisible = true;
 
 
 			Interface.CurrentOptions.AnisotropicFilteringMaximum = 0;
@@ -118,7 +118,7 @@ namespace OpenBve {
 			MainLoop.InitializeMotionBlur();
 			Timetable.CreateTimetable();
 			Timetable.UpdateCustomTimetable(null, null);
-			World.MouseGrabTarget = new World.Vector2D(0.0, 0.0);
+			World.MouseGrabTarget = new Vector2(0.0, 0.0);
 			World.MouseGrabIgnoreOnce = true;
 			World.InitializeCameraRestriction();
 			if (Renderer.OptionBackfaceCulling) {

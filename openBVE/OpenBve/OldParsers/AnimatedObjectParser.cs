@@ -126,8 +126,8 @@ namespace OpenBve {
 								Result.Objects[ObjectCount].RotateXDirection = new Vector3(1.0, 0.0, 0.0);
 								Result.Objects[ObjectCount].RotateYDirection = new Vector3(0.0, 1.0, 0.0);
 								Result.Objects[ObjectCount].RotateZDirection = new Vector3(0.0, 0.0, 1.0);
-								Result.Objects[ObjectCount].TextureShiftXDirection = new World.Vector2D(1.0, 0.0);
-								Result.Objects[ObjectCount].TextureShiftYDirection = new World.Vector2D(0.0, 1.0);
+								Result.Objects[ObjectCount].TextureShiftXDirection = new Vector2(1.0, 0.0);
+								Result.Objects[ObjectCount].TextureShiftYDirection = new Vector2(0.0, 1.0);
 								Result.Objects[ObjectCount].RefreshRate = 0.0;
 								Result.Objects[ObjectCount].ObjectIndex = -1;
 								Vector3 Position = new Vector3(0.0, 0.0, 0.0);
@@ -517,7 +517,7 @@ namespace OpenBve {
 		/// <param name="field">Actual field name.</param>
 		/// <param name="filename">File name.</param>
 		/// <param name="line">Actual line number string.</param>
-		private static void ParseTextureShift(string value, ref World.Vector2D shift, string field, int line, string filename){
+		private static void ParseTextureShift(string value, ref Vector2 shift, string field, int line, string filename){
 			string[] s = value.Split(',');
 			if (s.Length == 2) {
 				double x, y;
@@ -526,7 +526,7 @@ namespace OpenBve {
 				} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
 					Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else {
-					shift = new World.Vector2D(x, y);
+					shift = new Vector2(x, y);
 				}
 			} else {
 				Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 2 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);

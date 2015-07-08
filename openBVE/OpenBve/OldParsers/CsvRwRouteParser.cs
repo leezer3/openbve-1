@@ -1769,7 +1769,7 @@ namespace OpenBve {
 										double dx = Math.Cos(theta) * Math.Sin(phi);
 										double dy = -Math.Sin(theta);
 										double dz = Math.Cos(theta) * Math.Cos(phi);
-										Renderer.OptionLightPosition = new World.Vector3Df((float)-dx, (float)-dy, (float)-dz);
+										Renderer.OptionLightPosition = new Vector3f((float)-dx, (float)-dy, (float)-dz);
 									} break;
 									// train
 								case "train.folder":
@@ -4902,7 +4902,7 @@ namespace OpenBve {
 			}
 			// create objects and track
 			Vector3 Position = new Vector3(0.0, 0.0, 0.0);
-			World.Vector2D Direction = new World.Vector2D(0.0, 1.0);
+			Vector2 Direction = new Vector2(0.0, 1.0);
 			TrackManager.CurrentTrack = new TrackManager.Track();
 			TrackManager.CurrentTrack.Elements = new TrackManager.TrackElement[] { };
 			double CurrentSpeedLimit = double.PositiveInfinity;
@@ -5239,7 +5239,7 @@ namespace OpenBve {
 							double dh;
 							if (i < Data.Blocks.Length - 1 && Data.Blocks[i + 1].Rail.Length > j) {
 								// take orientation of upcoming block into account
-								World.Vector2D Direction2 = Direction;
+								Vector2 Direction2 = Direction;
 								Vector3 Position2 = Position;
 								Position2.X += Direction.X * c;
 								Position2.Y += h;
