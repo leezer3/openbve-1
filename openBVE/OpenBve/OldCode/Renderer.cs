@@ -1319,7 +1319,7 @@ namespace OpenBve {
 									CreateBackColor(Hud.CurrentHudElements[i].OverlayColor, Game.Messages[j].Color, out or, out og, out ob, out oa);
 									double tx, ty;
 									bool preserve = false;
-									if ((Hud.CurrentHudElements[i].Transition & Interface.HudTransition.Move) != 0) {
+									if ((Hud.CurrentHudElements[i].Transition & Hud.HudTransition.Move) != 0) {
 										if (Game.SecondsSinceMidnight < Game.Messages[j].Timeout) {
 											if (Game.Messages[j].RendererAlpha == 0.0) {
 												Game.Messages[j].RendererPosition.X = x + Hud.CurrentHudElements[i].TransitionVector.X;
@@ -1329,7 +1329,7 @@ namespace OpenBve {
 											tx = x;
 											ty = y + m * (Hud.CurrentHudElements[i].Value2);
 											preserve = true;
-										} else if (Hud.CurrentHudElements[i].Transition == Interface.HudTransition.MoveAndFade) {
+										} else if (Hud.CurrentHudElements[i].Transition == Hud.HudTransition.MoveAndFade) {
 											tx = x;
 											ty = y + m * (Hud.CurrentHudElements[i].Value2);
 										} else {
@@ -1362,7 +1362,7 @@ namespace OpenBve {
 											Game.Messages[j].RendererPosition.Y += Math.Sign(ty - Game.Messages[j].RendererPosition.Y) * dy;
 										}
 									}
-									if ((Hud.CurrentHudElements[i].Transition & Interface.HudTransition.Fade) != 0) {
+									if ((Hud.CurrentHudElements[i].Transition & Hud.HudTransition.Fade) != 0) {
 										if (Game.SecondsSinceMidnight >= Game.Messages[j].Timeout) {
 											Game.Messages[j].RendererAlpha -= TimeElapsed;
 											if (Game.Messages[j].RendererAlpha < 0.0) Game.Messages[j].RendererAlpha = 0.0;
@@ -1381,9 +1381,9 @@ namespace OpenBve {
 									double py = Game.Messages[j].RendererPosition.Y;
 									float alpha = (float)(Game.Messages[j].RendererAlpha * Game.Messages[j].RendererAlpha);
 									/// graphics
-									Interface.HudImage Left = j == 0 ? Hud.CurrentHudElements[i].TopLeft : j < n - 1 ? Hud.CurrentHudElements[i].CenterLeft : Hud.CurrentHudElements[i].BottomLeft;
-									Interface.HudImage Middle = j == 0 ? Hud.CurrentHudElements[i].TopMiddle : j < n - 1 ? Hud.CurrentHudElements[i].CenterMiddle : Hud.CurrentHudElements[i].BottomMiddle;
-									Interface.HudImage Right = j == 0 ? Hud.CurrentHudElements[i].TopRight : j < n - 1 ? Hud.CurrentHudElements[i].CenterRight : Hud.CurrentHudElements[i].BottomRight;
+									Hud.HudImage Left = j == 0 ? Hud.CurrentHudElements[i].TopLeft : j < n - 1 ? Hud.CurrentHudElements[i].CenterLeft : Hud.CurrentHudElements[i].BottomLeft;
+									Hud.HudImage Middle = j == 0 ? Hud.CurrentHudElements[i].TopMiddle : j < n - 1 ? Hud.CurrentHudElements[i].CenterMiddle : Hud.CurrentHudElements[i].BottomMiddle;
+									Hud.HudImage Right = j == 0 ? Hud.CurrentHudElements[i].TopRight : j < n - 1 ? Hud.CurrentHudElements[i].CenterRight : Hud.CurrentHudElements[i].BottomRight;
 									/// left background
 									if (Left.BackgroundTexture != null) {
 										if (Textures.LoadTexture(Left.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -1553,7 +1553,7 @@ namespace OpenBve {
 									CreateBackColor(Hud.CurrentHudElements[i].OverlayColor, Game.ScoreMessages[j].Color, out or, out og, out ob, out oa);
 									double tx, ty;
 									bool preserve = false;
-									if ((Hud.CurrentHudElements[i].Transition & Interface.HudTransition.Move) != 0) {
+									if ((Hud.CurrentHudElements[i].Transition & Hud.HudTransition.Move) != 0) {
 										if (Game.SecondsSinceMidnight < Game.ScoreMessages[j].Timeout) {
 											if (Game.ScoreMessages[j].RendererAlpha == 0.0) {
 												Game.ScoreMessages[j].RendererPosition.X = x + Hud.CurrentHudElements[i].TransitionVector.X;
@@ -1563,7 +1563,7 @@ namespace OpenBve {
 											tx = x;
 											ty = y + m * (Hud.CurrentHudElements[i].Value2);
 											preserve = true;
-										} else if (Hud.CurrentHudElements[i].Transition == Interface.HudTransition.MoveAndFade) {
+										} else if (Hud.CurrentHudElements[i].Transition == Hud.HudTransition.MoveAndFade) {
 											tx = x;
 											ty = y + m * (Hud.CurrentHudElements[i].Value2);
 										} else {
@@ -1596,7 +1596,7 @@ namespace OpenBve {
 											Game.ScoreMessages[j].RendererPosition.Y += Math.Sign(ty - Game.ScoreMessages[j].RendererPosition.Y) * dy;
 										}
 									}
-									if ((Hud.CurrentHudElements[i].Transition & Interface.HudTransition.Fade) != 0) {
+									if ((Hud.CurrentHudElements[i].Transition & Hud.HudTransition.Fade) != 0) {
 										if (Game.SecondsSinceMidnight >= Game.ScoreMessages[j].Timeout) {
 											Game.ScoreMessages[j].RendererAlpha -= TimeElapsed;
 											if (Game.ScoreMessages[j].RendererAlpha < 0.0) Game.ScoreMessages[j].RendererAlpha = 0.0;
@@ -1615,9 +1615,9 @@ namespace OpenBve {
 									double py = Game.ScoreMessages[j].RendererPosition.Y;
 									float alpha = (float)(Game.ScoreMessages[j].RendererAlpha * Game.ScoreMessages[j].RendererAlpha);
 									/// graphics
-									Interface.HudImage Left = j == 0 ? Hud.CurrentHudElements[i].TopLeft : j < n - 1 ? Hud.CurrentHudElements[i].CenterLeft : Hud.CurrentHudElements[i].BottomLeft;
-									Interface.HudImage Middle = j == 0 ? Hud.CurrentHudElements[i].TopMiddle : j < n - 1 ? Hud.CurrentHudElements[i].CenterMiddle : Hud.CurrentHudElements[i].BottomMiddle;
-									Interface.HudImage Right = j == 0 ? Hud.CurrentHudElements[i].TopRight : j < n - 1 ? Hud.CurrentHudElements[i].CenterRight : Hud.CurrentHudElements[i].BottomRight;
+									Hud.HudImage Left = j == 0 ? Hud.CurrentHudElements[i].TopLeft : j < n - 1 ? Hud.CurrentHudElements[i].CenterLeft : Hud.CurrentHudElements[i].BottomLeft;
+									Hud.HudImage Middle = j == 0 ? Hud.CurrentHudElements[i].TopMiddle : j < n - 1 ? Hud.CurrentHudElements[i].CenterMiddle : Hud.CurrentHudElements[i].BottomMiddle;
+									Hud.HudImage Right = j == 0 ? Hud.CurrentHudElements[i].TopRight : j < n - 1 ? Hud.CurrentHudElements[i].CenterRight : Hud.CurrentHudElements[i].BottomRight;
 									/// left background
 									if (Left.BackgroundTexture != null) {
 										if (Textures.LoadTexture(Left.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -1782,9 +1782,9 @@ namespace OpenBve {
 										} else {
 											o = 0;
 										}
-										Interface.HudImage Left = o < 0 ? Hud.CurrentHudElements[i].TopLeft : o == 0 ? Hud.CurrentHudElements[i].CenterLeft : Hud.CurrentHudElements[i].BottomLeft;
-										Interface.HudImage Middle = o < 0 ? Hud.CurrentHudElements[i].TopMiddle : o == 0 ? Hud.CurrentHudElements[i].CenterMiddle : Hud.CurrentHudElements[i].BottomMiddle;
-										Interface.HudImage Right = o < 0 ? Hud.CurrentHudElements[i].TopRight : o == 0 ? Hud.CurrentHudElements[i].CenterRight : Hud.CurrentHudElements[i].BottomRight;
+										Hud.HudImage Left = o < 0 ? Hud.CurrentHudElements[i].TopLeft : o == 0 ? Hud.CurrentHudElements[i].CenterLeft : Hud.CurrentHudElements[i].BottomLeft;
+										Hud.HudImage Middle = o < 0 ? Hud.CurrentHudElements[i].TopMiddle : o == 0 ? Hud.CurrentHudElements[i].CenterMiddle : Hud.CurrentHudElements[i].BottomMiddle;
+										Hud.HudImage Right = o < 0 ? Hud.CurrentHudElements[i].TopRight : o == 0 ? Hud.CurrentHudElements[i].CenterRight : Hud.CurrentHudElements[i].BottomRight;
 										Game.MessageColor sc = Game.MessageColor.Gray;
 										if (TrainManager.PlayerTrain.Plugin.Panel.Length >= 272) {
 											switch (CurrentLampCollection.Lamps[j].Type) {
@@ -2031,7 +2031,7 @@ namespace OpenBve {
 									case "stopnone":
 										{
 											int s = TrainManager.PlayerTrain.Station;
-											if (s >= 0 && Game.PlayerStopsAtStation(s) && Options.Current.GameMode != Interface.GameMode.Expert) {
+											if (s >= 0 && Game.PlayerStopsAtStation(s) && Options.Current.CurrentGameMode != Options.GameMode.Expert) {
 												bool cond;
 												if (Command == "stopleft") {
 													cond = Game.Stations[s].OpenLeftDoors;
@@ -2058,7 +2058,7 @@ namespace OpenBve {
 									case "stopnonetick":
 										{
 											int s = TrainManager.PlayerTrain.Station;
-											if (s >= 0 && Game.PlayerStopsAtStation(s) && Options.Current.GameMode != Interface.GameMode.Expert) {
+											if (s >= 0 && Game.PlayerStopsAtStation(s) && Options.Current.CurrentGameMode != Options.GameMode.Expert) {
 												int c = Game.GetStopIndex(s, TrainManager.PlayerTrain.Cars.Length);
 												if (c >= 0) {
 													bool cond;
@@ -2148,7 +2148,7 @@ namespace OpenBve {
 											if (Hud.CurrentHudElements[i].TransitionState > 1.0) Hud.CurrentHudElements[i].TransitionState = 1.0;
 										} break;
 									case "score":
-										if (Options.Current.GameMode == Interface.GameMode.Arcade) {
+										if (Options.Current.CurrentGameMode == Options.GameMode.Arcade) {
 											t = Game.CurrentScore.Value.ToString(Culture) + " / " + Game.CurrentScore.Maximum.ToString(Culture);
 											if (Game.CurrentScore.Value < 0) {
 												sc = Game.MessageColor.Red;
@@ -2168,14 +2168,14 @@ namespace OpenBve {
 								}
 								// transitions
 								float alpha = 1.0f;
-								if ((Hud.CurrentHudElements[i].Transition & Interface.HudTransition.Move) != 0) {
+								if ((Hud.CurrentHudElements[i].Transition & Hud.HudTransition.Move) != 0) {
 									double s = Hud.CurrentHudElements[i].TransitionState;
 									x += Hud.CurrentHudElements[i].TransitionVector.X * s * s;
 									y += Hud.CurrentHudElements[i].TransitionVector.Y * s * s;
 								}
-								if ((Hud.CurrentHudElements[i].Transition & Interface.HudTransition.Fade) != 0) {
+								if ((Hud.CurrentHudElements[i].Transition & Hud.HudTransition.Fade) != 0) {
 									alpha = (float)(1.0 - Hud.CurrentHudElements[i].TransitionState);
-								} else if (Hud.CurrentHudElements[i].Transition == Interface.HudTransition.None) {
+								} else if (Hud.CurrentHudElements[i].Transition == Hud.HudTransition.None) {
 									alpha = (float)(1.0 - Hud.CurrentHudElements[i].TransitionState);
 								}
 								/// render
@@ -2216,7 +2216,7 @@ namespace OpenBve {
 					}
 				}
 				// marker
-				if (Options.Current.GameMode != Interface.GameMode.Expert) {
+				if (Options.Current.CurrentGameMode != Options.GameMode.Expert) {
 					double y = 8.0;
 					for (int i = 0; i < Game.MarkerTextures.Length; i++) {
 						if (Textures.LoadTexture(Game.MarkerTextures[i], Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -2398,7 +2398,7 @@ namespace OpenBve {
 				}
 			}
 			// air brake debug output
-			if (Options.Current.GameMode != Interface.GameMode.Expert & OptionBrakeSystems) {
+			if (Options.Current.CurrentGameMode != Options.GameMode.Expert & OptionBrakeSystems) {
 				double oy = 64.0, y = oy, h = 16.0;
 				bool[] heading = new bool[6];
 				for (int i = 0; i < TrainManager.PlayerTrain.Cars.Length; i++) {

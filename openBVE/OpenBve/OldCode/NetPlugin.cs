@@ -78,10 +78,10 @@ namespace OpenBve {
 				UpdateReverser();
 				return true;
 			} else if (properties.FailureReason != null) {
-				Interface.AddMessage(Interface.MessageType.Error, false, "The train plugin " + base.PluginTitle + " failed to load for the following reason: " + properties.FailureReason);
+				Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + base.PluginTitle + " failed to load for the following reason: " + properties.FailureReason);
 				return false;
 			} else {
-				Interface.AddMessage(Interface.MessageType.Error, false, "The train plugin " + base.PluginTitle + " failed to load for an unspecified reason.");
+				Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + base.PluginTitle + " failed to load for an unspecified reason.");
 				return false;
 			}
 		}

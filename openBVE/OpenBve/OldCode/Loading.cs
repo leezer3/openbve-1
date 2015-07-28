@@ -71,12 +71,12 @@ namespace OpenBve {
 				for (int i = 0; i < TrainManager.Trains.Length; i++) {
 					if (TrainManager.Trains[i] != null && TrainManager.Trains[i].Plugin != null) {
 						if (TrainManager.Trains[i].Plugin.LastException != null) {
-							Interface.AddMessage(Interface.MessageType.Critical, false, "The train plugin " + TrainManager.Trains[i].Plugin.PluginTitle + " caused a critical error in the route and train loader: " + TrainManager.Trains[i].Plugin.LastException.Message);
+							Debug.AddMessage(Debug.MessageType.Critical, false, "The train plugin " + TrainManager.Trains[i].Plugin.PluginTitle + " caused a critical error in the route and train loader: " + TrainManager.Trains[i].Plugin.LastException.Message);
 							return;
 						}
 					}
 				}
-				Interface.AddMessage(Interface.MessageType.Critical, false, "The route and train loader encountered the following critical error: " + ex.Message);
+				Debug.AddMessage(Debug.MessageType.Critical, false, "The route and train loader encountered the following critical error: " + ex.Message);
 			}
 			#endif
 			Complete = true;
@@ -84,7 +84,7 @@ namespace OpenBve {
 		private static void LoadEverythingThreaded() {
 			string RailwayFolder = GetRailwayFolder(CurrentRouteFile);
 //			if (RailwayFolder == null) {
-//				Interface.AddMessage(Interface.MessageType.Critical, false, "The Railway folder could not be found. Please check your folder structure.");
+//				Debug.AddMessage(Debug.MessageType.Critical, false, "The Railway folder could not be found. Please check your folder structure.");
 //				return;
 //			}
 			string ObjectFolder = OpenBveApi.Path.CombineDirectory(RailwayFolder, "Object");

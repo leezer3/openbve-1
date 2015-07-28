@@ -96,14 +96,14 @@ namespace OpenBve
 			this.Toppling = true;
 			this.Collisions = true;
 			this.Derailments = true;
-			this.GameMode = GameMode.Normal;
+			this.CurrentGameMode = GameMode.Normal;
 			this.BlackBox = false;
 			this.UseJoysticks = true;
 			this.JoystickAxisThreshold = 0.0;
 			this.KeyRepeatDelay = 0.5;
 			this.KeyRepeatInterval = 0.1;
 			this.SoundModel = Sounds.SoundModels.Inverse;
-			this.SoundRange = SoundRange.Low;
+			this.SoundRange = Sounds.SoundRange.Low;
 			this.SoundNumber = 16;
 			this.ShowWarningMessages = true;
 			this.ShowErrorMessages = true;
@@ -321,10 +321,10 @@ namespace OpenBve
 										break;
 									case "mode":
 										switch (Value.ToLowerInvariant()) {
-											case "arcade": Current.GameMode = GameMode.Arcade; break;
-											case "normal": Current.GameMode = GameMode.Normal; break;
-											case "expert": Current.GameMode = GameMode.Expert; break;
-											default: Current.GameMode = GameMode.Normal; break;
+												case "arcade": Current.CurrentGameMode = GameMode.Arcade; break;
+												case "normal": Current.CurrentGameMode = GameMode.Normal; break;
+												case "expert": Current.CurrentGameMode = GameMode.Expert; break;
+												default: Current.CurrentGameMode = GameMode.Normal; break;
 										} break;
 								} break;
 							case "controls":
@@ -363,10 +363,10 @@ namespace OpenBve
 										break;
 									case "range":
 										switch (Value.ToLowerInvariant()) {
-											case "low": Current.SoundRange = SoundRange.Low; break;
-											case "medium": Current.SoundRange = SoundRange.Medium; break;
-											case "high": Current.SoundRange = SoundRange.High; break;
-											default: Current.SoundRange = SoundRange.Low; break;
+												case "low": Current.SoundRange = Sounds.SoundRange.Low; break;
+												case "medium": Current.SoundRange = Sounds.SoundRange.Medium; break;
+												case "high": Current.SoundRange = Sounds.SoundRange.High; break;
+												default: Current.SoundRange = Sounds.SoundRange.Low; break;
 										}
 										break;
 									case "number":
@@ -528,7 +528,7 @@ namespace OpenBve
 		Builder.AppendLine("derailments = " + (Current.Derailments ? "true" : "false"));
 		Builder.AppendLine("blackbox = " + (Current.BlackBox ? "true" : "false"));
 		Builder.Append("mode = ");
-		switch (Current.GameMode) {
+		switch (Current.CurrentGameMode) {
 			case GameMode.Arcade: Builder.AppendLine("arcade"); break;
 			case GameMode.Normal: Builder.AppendLine("normal"); break;
 			case GameMode.Expert: Builder.AppendLine("expert"); break;
@@ -553,9 +553,9 @@ namespace OpenBve
 		}
 		Builder.Append("range = ");
 		switch (Current.SoundRange) {
-			case SoundRange.Low: Builder.AppendLine("low"); break;
-			case SoundRange.Medium: Builder.AppendLine("medium"); break;
-			case SoundRange.High: Builder.AppendLine("high"); break;
+				case Sounds.SoundRange.Low: Builder.AppendLine("low"); break;
+				case Sounds.SoundRange.Medium: Builder.AppendLine("medium"); break;
+				case Sounds.SoundRange.High: Builder.AppendLine("high"); break;
 			default: Builder.AppendLine("low"); break;
 		}
 		Builder.AppendLine("number = " + Current.SoundNumber.ToString(Culture));

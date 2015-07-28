@@ -289,7 +289,7 @@ namespace OpenBveApi {
 		/// <remarks>Invalid characters are stored in <see cref="InvalidPathChars"/>.</remarks>
 		/// <returns><c>true</c>, if invalid path is invalid, <c>false</c> otherwise.</returns>
 		/// <param name="Expression">The path to check.</param>
-		internal static bool ContainsInvalidPathChars(string Expression) {
+		public static bool ContainsInvalidPathChars(string Expression) {
 			for (int i = 0; i < Expression.Length; i++) {
 				for (int j = 0; j < InvalidPathChars.Length; j++) {
 					if (Expression[i] == InvalidPathChars[j])

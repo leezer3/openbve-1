@@ -1167,14 +1167,14 @@ namespace OpenBve {
 			} else if (Train.State == TrainState.Available) {
 				// available train
 				UpdateTrainPhysicsAndControls(Train, TimeElapsed);
-				if (Options.Current.GameMode == Interface.GameMode.Arcade) {
+				if (Options.Current.CurrentGameMode == Options.GameMode.Arcade) {
 					if (Train.Specs.CurrentAverageSpeed > Train.CurrentRouteLimit) {
-						Game.AddMessage(Strings.GetInterfaceString("message_route_overspeed"), Game.MessageDependency.RouteLimit, Interface.GameMode.Arcade, Game.MessageColor.Orange, double.PositiveInfinity);
+						Game.AddMessage(Strings.GetInterfaceString("message_route_overspeed"), Game.MessageDependency.RouteLimit, Options.GameMode.Arcade, Game.MessageColor.Orange, double.PositiveInfinity);
 					}
 					if (Train.CurrentSectionLimit == 0.0) {
-						Game.AddMessage(Strings.GetInterfaceString("message_signal_stop"), Game.MessageDependency.SectionLimit, Interface.GameMode.Normal, Game.MessageColor.Red, double.PositiveInfinity);
+						Game.AddMessage(Strings.GetInterfaceString("message_signal_stop"), Game.MessageDependency.SectionLimit, Options.GameMode.Normal, Game.MessageColor.Red, double.PositiveInfinity);
 					} else if (Train.Specs.CurrentAverageSpeed > Train.CurrentSectionLimit) {
-						Game.AddMessage(Strings.GetInterfaceString("message_signal_overspeed"), Game.MessageDependency.SectionLimit, Interface.GameMode.Normal, Game.MessageColor.Orange, double.PositiveInfinity);
+						Game.AddMessage(Strings.GetInterfaceString("message_signal_overspeed"), Game.MessageDependency.SectionLimit, Options.GameMode.Normal, Game.MessageColor.Orange, double.PositiveInfinity);
 					}
 				}
 				if (Train.AI != null) {
@@ -1548,10 +1548,10 @@ namespace OpenBve {
 									s = s.Replace("[name]", Game.Stations[i].Name);
 									s = s.Replace("[time]", b);
 									s = s.Replace("[difference]", c);
-									Game.AddMessage(s, Game.MessageDependency.None, Interface.GameMode.Normal, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 10.0);
+									Game.AddMessage(s, Game.MessageDependency.None, Options.GameMode.Normal, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 10.0);
 									if (Game.Stations[i].StationType == Game.StationType.Normal) {
 										s = Strings.GetInterfaceString("message_station_deadline");
-										Game.AddMessage(s, Game.MessageDependency.Station, Interface.GameMode.Normal, Game.MessageColor.Blue, double.PositiveInfinity);
+										Game.AddMessage(s, Game.MessageDependency.Station, Options.GameMode.Normal, Game.MessageColor.Blue, double.PositiveInfinity);
 									}
 									Timetable.UpdateCustomTimetable(Game.Stations[i].TimetableDaytimeTexture, Game.Stations[i].TimetableNighttimeTexture);
 								}
@@ -1588,7 +1588,7 @@ namespace OpenBve {
 										Sounds.PlaySound(buffer, 1.0, 1.0, pos, Train, Train.DriverCar, false);
 									}
 									if (Train == TrainManager.PlayerTrain) {
-										Game.AddMessage(Strings.GetInterfaceString("message_station_correct"), Game.MessageDependency.None, Interface.GameMode.Normal, Game.MessageColor.Orange, Game.SecondsSinceMidnight + 5.0);
+										Game.AddMessage(Strings.GetInterfaceString("message_station_correct"), Game.MessageDependency.None, Options.GameMode.Normal, Game.MessageColor.Orange, Game.SecondsSinceMidnight + 5.0);
 									}
 									Train.StationAdjust = true;
 								}
@@ -1643,12 +1643,12 @@ namespace OpenBve {
 							Train.StationState = TrainStopState.Completed;
 							if (Train == PlayerTrain & Game.Stations[i].StationType == Game.StationType.Normal) {
 								if (!Game.Stations[i].OpenLeftDoors & !Game.Stations[i].OpenRightDoors | Train.Specs.DoorCloseMode != DoorMode.Manual) {
-									Game.AddMessage(Strings.GetInterfaceString("message_station_depart"), Game.MessageDependency.None, Interface.GameMode.Normal, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
+									Game.AddMessage(Strings.GetInterfaceString("message_station_depart"), Game.MessageDependency.None, Options.GameMode.Normal, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 								} else {
-									Game.AddMessage(Strings.GetInterfaceString("message_station_depart_closedoors"), Game.MessageDependency.None, Interface.GameMode.Normal, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
+									Game.AddMessage(Strings.GetInterfaceString("message_station_depart_closedoors"), Game.MessageDependency.None, Options.GameMode.Normal, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 								}
 							} else if (Game.Stations[i].StationType == Game.StationType.ChangeEnds) {
-								//Game.AddMessage("CHANGE ENDS", Game.MessageDependency.None, Interface.GameMode.Expert, Game.MessageColor.Magenta, Game.SecondsSinceMidnight + 5.0);
+								//Game.AddMessage("CHANGE ENDS", Game.MessageDependency.None, Options.GameMode.Expert, Game.MessageColor.Magenta, Game.SecondsSinceMidnight + 5.0);
 								JumpTrain(Train, i + 1);
 							}
 						}
@@ -1665,7 +1665,7 @@ namespace OpenBve {
 					} else {
 						Train.StationState = TrainStopState.Completed;
 						if (Train == PlayerTrain & Game.Stations[i].StationType == Game.StationType.Normal) {
-							Game.AddMessage(Strings.GetInterfaceString("message_station_depart"), Game.MessageDependency.None, Interface.GameMode.Normal, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
+							Game.AddMessage(Strings.GetInterfaceString("message_station_depart"), Game.MessageDependency.None, Options.GameMode.Normal, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 						}
 					}
 					// departure sound
@@ -3581,7 +3581,7 @@ namespace OpenBve {
 						string s = Strings.GetInterfaceString("message_signal_proceed");
 						double a = 3.6 * Train.CurrentSectionLimit;
 						s = s.Replace("[speed]", a.ToString("0", System.Globalization.CultureInfo.InvariantCulture));
-						Game.AddMessage(s, Game.MessageDependency.None, Interface.GameMode.Normal, Game.MessageColor.Red, Game.SecondsSinceMidnight + 5.0);
+						Game.AddMessage(s, Game.MessageDependency.None, Options.GameMode.Normal, Game.MessageColor.Red, Game.SecondsSinceMidnight + 5.0);
 					}
 				}
 			}

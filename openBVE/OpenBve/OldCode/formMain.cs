@@ -89,7 +89,7 @@ namespace OpenBve {
 				radiobuttonGetAddOns.TextAlign = ContentAlignment.MiddleCenter;
 			}
 			// options
-			Interface.LoadLogs();
+			BlackBox.LoadLogs();
 			ListLanguages();
 			{
 				int Tab = 0;
@@ -216,7 +216,7 @@ namespace OpenBve {
 			// modes
 			comboboxMode.Items.Clear();
 			comboboxMode.Items.AddRange(new string[] { "", "", "" });
-			comboboxMode.SelectedIndex = Options.Current.GameMode == Interface.GameMode.Arcade ? 0 : Options.Current.GameMode == Interface.GameMode.Expert ? 2 : 1;
+			comboboxMode.SelectedIndex = Options.Current.CurrentGameMode == Options.GameMode.Arcade ? 0 : Options.Current.CurrentGameMode == Options.GameMode.Expert ? 2 : 1;
 			// review last game
 			{
 				if (Game.LogRouteName.Length == 0 | Game.LogTrainName.Length == 0) {
@@ -225,16 +225,16 @@ namespace OpenBve {
 					double ratio = Game.CurrentScore.Maximum == 0 ? 0.0 : (double)Game.CurrentScore.Value / (double)Game.CurrentScore.Maximum;
 					if (ratio < 0.0) ratio = 0.0;
 					if (ratio > 1.0) ratio = 1.0;
-					int index = (int)Math.Floor(ratio * (double)Interface.RatingsCount);
-					if (index >= Interface.RatingsCount) index = Interface.RatingsCount - 1;
+					int index = (int)Math.Floor(ratio * (double)BlackBox.RatingsCount);
+					if (index >= BlackBox.RatingsCount) index = BlackBox.RatingsCount - 1;
 					labelReviewRouteValue.Text = Game.LogRouteName;
 					labelReviewTrainValue.Text = Game.LogTrainName;
 					labelReviewDateValue.Text = Game.LogDateTime.ToString("yyyy-MM-dd", Culture);
 					labelReviewTimeValue.Text = Game.LogDateTime.ToString("HH:mm:ss", Culture);
-					switch (Options.Current.GameMode) {
-							case Interface.GameMode.Arcade: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_arcade"); break;
-							case Interface.GameMode.Normal: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_normal"); break;
-							case Interface.GameMode.Expert: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_expert"); break;
+					switch (Options.Current.CurrentGameMode) {
+							case Options.GameMode.Arcade: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_arcade"); break;
+							case Options.GameMode.Normal: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_normal"); break;
+							case Options.GameMode.Expert: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_expert"); break;
 							default: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_unkown"); break;
 					}
 					if (Game.CurrentScore.Maximum == 0) {
@@ -346,7 +346,7 @@ namespace OpenBve {
 					try {
 						#endif
 						string File = OpenBveApi.Path.CombineFile(Folder, "en-US.cfg");
-						Interface.LoadLanguage(File);
+						Strings.LoadLanguage(File);
 						ApplyLanguage();
 						#if !DEBUG
 					} catch (Exception ex) {
@@ -511,18 +511,18 @@ namespace OpenBve {
 			labelScore.Text = " " + Strings.GetInterfaceString("review_score");
 			groupboxRating.Text = Strings.GetInterfaceString("review_score_rating");
 			labelRatingModeCaption.Text = Strings.GetInterfaceString("review_score_rating_mode");
-			switch (Options.Current.GameMode) {
-					case Interface.GameMode.Arcade: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_arcade"); break;
-					case Interface.GameMode.Normal: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_normal"); break;
-					case Interface.GameMode.Expert: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_expert"); break;
+			switch (Options.Current.CurrentGameMode) {
+					case Options.GameMode.Arcade: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_arcade"); break;
+					case Options.GameMode.Normal: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_normal"); break;
+					case Options.GameMode.Expert: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_expert"); break;
 					default: labelRatingModeValue.Text = Strings.GetInterfaceString("mode_unkown"); break;
 			}
 			{
 					double ratio = Game.CurrentScore.Maximum == 0 ? 0.0 : (double)Game.CurrentScore.Value / (double)Game.CurrentScore.Maximum;
 					if (ratio < 0.0) ratio = 0.0;
 					if (ratio > 1.0) ratio = 1.0;
-					int index = (int)Math.Floor(ratio * (double)Interface.RatingsCount);
-					if (index >= Interface.RatingsCount) index = Interface.RatingsCount - 1;
+					int index = (int)Math.Floor(ratio * (double)BlackBox.RatingsCount);
+					if (index >= BlackBox.RatingsCount) index = BlackBox.RatingsCount - 1;
 					if (Game.CurrentScore.Maximum == 0) {
 						labelRatingDescription.Text = Strings.GetInterfaceString("rating_unkown");
 					} else {
@@ -576,15 +576,15 @@ namespace OpenBve {
 			{
 				listviewControls.Items.Clear();
 				comboboxCommand.Items.Clear();
-				for (int i = 0; i < Interface.CommandInfos.Length; i++) {
-					comboboxCommand.Items.Add(Interface.CommandInfos[i].Name + " - " + Interface.CommandInfos[i].Description);
+				for (int i = 0; i < OpenBve.Controls.CommandInfos.Length; i++) {
+					comboboxCommand.Items.Add(OpenBve.Controls.CommandInfos[i].Name + " - " + OpenBve.Controls.CommandInfos[i].Description);
 				}
 				comboboxKeyboardKey.Items.Clear();
-				for (int i = 0; i < Interface.Keys.Length; i++) {
-					comboboxKeyboardKey.Items.Add(Interface.Keys[i].Description);
+				for (int i = 0; i < OpenBve.Controls.Keys.Length; i++) {
+					comboboxKeyboardKey.Items.Add(OpenBve.Controls.Keys[i].Description);
 				}
-				ListViewItem[] Items = new ListViewItem[Interface.CurrentControls.Length];
-				for (int i = 0; i < Interface.CurrentControls.Length; i++) {
+				ListViewItem[] Items = new ListViewItem[OpenBve.Controls.CurrentControls.Length];
+				for (int i = 0; i < OpenBve.Controls.CurrentControls.Length; i++) {
 					Items[i] = new ListViewItem(new string[] { "", "", "", "" });
 					UpdateControlListElement(Items[i], i, false);
 				}
@@ -608,16 +608,16 @@ namespace OpenBve {
 			Options.Current.FullscreenWidth = (int)Math.Round(updownFullscreenWidth.Value);
 			Options.Current.FullscreenHeight = (int)Math.Round(updownFullscreenHeight.Value);
 			Options.Current.FullscreenBits = comboboxFullscreenBits.SelectedIndex == 0 ? 16 : 32;
-			Options.Current.Interpolation = (Interface.InterpolationMode)comboboxInterpolation.SelectedIndex;
+			Options.Current.Interpolation = (Options.InterpolationMode)comboboxInterpolation.SelectedIndex;
 			Options.Current.AnisotropicFilteringLevel = (int)Math.Round(updownAnisotropic.Value);
 			Options.Current.AntiAliasingLevel = (int)Math.Round(updownAntiAliasing.Value);
 			Options.Current.TransparencyMode = (Renderer.TransparencyMode)trackbarTransparency.Value;
 			Options.Current.ViewingDistance = (int)Math.Round(updownDistance.Value);
-			Options.Current.MotionBlur = (Interface.MotionBlurMode)comboboxMotionBlur.SelectedIndex;
+			Options.Current.MotionBlur = (Options.MotionBlurMode)comboboxMotionBlur.SelectedIndex;
 			Options.Current.Toppling = checkboxToppling.Checked;
 			Options.Current.Collisions = checkboxCollisions.Checked;
 			Options.Current.Derailments = checkboxDerailments.Checked;
-			Options.Current.GameMode = (Interface.GameMode)comboboxMode.SelectedIndex;
+			Options.Current.CurrentGameMode = (Options.GameMode)comboboxMode.SelectedIndex;
 			Options.Current.BlackBox = checkboxBlackBox.Checked;
 			Options.Current.UseJoysticks = checkboxJoysticksUsed.Checked;
 			Options.Current.JoystickAxisThreshold = ((double)trackbarJoystickAxisThreshold.Value - (double)trackbarJoystickAxisThreshold.Minimum) / (double)(trackbarJoystickAxisThreshold.Maximum - trackbarJoystickAxisThreshold.Minimum);
@@ -695,27 +695,27 @@ namespace OpenBve {
 			// remove non-existing route encoding mappings
 			{
 				int n = 0;
-				Interface.EncodingValue[] a = new Interface.EncodingValue[Options.Current.RouteEncodings.Length];
+				Options.EncodingValue[] a = new Options.EncodingValue[Options.Current.RouteEncodings.Length];
 				for (int i = 0; i < Options.Current.RouteEncodings.Length; i++) {
 					if (System.IO.File.Exists(Options.Current.RouteEncodings[i].Value)) {
 						a[n] = Options.Current.RouteEncodings[i];
 						n++;
 					}
 				}
-				Array.Resize<Interface.EncodingValue>(ref a, n);
+				Array.Resize<Options.EncodingValue>(ref a, n);
 				Options.Current.RouteEncodings = a;
 			}
 			// remove non-existing train encoding mappings
 			{
 				int n = 0;
-				Interface.EncodingValue[] a = new Interface.EncodingValue[Options.Current.TrainEncodings.Length];
+				Options.EncodingValue[] a = new Options.EncodingValue[Options.Current.TrainEncodings.Length];
 				for (int i = 0; i < Options.Current.TrainEncodings.Length; i++) {
 					if (System.IO.Directory.Exists(Options.Current.TrainEncodings[i].Value)) {
 						a[n] = Options.Current.TrainEncodings[i];
 						n++;
 					}
 				}
-				Array.Resize<Interface.EncodingValue>(ref a, n);
+				Array.Resize<Options.EncodingValue>(ref a, n);
 				Options.Current.TrainEncodings = a;
 			}
 			// clear cache
@@ -725,7 +725,7 @@ namespace OpenBve {
 			#if !DEBUG
 			try {
 				#endif
-				Interface.SaveOptions();
+				Options.SaveOptions();
 				#if !DEBUG
 			} catch (Exception ex) {
 				MessageBox.Show(ex.Message, "Save options", MessageBoxButtons.OK, MessageBoxIcon.Hand);
@@ -734,7 +734,7 @@ namespace OpenBve {
 			#if !DEBUG
 			try {
 				#endif
-				Interface.SaveControls(null);
+				OpenBve.Controls.SaveControls(null);
 				#if !DEBUG
 			} catch (Exception ex) {
 				MessageBox.Show(ex.Message, "Save controls", MessageBoxButtons.OK, MessageBoxIcon.Hand);
@@ -1085,19 +1085,19 @@ namespace OpenBve {
 					for (int i = 0; i < axes; i++) {
 						double a = state.GetAxis((JoystickAxis)Enum.Parse(typeof(JoystickAxis), "Axis" + i));
 						if (a < -0.75) {
-							Interface.CurrentControls[j].Device = k;
-							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Axis;
-							Interface.CurrentControls[j].Element = i;
-							Interface.CurrentControls[j].Direction = -1;
+							OpenBve.Controls.CurrentControls[j].Device = k;
+							OpenBve.Controls.CurrentControls[j].Component = OpenBve.Controls.JoystickComponent.Axis;
+							OpenBve.Controls.CurrentControls[j].Element = i;
+							OpenBve.Controls.CurrentControls[j].Direction = -1;
 							radiobuttonJoystick.Focus();
 							UpdateJoystickDetails();
 							UpdateControlListElement(listviewControls.Items[j], j, true);
 							return;
 						} else if (a > 0.75) {
-							Interface.CurrentControls[j].Device = k;
-							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Axis;
-							Interface.CurrentControls[j].Element = i;
-							Interface.CurrentControls[j].Direction = 1;
+							OpenBve.Controls.CurrentControls[j].Device = k;
+							OpenBve.Controls.CurrentControls[j].Component = OpenBve.Controls.JoystickComponent.Axis;
+							OpenBve.Controls.CurrentControls[j].Element = i;
+							OpenBve.Controls.CurrentControls[j].Direction = 1;
 							radiobuttonJoystick.Focus();
 							UpdateJoystickDetails();
 							UpdateControlListElement(listviewControls.Items[j], j, true);
@@ -1110,10 +1110,10 @@ namespace OpenBve {
 							(JoystickButton)Enum.Parse(
 							typeof(JoystickButton), "Button" + i)) == OpenTK.Input.ButtonState.Pressed;
 						if (press) {
-							Interface.CurrentControls[j].Device = k;
-							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Button;
-							Interface.CurrentControls[j].Element = i;
-							Interface.CurrentControls[j].Direction = 1;
+							OpenBve.Controls.CurrentControls[j].Device = k;
+							OpenBve.Controls.CurrentControls[j].Component = OpenBve.Controls.JoystickComponent.Button;
+							OpenBve.Controls.CurrentControls[j].Element = i;
+							OpenBve.Controls.CurrentControls[j].Direction = 1;
 							radiobuttonJoystick.Focus();
 							UpdateJoystickDetails();
 							UpdateControlListElement(listviewControls.Items[j], j, true);
@@ -1124,10 +1124,10 @@ namespace OpenBve {
 					for (int i = 0; i < hats; i++) {
 					var hat = state.GetHat((JoystickHat)Enum.Parse(typeof(JoystickHat),"Hat"+i));
 						if (hat.Position != HatPosition.Centered) {
-							Interface.CurrentControls[j].Device = k;
-							Interface.CurrentControls[j].Component = Interface.JoystickComponent.Hat;
-							Interface.CurrentControls[j].Element = i;
-							Interface.CurrentControls[j].Direction = (object)hat;
+							OpenBve.Controls.CurrentControls[j].Device = k;
+							OpenBve.Controls.CurrentControls[j].Component = OpenBve.Controls.JoystickComponent.Hat;
+							OpenBve.Controls.CurrentControls[j].Element = i;
+							OpenBve.Controls.CurrentControls[j].Direction = (object)hat;
 							radiobuttonJoystick.Focus();
 							UpdateJoystickDetails();
 							UpdateControlListElement(listviewControls.Items[j], j, true);

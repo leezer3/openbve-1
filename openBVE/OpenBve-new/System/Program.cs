@@ -52,13 +52,13 @@ namespace OpenBve {
 			SetPackageLookupDirectories();
 			// --- load options and controls ---
 			Interface.LoadOptions();
-			Interface.LoadControls(null, out Interface.CurrentControls);
+			Interface.LoadControls(null, out OpenBve.Controls.CurrentControls);
 			{
 				string folder = Program.FileSystem.GetDataFolder("Controls");
 				string file = OpenBveApi.Path.CombineFile(folder, "Default keyboard assignment.controls");
 				Interface.Control[] controls;
 				Interface.LoadControls(file, out controls);
-				Interface.AddControls(ref Interface.CurrentControls, controls);
+				Interface.AddControls(ref OpenBve.Controls.CurrentControls, controls);
 			}
 			// --- load language ---
 			{

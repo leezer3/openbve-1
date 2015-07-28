@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenBve;
 
 namespace OpenBve {
 	internal static partial class Sounds {

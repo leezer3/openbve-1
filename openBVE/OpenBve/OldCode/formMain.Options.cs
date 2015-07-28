@@ -20,7 +20,7 @@ namespace OpenBve {
 				#if !DEBUG
 				try {
 					#endif
-					Interface.LoadLanguage(LanguageFiles[i]);
+					Strings.LoadLanguage(LanguageFiles[i]);
 					#if !DEBUG
 				} catch (Exception ex) {
 					MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
@@ -52,10 +52,10 @@ namespace OpenBve {
 		// interpolation
 		private void comboboxInterpolation_SelectedIndexChanged(object sender, EventArgs e) {
 			int i = comboboxInterpolation.SelectedIndex;
-			bool q = i == (int)Interface.InterpolationMode.AnisotropicFiltering;
+			bool q = i == (int)Options.InterpolationMode.AnisotropicFiltering;
 			labelAnisotropic.Enabled = q;
 			updownAnisotropic.Enabled = q;
-			q = i != (int)Interface.InterpolationMode.NearestNeighbor & i != (int)Interface.InterpolationMode.Bilinear;
+			q = i != (int)Options.InterpolationMode.NearestNeighbor & i != (int)Options.InterpolationMode.Bilinear;
 		}
 
 		

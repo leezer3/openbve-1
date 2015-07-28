@@ -726,7 +726,7 @@ namespace OpenBve {
 														TrainManager.JumpTrain(TrainManager.PlayerTrain, b.Data);
 														break;
 													case Game.MenuTag.ExitToMainMenu:
-														Program.RestartArguments = Options.Current.GameMode == Options.GameMode.Arcade ? "/review" : "";
+														Program.RestartArguments = Options.Current.CurrentGameMode == Options.GameMode.Arcade ? "/review" : "";
 														Quit = true;
 														break;
 													case Game.MenuTag.Quit:
@@ -1591,7 +1591,7 @@ namespace OpenBve {
 										break;
 									case Controls.Command.MiscAI:
 										// option: AI
-										if (Options.Current.GameMode == Options.GameMode.Expert) {
+										if (Options.Current.CurrentGameMode == Options.GameMode.Expert) {
 											Game.AddMessage(Strings.GetInterfaceString("notification_notavailableexpert"), Game.MessageDependency.None, Options.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 										} else {
 											if (TrainManager.PlayerTrain.AI == null) {
@@ -1607,7 +1607,7 @@ namespace OpenBve {
 										// option: debug
 										switch (Renderer.CurrentOutputMode) {
 											case Renderer.OutputMode.Default:
-												Renderer.CurrentOutputMode = Options.Current.GameMode == Options.GameMode.Expert ? Renderer.OutputMode.None : Renderer.OutputMode.Debug;
+												Renderer.CurrentOutputMode = Options.Current.CurrentGameMode == Options.GameMode.Expert ? Renderer.OutputMode.None : Renderer.OutputMode.Debug;
 												break;
 											case Renderer.OutputMode.Debug:
 												Renderer.CurrentOutputMode = Renderer.OutputMode.None;
@@ -1629,7 +1629,7 @@ namespace OpenBve {
 										break;
 									case Controls.Command.DebugBrakeSystems:
 										// option: brake systems
-										if (Options.Current.GameMode == Options.GameMode.Expert) {
+										if (Options.Current.CurrentGameMode == Options.GameMode.Expert) {
 											Game.AddMessage(Strings.GetInterfaceString("notification_notavailableexpert"), Game.MessageDependency.None, Options.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 										} else {
 											Renderer.OptionBrakeSystems = !Renderer.OptionBrakeSystems;

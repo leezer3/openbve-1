@@ -19,19 +19,19 @@ namespace OpenBve {
 				{
 					this.Tag = new object();
 					{ // command
-						int j; for (j = 0; j < Interface.CommandInfos.Length; j++) {
-							if (Interface.CommandInfos[j].Command == Interface.CurrentControls[i].Command) {
+						int j; for (j = 0; j < OpenBve.Controls.CommandInfos.Length; j++) {
+							if (OpenBve.Controls.CommandInfos[j].Command == OpenBve.Controls.CurrentControls[i].Command) {
 								comboboxCommand.SelectedIndex = j;
 								break;
 							}
-						} if (j == Interface.CommandInfos.Length) {
+						} if (j == OpenBve.Controls.CommandInfos.Length) {
 							comboboxCommand.SelectedIndex = -1;
 						}
 					}
 					// data
-					if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Keyboard) {
+					if (OpenBve.Controls.CurrentControls[i].Method == OpenBve.Controls.ControlMethod.Keyboard) {
 						radiobuttonKeyboard.Checked = true;
-					} else if (Interface.CurrentControls[i].Method == Interface.ControlMethod.Joystick) {
+					} else if (OpenBve.Controls.CurrentControls[i].Method == OpenBve.Controls.ControlMethod.Joystick) {
 						radiobuttonJoystick.Checked = true;
 					} else {
 						radiobuttonKeyboard.Checked = false;
@@ -39,17 +39,17 @@ namespace OpenBve {
 					}
 					panelKeyboard.Enabled = radiobuttonKeyboard.Checked;
 					if (radiobuttonKeyboard.Checked) {
-						int j; for (j = 0; j < Interface.Keys.Length; j++) {
-							if (Interface.Keys[j].Value == (Key)Interface.CurrentControls[i].Element) {
+						int j; for (j = 0; j < OpenBve.Controls.Keys.Length; j++) {
+							if (OpenBve.Controls.Keys[j].Value == (Key)OpenBve.Controls.CurrentControls[i].Element) {
 								comboboxKeyboardKey.SelectedIndex = j;
 								break;
 							}
-						} if (j == Interface.Keys.Length) {
+						} if (j == OpenBve.Controls.Keys.Length) {
 							comboboxKeyboardKey.SelectedIndex = -1;
 						}
-						checkboxKeyboardShift.Checked = (Interface.CurrentControls[i].Modifier & Interface.KeyboardModifier.Shift) != 0;
-						checkboxKeyboardCtrl.Checked = (Interface.CurrentControls[i].Modifier & Interface.KeyboardModifier.Ctrl) != 0;
-						checkboxKeyboardAlt.Checked = (Interface.CurrentControls[i].Modifier & Interface.KeyboardModifier.Alt) != 0;
+						checkboxKeyboardShift.Checked = (OpenBve.Controls.CurrentControls[i].Modifier & OpenBve.Controls.KeyboardModifier.Shift) != 0;
+						checkboxKeyboardCtrl.Checked = (OpenBve.Controls.CurrentControls[i].Modifier & OpenBve.Controls.KeyboardModifier.Ctrl) != 0;
+						checkboxKeyboardAlt.Checked = (OpenBve.Controls.CurrentControls[i].Modifier & OpenBve.Controls.KeyboardModifier.Alt) != 0;
 					} else if (radiobuttonJoystick.Checked) {
 						labelJoystickAssignmentValue.Text = GetControlDetails(i);
 					} else {
@@ -64,7 +64,7 @@ namespace OpenBve {
 				}
 				buttonControlRemove.Enabled = true;
 				buttonControlUp.Enabled = i > 0;
-				buttonControlDown.Enabled = i < Interface.CurrentControls.Length - 1;
+				buttonControlDown.Enabled = i < OpenBve.Controls.CurrentControls.Length - 1;
 				groupboxControl.Enabled = true;
 			} else {
 				this.Tag = new object();
@@ -84,20 +84,20 @@ namespace OpenBve {
 			}
 		}
 		private void UpdateControlListElement(ListViewItem Item, int Index, bool ResizeColumns) {
-			Interface.CommandInfo Info;
-			Interface.TryGetCommandInfo(Interface.CurrentControls[Index].Command, out Info);
+			OpenBve.Controls.CommandInfo Info;
+			OpenBve.Controls.TryGetCommandInfo(OpenBve.Controls.CurrentControls[Index].Command, out Info);
 			Item.SubItems[0].Text = Info.Name;
 			switch (Info.Type) {
-					case Interface.CommandType.Digital: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_digital"); break;
-					case Interface.CommandType.AnalogHalf: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_analoghalf"); break;
-					case Interface.CommandType.AnalogFull: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_analogfull"); break;
+					case OpenBve.Controls.CommandType.Digital: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_digital"); break;
+					case OpenBve.Controls.CommandType.AnalogHalf: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_analoghalf"); break;
+					case OpenBve.Controls.CommandType.AnalogFull: Item.SubItems[1].Text = Strings.GetInterfaceString("controls_list_type_analogfull"); break;
 					default: Item.SubItems[1].Text = Info.Type.ToString(); break;
 			}
 			Item.SubItems[2].Text = Info.Description;
-			if (Interface.CurrentControls[Index].Method == Interface.ControlMethod.Keyboard) {
+			if (OpenBve.Controls.CurrentControls[Index].Method == OpenBve.Controls.ControlMethod.Keyboard) {
 				Item.ImageKey = "keyboard";
-			} else if (Interface.CurrentControls[Index].Method == Interface.ControlMethod.Joystick) {
-				if (Info.Type == Interface.CommandType.AnalogHalf | Info.Type == Interface.CommandType.AnalogFull) {
+			} else if (OpenBve.Controls.CurrentControls[Index].Method == OpenBve.Controls.ControlMethod.Joystick) {
+				if (Info.Type == OpenBve.Controls.CommandType.AnalogHalf | Info.Type == OpenBve.Controls.CommandType.AnalogFull) {
 					Item.ImageKey = "joystick";
 				} else {
 					Item.ImageKey = "gamepad";
@@ -113,30 +113,30 @@ namespace OpenBve {
 
 		// get control details
 		private string GetControlDetails(int Index) {
-			Interface.CommandInfo Info;
-			Interface.TryGetCommandInfo(Interface.CurrentControls[Index].Command, out Info);
+			OpenBve.Controls.CommandInfo Info;
+			OpenBve.Controls.TryGetCommandInfo(OpenBve.Controls.CurrentControls[Index].Command, out Info);
 			System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
 			string Separator = Strings.GetInterfaceString("controls_assignment_separator");
-			if (Interface.CurrentControls[Index].Method == Interface.ControlMethod.Keyboard) {
+			if (OpenBve.Controls.CurrentControls[Index].Method == OpenBve.Controls.ControlMethod.Keyboard) {
 				string t = Strings.GetInterfaceString("controls_assignment_keyboard") + Separator;
-				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Shift) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_shift");
-				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Ctrl) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_ctrl");
-				if ((Interface.CurrentControls[Index].Modifier & Interface.KeyboardModifier.Alt) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_alt");
-				int j; for (j = 0; j < Interface.Keys.Length; j++) {
-					if (Interface.Keys[j].Value == (Key)Interface.CurrentControls[Index].Element) {
-						t += Interface.Keys[j].Description;
+				if ((OpenBve.Controls.CurrentControls[Index].Modifier & OpenBve.Controls.KeyboardModifier.Shift) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_shift");
+				if ((OpenBve.Controls.CurrentControls[Index].Modifier & OpenBve.Controls.KeyboardModifier.Ctrl) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_ctrl");
+				if ((OpenBve.Controls.CurrentControls[Index].Modifier & OpenBve.Controls.KeyboardModifier.Alt) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_alt");
+				int j; for (j = 0; j < OpenBve.Controls.Keys.Length; j++) {
+					if (OpenBve.Controls.Keys[j].Value == (Key)OpenBve.Controls.CurrentControls[Index].Element) {
+						t += OpenBve.Controls.Keys[j].Description;
 						break;
 					}
-				} if (j == Interface.Keys.Length) {
-					t += "{" + Interface.CurrentControls[Index].Element.ToString(Culture) + "}";
+				} if (j == OpenBve.Controls.Keys.Length) {
+					t += "{" + OpenBve.Controls.CurrentControls[Index].Element.ToString(Culture) + "}";
 				}
 				return t;
-			} else if (Interface.CurrentControls[Index].Method == Interface.ControlMethod.Joystick) {
-				string t = Strings.GetInterfaceString("controls_assignment_joystick").Replace("[index]", (Interface.CurrentControls[Index].Device + 1).ToString(Culture));
-				switch (Interface.CurrentControls[Index].Component) {
-					case Interface.JoystickComponent.Axis:
-						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_axis").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
-						float pos = (float)Interface.CurrentControls[Index].Direction;
+			} else if (OpenBve.Controls.CurrentControls[Index].Method == OpenBve.Controls.ControlMethod.Joystick) {
+				string t = Strings.GetInterfaceString("controls_assignment_joystick").Replace("[index]", (OpenBve.Controls.CurrentControls[Index].Device + 1).ToString(Culture));
+				switch (OpenBve.Controls.CurrentControls[Index].Component) {
+					case OpenBve.Controls.JoystickComponent.Axis:
+						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_axis").Replace("[index]", (OpenBve.Controls.CurrentControls[Index].Element + 1).ToString(Culture));
+						float pos = (float)OpenBve.Controls.CurrentControls[Index].Direction;
 						if (pos == -1) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_axis_negative");
 						} else if (pos == 1) {
@@ -144,12 +144,12 @@ namespace OpenBve {
 						} else {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_axis_invalid");
 						} break;
-					case Interface.JoystickComponent.Button:
-						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_button").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
+					case OpenBve.Controls.JoystickComponent.Button:
+						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_button").Replace("[index]", (OpenBve.Controls.CurrentControls[Index].Element + 1).ToString(Culture));
 						break;
-					case Interface.JoystickComponent.Hat:
-						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat").Replace("[index]", (Interface.CurrentControls[Index].Element + 1).ToString(Culture));
-						JoystickHatState state = (JoystickHatState)Interface.CurrentControls[Index].Direction;
+					case OpenBve.Controls.JoystickComponent.Hat:
+						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat").Replace("[index]", (OpenBve.Controls.CurrentControls[Index].Element + 1).ToString(Culture));
+						JoystickHatState state = (JoystickHatState)OpenBve.Controls.CurrentControls[Index].Direction;
 						if (state.Position == HatPosition.Left) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_left");
 						} else if (state.Position == HatPosition.UpLeft) {
@@ -180,12 +180,12 @@ namespace OpenBve {
 
 		// control add
 		private void buttonControlAdd_Click(object sender, EventArgs e) {
-			for (int i = 0; i < Interface.CurrentControls.Length; i++) {
+			for (int i = 0; i < OpenBve.Controls.CurrentControls.Length; i++) {
 				listviewControls.Items[i].Selected = false;
 			}
-			int n = Interface.CurrentControls.Length;
-			Array.Resize<Interface.Control>(ref Interface.CurrentControls, n + 1);
-			Interface.CurrentControls[n].Command = Interface.Command.None;
+			int n = OpenBve.Controls.CurrentControls.Length;
+			Array.Resize<OpenBve.Controls.Control>(ref OpenBve.Controls.CurrentControls, n + 1);
+			OpenBve.Controls.CurrentControls[n].Command = OpenBve.Controls.Command.None;
 			ListViewItem Item = new ListViewItem(new string[] { "", "", "", "" });
 			UpdateControlListElement(Item, n, true);
 			listviewControls.Items.Add(Item);
@@ -196,10 +196,10 @@ namespace OpenBve {
 		private void buttonControlRemove_Click(object sender, EventArgs e) {
 			if (listviewControls.SelectedIndices.Count == 1) {
 				int j = listviewControls.SelectedIndices[0];
-				for (int i = j; i < Interface.CurrentControls.Length - 1; i++) {
-					Interface.CurrentControls[i] = Interface.CurrentControls[i + 1];
+				for (int i = j; i < OpenBve.Controls.CurrentControls.Length - 1; i++) {
+					OpenBve.Controls.CurrentControls[i] = OpenBve.Controls.CurrentControls[i + 1];
 				}
-				Array.Resize<Interface.Control>(ref Interface.CurrentControls, Interface.CurrentControls.Length - 1);
+				Array.Resize<OpenBve.Controls.Control>(ref OpenBve.Controls.CurrentControls, OpenBve.Controls.CurrentControls.Length - 1);
 				listviewControls.Items[j].Remove();
 			}
 		}
@@ -209,9 +209,9 @@ namespace OpenBve {
 			if (listviewControls.SelectedIndices.Count == 1) {
 				int j = listviewControls.SelectedIndices[0];
 				if (j > 0) {
-					Interface.Control c = Interface.CurrentControls[j];
-					Interface.CurrentControls[j] = Interface.CurrentControls[j - 1];
-					Interface.CurrentControls[j - 1] = c;
+					OpenBve.Controls.Control c = OpenBve.Controls.CurrentControls[j];
+					OpenBve.Controls.CurrentControls[j] = OpenBve.Controls.CurrentControls[j - 1];
+					OpenBve.Controls.CurrentControls[j - 1] = c;
 					ListViewItem v = listviewControls.Items[j];
 					listviewControls.Items.RemoveAt(j);
 					listviewControls.Items.Insert(j - 1, v);
@@ -223,10 +223,10 @@ namespace OpenBve {
 		private void buttonControlDown_Click(object sender, EventArgs e) {
 			if (listviewControls.SelectedIndices.Count == 1) {
 				int j = listviewControls.SelectedIndices[0];
-				if (j < Interface.CurrentControls.Length - 1) {
-					Interface.Control c = Interface.CurrentControls[j];
-					Interface.CurrentControls[j] = Interface.CurrentControls[j + 1];
-					Interface.CurrentControls[j + 1] = c;
+				if (j < OpenBve.Controls.CurrentControls.Length - 1) {
+					OpenBve.Controls.Control c = OpenBve.Controls.CurrentControls[j];
+					OpenBve.Controls.CurrentControls[j] = OpenBve.Controls.CurrentControls[j + 1];
+					OpenBve.Controls.CurrentControls[j + 1] = c;
 					ListViewItem v = listviewControls.Items[j];
 					listviewControls.Items.RemoveAt(j);
 					listviewControls.Items.Insert(j + 1, v);
@@ -240,10 +240,10 @@ namespace OpenBve {
 				int i = listviewControls.SelectedIndices[0];
 				int j = comboboxCommand.SelectedIndex;
 				if (j >= 0) {
-					Interface.CurrentControls[i].Command = Interface.CommandInfos[j].Command;
-					Interface.CommandInfo Info;
-					Interface.TryGetCommandInfo(Interface.CommandInfos[j].Command, out Info);
-					Interface.CurrentControls[i].InheritedType = Info.Type;
+					OpenBve.Controls.CurrentControls[i].Command = OpenBve.Controls.CommandInfos[j].Command;
+					OpenBve.Controls.CommandInfo Info;
+					OpenBve.Controls.TryGetCommandInfo(OpenBve.Controls.CommandInfos[j].Command, out Info);
+					OpenBve.Controls.CurrentControls[i].InheritedType = Info.Type;
 					UpdateControlListElement(listviewControls.Items[i], i, true);
 				}
 			}
@@ -257,7 +257,7 @@ namespace OpenBve {
 		private void radiobuttonKeyboard_CheckedChanged(object sender, EventArgs e) {
 			if (this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int i = listviewControls.SelectedIndices[0];
-				Interface.CurrentControls[i].Method = Interface.ControlMethod.Keyboard;
+				OpenBve.Controls.CurrentControls[i].Method = OpenBve.Controls.ControlMethod.Keyboard;
 				UpdateControlListElement(listviewControls.Items[i], i, true);
 			}
 			panelKeyboard.Enabled = radiobuttonKeyboard.Checked;
@@ -269,7 +269,7 @@ namespace OpenBve {
 				int i = listviewControls.SelectedIndices[0];
 				int j = comboboxKeyboardKey.SelectedIndex;
 				if (j >= 0) {
-					Interface.CurrentControls[i].Element = (int)Interface.Keys[j].Value;
+					OpenBve.Controls.CurrentControls[i].Element = (int)OpenBve.Controls.Keys[j].Value;
 				}
 				UpdateControlListElement(listviewControls.Items[i], i, true);
 			}
@@ -279,27 +279,27 @@ namespace OpenBve {
 		private void checkboxKeyboardShift_CheckedChanged(object sender, EventArgs e) {
 			if (this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int i = listviewControls.SelectedIndices[0];
-				Interface.CurrentControls[i].Modifier = (checkboxKeyboardShift.Checked ? Interface.KeyboardModifier.Shift : Interface.KeyboardModifier.None) |
-					(checkboxKeyboardCtrl.Checked ? Interface.KeyboardModifier.Ctrl : Interface.KeyboardModifier.None) |
-					(checkboxKeyboardAlt.Checked ? Interface.KeyboardModifier.Alt : Interface.KeyboardModifier.None);
+				OpenBve.Controls.CurrentControls[i].Modifier = (checkboxKeyboardShift.Checked ? OpenBve.Controls.KeyboardModifier.Shift : OpenBve.Controls.KeyboardModifier.None) |
+					(checkboxKeyboardCtrl.Checked ? OpenBve.Controls.KeyboardModifier.Ctrl : OpenBve.Controls.KeyboardModifier.None) |
+					(checkboxKeyboardAlt.Checked ? OpenBve.Controls.KeyboardModifier.Alt : OpenBve.Controls.KeyboardModifier.None);
 				UpdateControlListElement(listviewControls.Items[i], i, true);
 			}
 		}
 		private void checkboxKeyboardCtrl_CheckedChanged(object sender, EventArgs e) {
 			if (this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int i = listviewControls.SelectedIndices[0];
-				Interface.CurrentControls[i].Modifier = (checkboxKeyboardShift.Checked ? Interface.KeyboardModifier.Shift : Interface.KeyboardModifier.None) |
-					(checkboxKeyboardCtrl.Checked ? Interface.KeyboardModifier.Ctrl : Interface.KeyboardModifier.None) |
-					(checkboxKeyboardAlt.Checked ? Interface.KeyboardModifier.Alt : Interface.KeyboardModifier.None);
+				OpenBve.Controls.CurrentControls[i].Modifier = (checkboxKeyboardShift.Checked ? OpenBve.Controls.KeyboardModifier.Shift : OpenBve.Controls.KeyboardModifier.None) |
+					(checkboxKeyboardCtrl.Checked ? OpenBve.Controls.KeyboardModifier.Ctrl : OpenBve.Controls.KeyboardModifier.None) |
+					(checkboxKeyboardAlt.Checked ? OpenBve.Controls.KeyboardModifier.Alt : OpenBve.Controls.KeyboardModifier.None);
 				UpdateControlListElement(listviewControls.Items[i], i, true);
 			}
 		}
 		private void checkboxKeyboardAlt_CheckedChanged(object sender, EventArgs e) {
 			if (this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int i = listviewControls.SelectedIndices[0];
-				Interface.CurrentControls[i].Modifier = (checkboxKeyboardShift.Checked ? Interface.KeyboardModifier.Shift : Interface.KeyboardModifier.None) |
-					(checkboxKeyboardCtrl.Checked ? Interface.KeyboardModifier.Ctrl : Interface.KeyboardModifier.None) |
-					(checkboxKeyboardAlt.Checked ? Interface.KeyboardModifier.Alt : Interface.KeyboardModifier.None);
+				OpenBve.Controls.CurrentControls[i].Modifier = (checkboxKeyboardShift.Checked ? OpenBve.Controls.KeyboardModifier.Shift : OpenBve.Controls.KeyboardModifier.None) |
+					(checkboxKeyboardCtrl.Checked ? OpenBve.Controls.KeyboardModifier.Ctrl : OpenBve.Controls.KeyboardModifier.None) |
+					(checkboxKeyboardAlt.Checked ? OpenBve.Controls.KeyboardModifier.Alt : OpenBve.Controls.KeyboardModifier.None);
 				UpdateControlListElement(listviewControls.Items[i], i, true);
 			}
 		}
@@ -314,7 +314,7 @@ namespace OpenBve {
 		private void radiobuttonJoystick_CheckedChanged(object sender, EventArgs e) {
 			if (this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int i = listviewControls.SelectedIndices[0];
-				Interface.CurrentControls[i].Method = Interface.ControlMethod.Joystick;
+				OpenBve.Controls.CurrentControls[i].Method = OpenBve.Controls.ControlMethod.Joystick;
 				UpdateControlListElement(listviewControls.Items[i], i, true);
 			}
 			panelJoystick.Enabled = radiobuttonJoystick.Checked;
@@ -337,13 +337,13 @@ namespace OpenBve {
 			Dialog.Filter = Strings.GetInterfaceString("dialog_controlsfiles") + "|*.controls|" + Strings.GetInterfaceString("dialog_allfiles") + "|*";
 			if (Dialog.ShowDialog() == DialogResult.OK) {
 				try {
-					Interface.LoadControls(Dialog.FileName, out Interface.CurrentControls);
+					OpenBve.Controls.LoadControls(Dialog.FileName, out OpenBve.Controls.CurrentControls);
 					for (int i = 0; i < listviewControls.SelectedItems.Count; i++) {
 						listviewControls.SelectedItems[i].Selected = false;
 					}
 					listviewControls.Items.Clear();
-					ListViewItem[] Items = new ListViewItem[Interface.CurrentControls.Length];
-					for (int i = 0; i < Interface.CurrentControls.Length; i++) {
+					ListViewItem[] Items = new ListViewItem[OpenBve.Controls.CurrentControls.Length];
+					for (int i = 0; i < OpenBve.Controls.CurrentControls.Length; i++) {
 						Items[i] = new ListViewItem(new string[] { "", "", "", "" });
 						UpdateControlListElement(Items[i], i, false);
 					}
@@ -363,7 +363,7 @@ namespace OpenBve {
 			Dialog.Filter = Strings.GetInterfaceString("dialog_controlsfiles") + "|*.controls|" + Strings.GetInterfaceString("dialog_allfiles") + "|*";
 			if (Dialog.ShowDialog() == DialogResult.OK) {
 				try {
-					Interface.SaveControls(Dialog.FileName);
+					OpenBve.Controls.SaveControls(Dialog.FileName);
 				} catch (Exception ex) {
 					MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 				}
@@ -375,7 +375,7 @@ namespace OpenBve {
 			bool FullAxis = false;
 			if (this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int j = listviewControls.SelectedIndices[0];
-				if (Interface.CurrentControls[j].InheritedType == Interface.CommandType.AnalogFull) {
+				if (OpenBve.Controls.CurrentControls[j].InheritedType == OpenBve.Controls.CommandType.AnalogFull) {
 					FullAxis = true;
 				}
 			}
@@ -396,18 +396,18 @@ namespace OpenBve {
 		// attached joysticks
 		private void pictureboxJoysticks_Paint(object sender, PaintEventArgs e) {
 			int device = -1;
-			Interface.JoystickComponent component = Interface.JoystickComponent.Invalid;
+			OpenBve.Controls.JoystickComponent component = OpenBve.Controls.JoystickComponent.Invalid;
 			int element = -1;
 			object direction = new JoystickHatState();
-			Interface.CommandType type = Interface.CommandType.Digital;
+			OpenBve.Controls.CommandType type = OpenBve.Controls.CommandType.Digital;
 			if (this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int j = listviewControls.SelectedIndices[0];
-				if (Interface.CurrentControls[j].Method == Interface.ControlMethod.Joystick) {
-					device = Interface.CurrentControls[j].Device;
-					component = Interface.CurrentControls[j].Component;
-					element = Interface.CurrentControls[j].Element;
-					direction = Interface.CurrentControls[j].Direction;
-					type = Interface.CurrentControls[j].InheritedType;
+				if (OpenBve.Controls.CurrentControls[j].Method == OpenBve.Controls.ControlMethod.Joystick) {
+					device = OpenBve.Controls.CurrentControls[j].Device;
+					component = OpenBve.Controls.CurrentControls[j].Component;
+					element = OpenBve.Controls.CurrentControls[j].Element;
+					direction = OpenBve.Controls.CurrentControls[j].Direction;
+					type = OpenBve.Controls.CurrentControls[j].InheritedType;
 				}
 			}
 			System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
@@ -451,7 +451,7 @@ namespace OpenBve {
 						{ // hats
 							int n = caps.HatCount;
 							for (int j = 0; j < n; j++) {
-								if (device == i & component == Interface.JoystickComponent.Hat & element == j) {
+								if (device == i & component == OpenBve.Controls.JoystickComponent.Hat & element == j) {
 									e.Graphics.DrawEllipse(ps, u, v, g, g);
 								} else {
 									e.Graphics.DrawEllipse(p, u, v, g, g);
@@ -472,7 +472,7 @@ namespace OpenBve {
 									e.Graphics.DrawEllipse(new Pen(Color.Firebrick, 2.0f), u + 0.5f * g + dx - 4.0f, v + 0.5f * g + dy - 4.0f, 8.0f, 8.0f);
 								}
 								var hatState = ((JoystickHatState)direction);
-								if (device == i & component == Interface.JoystickComponent.Hat & element == j) {
+								if (device == i & component == OpenBve.Controls.JoystickComponent.Hat & element == j) {
 									double rx = hatState.IsLeft ? -1.0 : hatState.IsRight ? 1.0 : 0.0;
 									double ry = hatState.IsUp   ? -1.0 : hatState.IsDown  ? 1.0 : 0.0;
 									double rt = rx * rx + ry * ry;
@@ -503,11 +503,11 @@ namespace OpenBve {
 									e.Graphics.FillRectangle(Brushes.Firebrick, u, v + 0.5f * g - 0.5f * r1 * g, 16.0f, 0.5f * g * (r1 - r0));
 								}
 							float pos = (float)direction;
-								if (device == i & component == Interface.JoystickComponent.Axis & element == j) {
-									if (pos == -1 & type != Interface.CommandType.AnalogFull) {
+								if (device == i & component == OpenBve.Controls.JoystickComponent.Axis & element == j) {
+									if (pos == -1 & type != OpenBve.Controls.CommandType.AnalogFull) {
 										e.Graphics.DrawRectangle(p, u, v, 16.0f, g);
 										e.Graphics.DrawRectangle(ps, u, v + 0.5f * g, 16.0f, 0.5f * g);
-									} else if (pos == 1 & type != Interface.CommandType.AnalogFull) {
+									} else if (pos == 1 & type != OpenBve.Controls.CommandType.AnalogFull) {
 										e.Graphics.DrawRectangle(p, u, v, 16.0f, g);
 										e.Graphics.DrawRectangle(ps, u, v, 16.0f, 0.5f * g);
 									} else {
@@ -531,7 +531,7 @@ namespace OpenBve {
 								bool q = state.GetButton((JoystickButton)Enum.Parse(typeof(JoystickButton), "Button" + j)) == OpenTK.Input.ButtonState.Pressed;
 								float dv = (float)(j & 1) * (g + 8.0f);
 								if (q) e.Graphics.FillRectangle(Brushes.Firebrick, u, v + dv, g, g);
-								if (device == i & component == Interface.JoystickComponent.Button & element == j) {
+								if (device == i & component == OpenBve.Controls.JoystickComponent.Button & element == j) {
 									e.Graphics.DrawRectangle(ps, u, v + dv, g, g);
 								} else {
 									e.Graphics.DrawRectangle(p, u, v + dv, g, g);

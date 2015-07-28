@@ -75,7 +75,7 @@ namespace OpenBve {
 							Array.Resize<Station>(ref Table.Stations, Table.Stations.Length << 1);
 						}
 						Table.Stations[n].Name = Game.Stations[sse.StationIndex].Name;
-						Table.Stations[n].NameJapanese = Interface.IsJapanese(Game.Stations[sse.StationIndex].Name);
+						Table.Stations[n].NameJapanese = Strings.IsJapanese(Game.Stations[sse.StationIndex].Name);
 						Table.Stations[n].Pass = !Game.PlayerStopsAtStation(sse.StationIndex);
 						Table.Stations[n].Terminal = Game.Stations[sse.StationIndex].StationType != Game.StationType.Normal;
 						double x;

@@ -1,6 +1,7 @@
 ﻿using System;
 using OpenTK.Audio.OpenAL;
 using OpenTK;
+using OpenBve;
 
 namespace OpenBve {
 	internal static partial class Sounds {
@@ -67,17 +68,17 @@ namespace OpenBve {
 		internal static bool Initialize() {
 			Deinitialize();
 			switch (Options.Current.SoundRange) {
-				case Interface.SoundRange.Low:
+				case SoundRange.Low:
 					OuterRadiusFactorMinimum = 2.0;
 					OuterRadiusFactorMaximum = 8.0;
 					OuterRadiusFactorMaximumSpeed = 1.0;
 					break;
-				case Interface.SoundRange.Medium:
+				case SoundRange.Medium:
 					OuterRadiusFactorMinimum = 4.0;
 					OuterRadiusFactorMaximum = 16.0;
 					OuterRadiusFactorMaximumSpeed = 2.0;
 					break;
-				case Interface.SoundRange.High:
+				case SoundRange.High:
 					OuterRadiusFactorMinimum = 6.0;
 					OuterRadiusFactorMaximum = 24.0;
 					OuterRadiusFactorMaximumSpeed = 3.0;

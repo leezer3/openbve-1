@@ -3,7 +3,8 @@ using System.Globalization;
 namespace OpenBve
 {
 	internal static class BlackBox
-    {
+	{
+		internal static int RatingsCount = 10;
 		// load logs
 		internal static void LoadLogs() {
 			string File = OpenBveApi.Path.CombineFile(Program.FileSystem.SettingsFolder, "logs.bin");
@@ -21,7 +22,7 @@ namespace OpenBve
 						Game.LogRouteName = Reader.ReadString();
 						Game.LogTrainName = Reader.ReadString();
 						Game.LogDateTime = DateTime.FromBinary(Reader.ReadInt64());
-						Options.Current.GameMode = (Options.GameMode)Reader.ReadInt16();
+						Options.Current.CurrentGameMode = (Options.GameMode)Reader.ReadInt16();
 						Game.BlackBoxEntryCount = Reader.ReadInt32();
 						Game.BlackBoxEntries = new Game.BlackBoxEntry[Game.BlackBoxEntryCount];
 						for (int i = 0; i < Game.BlackBoxEntryCount; i++) {
@@ -201,10 +202,10 @@ namespace OpenBve
 					double ratio = Game.CurrentScore.Maximum == 0 ? 0.0 : (double)Game.CurrentScore.Value / (double)Game.CurrentScore.Maximum;
 					if (ratio < 0.0) ratio = 0.0;
 					if (ratio > 1.0) ratio = 1.0;
-					int index = (int)Math.Floor(ratio * (double)Strings.RatingsCount);
-					if (index >= Strings.RatingsCount) index = Strings.RatingsCount - 1;
+					int index = (int)Math.Floor(ratio * (double)BlackBox.RatingsCount);
+					if (index >= BlackBox.RatingsCount) index = BlackBox.RatingsCount - 1;
 					string s;
-					switch (Options.Current.GameMode) {
+					switch (Options.Current.CurrentGameMode) {
 						case Options.GameMode.Arcade: s = Strings.GetInterfaceString("mode_arcade"); break;
 						case Options.GameMode.Normal: s = Strings.GetInterfaceString("mode_normal"); break;
 						case Options.GameMode.Expert: s = Strings.GetInterfaceString("mode_expert"); break;

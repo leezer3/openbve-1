@@ -840,14 +840,14 @@ namespace OpenBve {
 						Result = AnimatedObjectParser.ReadObject(FileName, Encoding, LoadMode);
 						break;
 					default:
-						Interface.AddMessage(Interface.MessageType.Error, false, "The file extension is not supported: " + FileName);
+					Debug.AddMessage(Debug.MessageType.Error, false, "The file extension is not supported: " + FileName);
 						return null;
 				}
 				OptimizeObject(Result, PreserveVertices);
 				return Result;
 				#if !DEBUG
 			} catch (Exception ex) {
-				Interface.AddMessage(Interface.MessageType.Error, true, "An unexpected error occured (" + ex.Message + ") while attempting to load the file " + FileName);
+				Debug.AddMessage(Debug.MessageType.Error, true, "An unexpected error occured (" + ex.Message + ") while attempting to load the file " + FileName);
 				return null;
 			}
 			#endif
@@ -887,17 +887,17 @@ namespace OpenBve {
 						Result = XObjectParser.ReadObject(FileName, Encoding, LoadMode, ForceTextureRepeatX, ForceTextureRepeatY);
 						break;
 					case ".animated":
-						Interface.AddMessage(Interface.MessageType.Error, false, "Tried to load an animated object even though only static objects are allowed: " + FileName);
+						Debug.AddMessage(Debug.MessageType.Error, false, "Tried to load an animated object even though only static objects are allowed: " + FileName);
 						return null;
 					default:
-						Interface.AddMessage(Interface.MessageType.Error, false, "The file extension is not supported: " + FileName);
+						Debug.AddMessage(Debug.MessageType.Error, false, "The file extension is not supported: " + FileName);
 						return null;
 				}
 				OptimizeObject(Result, PreserveVertices);
 				return Result;
 				#if !DEBUG
 			} catch (Exception ex) {
-				Interface.AddMessage(Interface.MessageType.Error, true, "An unexpected error occured (" + ex.Message + ") while attempting to load the file " + FileName);
+				Debug.AddMessage(Debug.MessageType.Error, true, "An unexpected error occured (" + ex.Message + ") while attempting to load the file " + FileName);
 				return null;
 			}
 			#endif

@@ -443,7 +443,7 @@ namespace OpenBve {
 			string file = OpenBveApi.Path.CombineFile(trainFolder, lines[0]);
 			string title = System.IO.Path.GetFileName(file);
 			if (!System.IO.File.Exists(file)) {
-				Interface.AddMessage(Interface.MessageType.Error, true, "The train plugin " + title + " could not be found in " + config);
+				Debug.AddMessage(Debug.MessageType.Error, true, "The train plugin " + title + " could not be found in " + config);
 				return false;
 			}
 			return LoadPlugin(train, file, trainFolder);
@@ -471,7 +471,7 @@ namespace OpenBve {
 		private static bool LoadPlugin(TrainManager.Train train, string pluginFile, string trainFolder) {
 			string pluginTitle = System.IO.Path.GetFileName(pluginFile);
 			if (!System.IO.File.Exists(pluginFile)) {
-				Interface.AddMessage(Interface.MessageType.Error, true, "The train plugin " + pluginTitle + " could not be found.");
+				Debug.AddMessage(Debug.MessageType.Error, true, "The train plugin " + pluginTitle + " could not be found.");
 				return false;
 			}
 			/*
@@ -508,7 +508,7 @@ namespace OpenBve {
 			} catch (BadImageFormatException) {
 				assembly = null;
 			} catch (Exception ex) {
-				Interface.AddMessage(Interface.MessageType.Error, false, "The train plugin " + pluginTitle + " could not be loaded due to the following exception: " + ex.Message);
+				Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + pluginTitle + " could not be loaded due to the following exception: " + ex.Message);
 				return false;
 			}
 			if (assembly != null) {
@@ -517,7 +517,7 @@ namespace OpenBve {
 					types = assembly.GetTypes();
 				} catch (ReflectionTypeLoadException ex) {
 					foreach (Exception e in ex.LoaderExceptions) {
-						Interface.AddMessage(Interface.MessageType.Error, false, "The train plugin " + pluginTitle + " raised an exception on loading: " + e.Message);
+						Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + pluginTitle + " raised an exception on loading: " + e.Message);
 					}
 					return false;
 				}
@@ -533,7 +533,7 @@ namespace OpenBve {
 						}
 					}
 				}
-				Interface.AddMessage(Interface.MessageType.Error, false, "The train plugin " + pluginTitle + " does not export a train interface and therefore cannot be used with openBVE.");
+				Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + pluginTitle + " does not export a train interface and therefore cannot be used with openBVE.");
 				return false;
 			}
 			/*
@@ -541,15 +541,15 @@ namespace OpenBve {
 			 * */
 			try {
 				if (!CheckWin32Header(pluginFile)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "The train plugin " + pluginTitle + " is of an unsupported binary format and therefore cannot be used with openBVE.");
+					Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + pluginTitle + " is of an unsupported binary format and therefore cannot be used with openBVE.");
 					return false;
 				}
 			} catch (Exception ex) {
-				Interface.AddMessage(Interface.MessageType.Error, false, "The train plugin " + pluginTitle + " could not be read due to the following reason: " + ex.Message);
+				Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + pluginTitle + " could not be read due to the following reason: " + ex.Message);
 				return false;
 			}
 			if (!Program.CurrentlyRunningOnWindows | IntPtr.Size != 4) {
-				Interface.AddMessage(Interface.MessageType.Warning, false, "The train plugin " + pluginTitle + " can only be used on 32-bit Microsoft Windows or compatible.");
+				Debug.AddMessage(Debug.MessageType.Warning, false, "The train plugin " + pluginTitle + " can only be used on 32-bit Microsoft Windows or compatible.");
 				return false;
 			}
 			train.Plugin = new Win32Plugin(pluginFile, train);

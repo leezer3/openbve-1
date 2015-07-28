@@ -4,7 +4,7 @@ using OpenBveApi.Colors;
 
 namespace OpenBve
 {
-    public static class Hud
+	internal static class Hud
     {
 		internal struct HudVector {
 			internal int X;

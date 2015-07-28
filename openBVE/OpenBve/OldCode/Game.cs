@@ -495,8 +495,8 @@ namespace OpenBve {
 									double y = (double)CurrentScore.Value / (double)CurrentScore.Maximum;
 									if (y < 0.0) y = 0.0;
 									if (y > 1.0) y = 1.0;
-									int k = (int)Math.Floor(y * (double)Strings.RatingsCount);
-									if (k >= Strings.RatingsCount) k = Strings.RatingsCount - 1;
+									int k = (int)Math.Floor(y * (double)BlackBox.RatingsCount);
+									if (k >= BlackBox.RatingsCount) k = BlackBox.RatingsCount - 1;
 									System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
 									AddScore(Strings.GetInterfaceString("score_rating"), 20.0);
 									AddScore(Strings.GetInterfaceString("rating_" + k.ToString(Culture)) + " (" + (100.0 * y).ToString("0.00", Culture) + "%)", 20.0);

@@ -17,7 +17,7 @@ namespace OpenBve {
 			Dialog.Filter = Strings.GetInterfaceString("dialog_textfiles") + "|*.txt|" + Strings.GetInterfaceString("dialog_allfiles") + "|*";
 			if (Dialog.ShowDialog() == DialogResult.OK) {
 				try {
-					Interface.ExportScore(Dialog.FileName);
+					BlackBox.ExportScore(Dialog.FileName);
 				} catch (Exception ex) {
 					MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 				}
@@ -40,7 +40,7 @@ namespace OpenBve {
 			}
 			if (Dialog.ShowDialog() == DialogResult.OK) {
 				try {
-					Interface.ExportBlackBox(Dialog.FileName, (Interface.BlackBoxFormat)comboboxBlackBoxFormat.SelectedIndex);
+					BlackBox.ExportBlackBox(Dialog.FileName, (BlackBox.BlackBoxFormat)comboboxBlackBoxFormat.SelectedIndex);
 				} catch (Exception ex) {
 					MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 				}
@@ -66,7 +66,7 @@ namespace OpenBve {
 					Item.SubItems.Add(Game.ScoreLogs[i].Position.ToString("0", Culture));
 					Item.SubItems.Add(Game.ScoreLogs[i].Value.ToString(Culture));
 					Item.SubItems.Add(sum.ToString(Culture));
-					Item.SubItems.Add(Interface.GetScoreText(Game.ScoreLogs[i].TextToken));
+					Item.SubItems.Add(BlackBox.GetScoreText(Game.ScoreLogs[i].TextToken));
 				}
 			}
 			listviewScore.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);

@@ -1,5 +1,6 @@
 using System;
 using OpenBveApi.Math;
+using OpenBveApi;
 
 namespace OpenBve {
 	internal static class AnimatedObjectParser {
@@ -25,7 +26,7 @@ namespace OpenBve {
 				rpnUsed = Lines[i].IndexOf("functionrpn", StringComparison.OrdinalIgnoreCase) >= 0;
 			}
 			if (rpnUsed) {
-				Interface.AddMessage(Interface.MessageType.Error, false, "An animated object file contains RPN functions. These were never meant to be used directly, only for debugging. They won't be supported indefinately. Please get rid of them in file " + FileName);
+				Debug.AddMessage(Debug.MessageType.Error, false, "An animated object file contains RPN functions. These were never meant to be used directly, only for debugging. They won't be supported indefinately. Please get rid of them in file " + FileName);
 			}
 			for (int i = 0; i < Lines.Length; i++) {
 				if (Lines[i].Length != 0) {
@@ -50,7 +51,7 @@ namespace OpenBve {
 													ParsePosition(after, ref position, before, i + 1, FileName);
 													break;
 												default:
-													Interface.AddMessage(Interface.MessageType.Error, false, "The attribute " + before + " is not supported at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+													Debug.AddMessage(Debug.MessageType.Error, false, "The attribute " + before + " is not supported at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													break;
 											}
 										} else {
@@ -58,8 +59,8 @@ namespace OpenBve {
 											 * Process object with file name relative to the location of this ANIMATED file.
 											 */
 											string Folder = System.IO.Path.GetDirectoryName(FileName);
-											if (Interface.ContainsInvalidPathChars(Lines[i])) {
-												Interface.AddMessage(Interface.MessageType.Error, false, Lines[i] + " contains illegal characters at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+											if (Path.ContainsInvalidPathChars(Lines[i])) {
+												Debug.AddMessage(Debug.MessageType.Error, false, Lines[i] + " contains illegal characters at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 											} else {
 												string file = OpenBveApi.Path.CombineFile(Folder, Lines[i]);
 												if (System.IO.File.Exists(file)) {
@@ -69,7 +70,7 @@ namespace OpenBve {
 													obj[objCount] = ObjectManager.LoadObject(file, Encoding, LoadMode, false, false, false);
 													objCount++;
 												} else {
-													Interface.AddMessage(Interface.MessageType.Error, true, "File " + file + " not found at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+													Debug.AddMessage(Debug.MessageType.Error, true, "File " + file + " not found at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 												}
 											}
 										}
@@ -154,7 +155,7 @@ namespace OpenBve {
 														StateFunctionLine = i;
 														StateFunctionRpn = FunctionScripts.GetPostfixNotationFromInfixNotation(after);
 													} catch (Exception ex) {
-														Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+														Debug.AddMessage(Debug.MessageType.Error, false, ex.Message + " in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} break;
 												case "statefunctionrpn":
 													{
@@ -256,7 +257,7 @@ namespace OpenBve {
 															}
 															break;
 														default:
-															Interface.AddMessage(Interface.MessageType.Error, false, "Unrecognized value in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Debug.AddMessage(Debug.MessageType.Error, false, "Unrecognized value in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 															break;
 													}
 													break;
@@ -264,19 +265,19 @@ namespace OpenBve {
 													{
 														double r;
 														if (!double.TryParse(after, System.Globalization.NumberStyles.Float, Culture, out r)) {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Value is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Debug.AddMessage(Debug.MessageType.Error, false, "Value is invalid in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 														} else if (r < 0.0) {
-															Interface.AddMessage(Interface.MessageType.Error, false, "Value is expected to be non-negative in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+															Debug.AddMessage(Debug.MessageType.Error, false, "Value is expected to be non-negative in " + before + " at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 														} else {
 															Result.Objects[ObjectCount].RefreshRate = r;
 														}
 													} break;
 												default:
-													Interface.AddMessage(Interface.MessageType.Error, false, "The attribute " + before + " is not supported at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+													Debug.AddMessage(Debug.MessageType.Error, false, "The attribute " + before + " is not supported at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													break;
 											}
 										} else {
-											Interface.AddMessage(Interface.MessageType.Error, false, "Invalid statement " + Lines[i] + " encountered at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+											Debug.AddMessage(Debug.MessageType.Error, false, "Invalid statement " + Lines[i] + " encountered at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 											return null;
 										}
 									}
@@ -296,7 +297,7 @@ namespace OpenBve {
 										try {
 											Result.Objects[ObjectCount].StateFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation(StateFunctionRpn);
 										} catch (Exception ex) {
-											Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in StateFunction at line " + (StateFunctionLine + 1).ToString(Culture) + " in file " + FileName);
+											Debug.AddMessage(Debug.MessageType.Error, false, ex.Message + " in StateFunction at line " + (StateFunctionLine + 1).ToString(Culture) + " in file " + FileName);
 										}
 									}
 									Result.Objects[ObjectCount].States = new ObjectManager.AnimatedObjectState[StateFiles.Length];
@@ -325,7 +326,7 @@ namespace OpenBve {
 							}
 							break;
 						default:
-							Interface.AddMessage(Interface.MessageType.Error, false, "Invalid statement " + Lines[i] + " encountered at line " + (i + 1).ToString(Culture) + " in file " + FileName);
+							Debug.AddMessage(Debug.MessageType.Error, false, "Invalid statement " + Lines[i] + " encountered at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 							return null;
 					}
 				}
@@ -347,16 +348,16 @@ namespace OpenBve {
 			if (s.Length == 3) {
 				double x, y, z;
 				if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + field + " at line " + line + " in file " + file);
+					Debug.AddMessage(Debug.MessageType.Error, false, "X is invalid in " + field + " at line " + line + " in file " + file);
 				} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + field + " at line " + line + " in file " + file);
+					Debug.AddMessage(Debug.MessageType.Error, false, "Y is invalid in " + field + " at line " + line + " in file " + file);
 				} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + field + " at line " + line + " in file " + file);
+					Debug.AddMessage(Debug.MessageType.Error, false, "Z is invalid in " + field + " at line " + line + " in file " + file);
 				} else {
 					position = new Vector3(x, y, z);
 				}
 			} else {
-				Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + file);
+				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + file);
 			}
 		}
 		/// <summary>
@@ -376,21 +377,21 @@ namespace OpenBve {
 				for (int k = 0; k < s.Length; k++) {
 					s[k] = s[k].Trim();
 					if (s[k].Length == 0) {
-						Interface.AddMessage(Interface.MessageType.Error, false, "File" + k.ToString(Culture) + " is an empty string - did you mean something else? - in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+						Debug.AddMessage(Debug.MessageType.Error, false, "File" + k.ToString(Culture) + " is an empty string - did you mean something else? - in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 						stateFiles[k] = null;
-					} else if (Interface.ContainsInvalidPathChars(s[k])) {
-						Interface.AddMessage(Interface.MessageType.Error, false, "File" + k.ToString(Culture) + " contains illegal characters in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					} else if (OpenBveApi.Path.ContainsInvalidPathChars(s[k])) {
+						Debug.AddMessage(Debug.MessageType.Error, false, "File" + k.ToString(Culture) + " contains illegal characters in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 						stateFiles[k] = null;
 					} else {
 						stateFiles[k] = OpenBveApi.Path.CombineFile(Folder, s[k]);
 						if (!System.IO.File.Exists(stateFiles[k])) {
-							Interface.AddMessage(Interface.MessageType.Error, true, "File " + stateFiles[k] + " not found in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+							Debug.AddMessage(Debug.MessageType.Error, true, "File " + stateFiles[k] + " not found in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 							stateFiles[k] = null;
 						}
 					}
 				}
 			} else {
-				Interface.AddMessage(Interface.MessageType.Error, false, "At least one argument is expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+				Debug.AddMessage(Debug.MessageType.Error, false, "At least one argument is expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				return false;
 			}
 			return true;
@@ -408,16 +409,16 @@ namespace OpenBve {
 			if (s.Length == 3) {
 				double x, y, z;
 				if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + file);
+					Debug.AddMessage(Debug.MessageType.Error, false, "X is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + file);
 				} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + file);
+					Debug.AddMessage(Debug.MessageType.Error, false, "Y is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + file);
 				} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + file);
+					Debug.AddMessage(Debug.MessageType.Error, false, "Z is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + file);
 				} else {
 					transDir = new Vector3(x, y, z);
 				}
 			} else {
-				Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + file);
+				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + file);
 			}
 		}
 
@@ -433,7 +434,7 @@ namespace OpenBve {
 			try {
 				func = FunctionScripts.GetFunctionScriptFromPostfixNotation(value);
 			} catch (Exception ex) {
-				Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+				Debug.AddMessage(Debug.MessageType.Error, false, ex.Message + " in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 			}
 		}
 
@@ -449,7 +450,7 @@ namespace OpenBve {
 			try {
 				func = FunctionScripts.GetFunctionScriptFromInfixNotation(value);
 			} catch (Exception ex) {
-				Interface.AddMessage(Interface.MessageType.Error, false, ex.Message + " in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+				Debug.AddMessage(Debug.MessageType.Error, false, ex.Message + " in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 			}
 		}
 
@@ -466,18 +467,18 @@ namespace OpenBve {
 			if (s.Length == 3) {
 				double x, y, z;
 				if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "X is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "Y is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "Z is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "Z is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else if (x == 0.0 && y == 0.0 && z == 0.0) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "The direction indicated by X, Y and Z is expected to be non-zero in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "The direction indicated by X, Y and Z is expected to be non-zero in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else {
 					rotDir = new Vector3(x, y, z);
 				}
 			} else {
-				Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 			}
 		}
 
@@ -494,18 +495,18 @@ namespace OpenBve {
 			if (s.Length == 2) {
 				double nf, dr;
 				if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out nf)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "NaturalFrequency is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "NaturalFrequency is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out dr)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "DampingRatio is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "DampingRatio is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else if (nf <= 0.0) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "NaturalFrequency is expected to be positive in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "NaturalFrequency is expected to be positive in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else if (dr <= 0.0) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "DampingRatio is expected to be positive in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "DampingRatio is expected to be positive in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else {
 					damp = new ObjectManager.Damping(nf, dr);
 				}
 			} else {
-				Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 2 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 2 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 			}
 		}
 
@@ -522,14 +523,14 @@ namespace OpenBve {
 			if (s.Length == 2) {
 				double x, y;
 				if (!double.TryParse(s[0], System.Globalization.NumberStyles.Float, Culture, out x)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "X is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "X is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
-					Interface.AddMessage(Interface.MessageType.Error, false, "Y is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+					Debug.AddMessage(Debug.MessageType.Error, false, "Y is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else {
 					shift = new Vector2(x, y);
 				}
 			} else {
-				Interface.AddMessage(Interface.MessageType.Error, false, "Exactly 2 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
+				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 2 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 			}
 		}
 	}

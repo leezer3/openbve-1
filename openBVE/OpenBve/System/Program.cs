@@ -56,14 +56,14 @@ namespace OpenBve {
 			// --- set up packages ---
 			SetPackageLookupDirectories();
 			// --- load options and controls ---
-			Interface.LoadOptions();
-			Interface.LoadControls(null, out Interface.CurrentControls);
+			Options.LoadOptions();
+			Controls.LoadControls(null, out OpenBve.Controls.CurrentControls);
 			{
 				string folder = Program.FileSystem.GetDataFolder("Controls");
 				string file = OpenBveApi.Path.CombineFile(folder, "Default keyboard assignment.controls");
-				Interface.Control[] controls;
-				Interface.LoadControls(file, out controls);
-				Interface.AddControls(ref Interface.CurrentControls, controls);
+				Controls.Control[] controls;
+				Controls.LoadControls(file, out controls);
+				Controls.AddControls(ref OpenBve.Controls.CurrentControls, controls);
 			}
 			// --- load language ---
 			{
@@ -72,7 +72,7 @@ namespace OpenBve {
 				if (!System.IO.File.Exists(file)) {
 					file = OpenBveApi.Path.CombineFile(folder, "en-US.cfg");
 				}
-				Interface.LoadLanguage(file);
+				Strings.LoadLanguage(file);
 			}
 			// --- check the command-line arguments for route and train ---
 			formMain.MainDialogResult result = new formMain.MainDialogResult();

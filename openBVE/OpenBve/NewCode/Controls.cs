@@ -4,7 +4,7 @@ using OpenTK.Input;
 
 namespace OpenBve
 {
-    public static class Controls
+	internal static class Controls
     {
 		internal enum Command {
 			None = 0,

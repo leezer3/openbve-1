@@ -132,23 +132,23 @@ namespace OpenBve {
 //						texture = Resize(texture, newWidth, newHeight);
 						
 						switch (Options.Current.Interpolation) {
-							case Interface.InterpolationMode.NearestNeighbor:
+							case Options.InterpolationMode.NearestNeighbor:
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
 								break;
-							case Interface.InterpolationMode.Bilinear:
+							case Options.InterpolationMode.Bilinear:
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Linear);
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Linear);
 								break;
-							case Interface.InterpolationMode.NearestNeighborMipmapped:
+							case Options.InterpolationMode.NearestNeighborMipmapped:
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.NearestMipmapNearest);
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,(float)TextureMagFilter.Nearest);
 								break;
-							case Interface.InterpolationMode.BilinearMipmapped:
+							case Options.InterpolationMode.BilinearMipmapped:
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.NearestMipmapLinear);
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Linear);
 								break;
-							case Interface.InterpolationMode.TrilinearMipmapped:
+							case Options.InterpolationMode.TrilinearMipmapped:
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.LinearMipmapLinear);
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Linear);
 								break;
@@ -167,12 +167,12 @@ namespace OpenBve {
 						} else {
 							GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
 						}
-						if (Options.Current.Interpolation == Interface.InterpolationMode.NearestNeighbor && Options.Current.Interpolation == Interface.InterpolationMode.Bilinear) {
+						if (Options.Current.Interpolation == Options.InterpolationMode.NearestNeighbor && Options.Current.Interpolation == Options.InterpolationMode.Bilinear) {
 							GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 0);
 						} else {
 							GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 1);
 						}
-						if (Options.Current.Interpolation == Interface.InterpolationMode.AnisotropicFiltering) {
+						if (Options.Current.Interpolation == Options.InterpolationMode.AnisotropicFiltering) {
 							GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, Options.Current.AnisotropicFilteringLevel);
 						}
 						if (handle.Transparency == OpenBveApi.Textures.TextureTransparencyType.Opaque) {

@@ -22,7 +22,6 @@ namespace OpenBve
 			internal string Score;
 		}
 		internal static InterfaceQuickReference QuickReferences;
-		internal static int RatingsCount = 10;
 		private struct InterfaceString {
 			internal string Name;
 			internal string Text;
@@ -87,7 +86,7 @@ namespace OpenBve
 						int j = Lines[i].IndexOf('=');
 						if (j >= 0) {
 							string a = Lines[i].Substring(0, j).TrimEnd().ToLowerInvariant();
-							string b = Conversions.Unescape(Lines[i].Substring(j + 1).TrimStart());
+							string b = Strings.Unescape(Lines[i].Substring(j + 1).TrimStart());
 							switch (Section) {
 								case "handles":
 									switch (a) {
@@ -162,6 +161,134 @@ namespace OpenBve
 					return false;
 				}
 			} return true;
+		}
+
+		internal enum Encoding {
+			Unknown = 0,
+			Utf8 = 1,
+			Utf16Le = 2,
+			Utf16Be = 3,
+			Utf32Le = 4,
+			Utf32Be = 5,
+		}
+		internal static Encoding GetEncodingFromFile(string File) {
+			try {
+				byte[] Data = System.IO.File.ReadAllBytes(File);
+				if (Data.Length >= 3) {
+					if (Data[0] == 0xEF & Data[1] == 0xBB & Data[2] == 0xBF) return Encoding.Utf8;
+				}
+				if (Data.Length >= 2) {
+					if (Data[0] == 0xFE & Data[1] == 0xFF) return Encoding.Utf16Be;
+					if (Data[0] == 0xFF & Data[1] == 0xFE) return Encoding.Utf16Le;
+				}
+				if (Data.Length >= 4) {
+					if (Data[0] == 0x00 & Data[1] == 0x00 & Data[2] == 0xFE & Data[3] == 0xFF) return Encoding.Utf32Be;
+					if (Data[0] == 0xFF & Data[1] == 0xFE & Data[2] == 0x00 & Data[3] == 0x00) return Encoding.Utf32Le;
+				}
+				return Encoding.Unknown;
+			} catch {
+				return Encoding.Unknown;
+			}
+		}
+		internal static Encoding GetEncodingFromFile(string Folder, string File) {
+			return GetEncodingFromFile(OpenBveApi.Path.CombineFile(Folder, File));
+		}
+
+
+		// unescape
+		internal static string Unescape(string Text) {
+			System.Text.StringBuilder Builder = new System.Text.StringBuilder(Text.Length);
+			int Start = 0;
+			for (int i = 0; i < Text.Length; i++) {
+				if (Text[i] == '\\') {
+					Builder.Append(Text, Start, i - Start);
+					if (i + 1 < Text.Length) {
+						switch (Text[i + 1]) {
+							case 'a': Builder.Append('\a'); break;
+							case 'b': Builder.Append('\b'); break;
+							case 't': Builder.Append('\t'); break;
+							case 'n': Builder.Append('\n'); break;
+							case 'v': Builder.Append('\v'); break;
+							case 'f': Builder.Append('\f'); break;
+							case 'r': Builder.Append('\r'); break;
+							case 'e': Builder.Append('\x1B'); break;
+							case 'c':
+								if (i + 2 < Text.Length) {
+									int CodePoint = char.ConvertToUtf32(Text, i + 2);
+									if (CodePoint >= 0x40 & CodePoint <= 0x5F) {
+										Builder.Append(char.ConvertFromUtf32(CodePoint - 64));
+									} else if (CodePoint == 0x3F) {
+										Builder.Append('\x7F');
+									} else {
+										//Debug.AddMessage(MessageType.Error, false, "Unrecognized control character found in " + Text.Substring(i, 3));
+										return Text;
+									} i++;
+								} else {
+									//Debug.AddMessage(MessageType.Error, false, "Insufficient characters available in " + Text + " to decode control character escape sequence");
+									return Text;
+								} break;
+							case '"':
+								Builder.Append('"');
+								break;
+							case '\\':
+								Builder.Append('\\');
+								break;
+							case 'x':
+								if (i + 3 < Text.Length) {
+									Builder.Append(char.ConvertFromUtf32(Convert.ToInt32(Text.Substring(i + 2, 2), 16)));
+									i += 2;
+								} else {
+									//Debug.AddMessage(MessageType.Error, false, "Insufficient characters available in " + Text + " to decode hexadecimal escape sequence.");
+									return Text;
+								} break;
+							case 'u':
+								if (i + 5 < Text.Length) {
+									Builder.Append(char.ConvertFromUtf32(Convert.ToInt32(Text.Substring(i + 2, 4), 16)));
+									i += 4;
+								} else {
+									//Debug.AddMessage(MessageType.Error, false, "Insufficient characters available in " + Text + " to decode hexadecimal escape sequence.");
+									return Text;
+								} break;
+							default:
+								//Debug.AddMessage(MessageType.Error, false, "Unrecognized escape sequence found in " + Text + ".");
+								return Text;
+						}
+						i++;
+						Start = i + 1;
+					} else {
+						//Debug.AddMessage(MessageType.Error, false, "Insufficient characters available in " + Text + " to decode escape sequence.");
+						return Text;
+					}
+				}
+			}
+			Builder.Append(Text, Start, Text.Length - Start);
+			return Builder.ToString();
+		}
+
+		// ================================
+
+		// convert newlines to crlf
+		internal static string ConvertNewlinesToCrLf(string Text) {
+			System.Text.StringBuilder Builder = new System.Text.StringBuilder();
+			for (int i = 0; i < Text.Length; i++) {
+				int a = char.ConvertToUtf32(Text, i);
+				if (a == 0xD & i < Text.Length - 1) {
+					int b = char.ConvertToUtf32(Text, i + 1);
+					if (b == 0xA) {
+						Builder.Append("\r\n");
+						i++;
+					} else {
+						Builder.Append("\r\n");
+					}
+				} else if (a == 0xA | a == 0xC | a == 0xD | a == 0x85 | a == 0x2028 | a == 0x2029) {
+					Builder.Append("\r\n");
+				} else if (a < 0x10000) {
+					Builder.Append(Text[i]);
+				} else {
+					Builder.Append(Text.Substring(i, 2));
+					i++;
+				}
+			} return Builder.ToString();
 		}
     }
 }
