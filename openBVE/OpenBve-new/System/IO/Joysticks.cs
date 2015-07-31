@@ -18,14 +18,17 @@ namespace OpenBve
 			/// Positions of hats on the joystick obtained from the last <see cref="Joystick.Update"/> call.
 			/// </summary>
 			private HatPosition[] hats;
+			private bool[] hatsChanges;
 			/// <summary>
 			/// Positions of axes on the joystick obtained from the last <see cref="Joystick.Update"/> call.
 			/// </summary>
 			private float[] axes;
+			private bool[] axesChanges;
 			/// <summary>
 			/// States of buttons on the joystick obtained from the last <see cref="Joystick.Update"/> call.
 			/// </summary>
 			private ButtonState[] buttons;
+			private bool[] buttonsChanges;
 			/// <summary>The textual representation of the joystick.</summary>
 			internal string Name;
 			/// <summary>The OpenTK index of this joystick.</summary>
@@ -39,24 +42,33 @@ namespace OpenBve
 				this.Index = index;
 				var caps = OpenTK.Input.Joystick.GetCapabilities(index);
 				hats = new HatPosition[JoystickHat.Last+1];
+				hatsChanges = new bool[JoystickHat.Last+1];
 				axes = new float[JoystickAxis.Last+1];
+				axesChanges = new bool[JoystickAxis.Last+1];
 				buttons = new ButtonState[JoystickButton.Last+1];
+				buttonsChanges = new bool[JoystickButton.Last+1];
 			}
 
 			// --- public API methods ---
 			/// <summary>
-			/// Update internal joystick state.
+			/// Update internal joystick state. Puts actual values in internal arrays and records potential changes.
 			/// </summary>
 			internal void Update() {
 				var joyState = OpenTK.Input.Joystick.GetState(Index);
 				for (int i = 0; i < hats.Length; i++) {
-					hats[i] = joyState.GetHat(EnumFromIndex<JoystickHat>(i,"Hat")).Position;
+					var newState = joyState.GetHat(EnumFromIndex<JoystickHat>(i,"Hat")).Position;
+					hatsChanges[i] = hats[i] != newState;
+					hats[i] = newState;
 				}
 				for (int j = 0; j < axes.Length; j++) {
-					axes[j] = joyState.GetAxis(EnumFromIndex<JoystickAxis>(j,"Axis"));
+					var newState = joyState.GetAxis(EnumFromIndex<JoystickAxis>(j,"Axis"));
+					axesChanges[j] = axes[j] != newState;
+					axes[j] = newState;
 				}
 				for (int k = 0; k < buttons.Length; k++) {
-					buttons[k] = joyState.GetButton(EnumFromIndex<JoystickButton>(k,"Button"));
+					var newState = joyState.GetButton(EnumFromIndex<JoystickButton>(k,"Button"));
+					buttonsChanges[k] = buttons[k] != newState;
+					buttons[k] = newState;
 				}
 			}
 			/// <summary>
@@ -112,6 +124,71 @@ namespace OpenBve
 			internal ButtonState GetButton(JoystickButton button) {
 				return buttons[EnumToIndex<JoystickButton>(button,"Button")];
 			}
+
+
+
+
+
+
+			/// <summary>
+			/// Get if hat state changed in previous time-slice.
+			/// </summary>
+			/// <returns>Whether the status had changed.</returns>
+			/// <param name="index">The hat index (0 - (<see cref="JoystickHat.Last"/>+1)).</param>
+			internal bool GetHatChanged(int index) {
+				return hatsChanges[index];
+			}
+
+			/// <summary>
+			/// Get if hat state changed in previous time-slice.
+			/// </summary>
+			/// <returns>Whether the status had changed.</returns>
+			/// <param name="hat">The hat name.</param>
+			internal bool GetHatChanged(JoystickHat hat) {
+				return hatsChanges[EnumToIndex<JoystickHat>(hat,"Hat")];
+			}
+
+			/// <summary>
+			/// Get if axis state changed in previous time-slice.
+			/// </summary>
+			/// <returns>Whether the status had changed.</returns>
+			/// <param name="index">The axis index (0 - (<see cref="JoystickAxis.Last"/>+1)).</param>
+			internal bool GetAxisChanged(int index) {
+				return axesChanges[index];
+			}
+
+			/// <summary>
+			/// Get if axis state changed in previous time-slice.
+			/// </summary>
+			/// <returns>Whether the status had changed.</returns>
+			/// <param name="axis">The axis name.</param>
+			internal bool GetAxisChanged(JoystickAxis axis) {
+				return axesChanges[EnumToIndex<JoystickAxis>(axis,"Axis")];
+			}
+
+			/// <summary>
+			/// Get if button state changed in previous time-slice.
+			/// </summary>
+			/// <returns>Whether the status had changed.</returns>
+			/// <param name="index">The button index (0 - (<see cref="JoystickButton.Last"/>+1)).</param>
+			internal bool GetButtonChanged(int index) {
+				return buttonsChanges[index];
+			}
+
+			/// <summary>
+			/// Get if button state changed in previous time-slice.
+			/// </summary>
+			/// <returns>Whether the status had changed.</returns>
+			/// <param name="button">The button name.</param>
+			internal bool GetButtonChanged(JoystickButton button) {
+				return buttonsChanges[EnumToIndex<JoystickButton>(button,"Button")];
+			}
+
+
+
+
+
+
 
 			// --- private helper methods ---
 			/// <summary>
