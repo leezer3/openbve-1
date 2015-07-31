@@ -51,7 +51,7 @@ namespace OpenBve {
 				                     "No plugin found that is capable of loading texture " + path
 				                    );
 			} else {
-				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path.ToString());
+				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path);
 			}
 			width = 0;
 			height = 0;

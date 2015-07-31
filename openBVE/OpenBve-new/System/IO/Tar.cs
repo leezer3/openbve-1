@@ -10,8 +10,8 @@ namespace OpenBve {
 		/// <param name="directory">The directory to extract the content to.</param>
 		/// <param name="prefix">The directory prefix that is trimmed off all the paths encountered in this archive, or a null reference.</param>
 		internal static void Unpack(byte[] bytes, string directory, string prefix) {
-			System.Text.ASCIIEncoding ascii = new ASCIIEncoding();
-			System.Text.UTF8Encoding utf8 = new UTF8Encoding();
+			ASCIIEncoding ascii = new ASCIIEncoding();
+			UTF8Encoding utf8 = new UTF8Encoding();
 			int position = 0;
 			string longLink = null;
 			while (position < bytes.Length) {

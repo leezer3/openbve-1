@@ -113,13 +113,13 @@ namespace OpenBve {
 			}
 			// operators
 			public static bool operator ==(Vertex A, Vertex B) {
-				if (A.Coordinates.X != B.Coordinates.X | A.Coordinates.Y != B.Coordinates.Y | A.Coordinates.Z != B.Coordinates.Z) return false;
-				if (A.TextureCoordinates.X != B.TextureCoordinates.X | A.TextureCoordinates.Y != B.TextureCoordinates.Y) return false;
+				if (A.Coordinates.X != B.Coordinates.X || A.Coordinates.Y != B.Coordinates.Y || A.Coordinates.Z != B.Coordinates.Z) return false;
+				if (A.TextureCoordinates.X != B.TextureCoordinates.X || A.TextureCoordinates.Y != B.TextureCoordinates.Y) return false;
 				return true;
 			}
 			public static bool operator !=(Vertex A, Vertex B) {
-				if (A.Coordinates.X != B.Coordinates.X | A.Coordinates.Y != B.Coordinates.Y | A.Coordinates.Z != B.Coordinates.Z) return true;
-				if (A.TextureCoordinates.X != B.TextureCoordinates.X | A.TextureCoordinates.Y != B.TextureCoordinates.Y) return true;
+				if (A.Coordinates.X != B.Coordinates.X || A.Coordinates.Y != B.Coordinates.Y || A.Coordinates.Z != B.Coordinates.Z) return true;
+				if (A.TextureCoordinates.X != B.TextureCoordinates.X || A.TextureCoordinates.Y != B.TextureCoordinates.Y) return true;
 				return false;
 			}
 		}
