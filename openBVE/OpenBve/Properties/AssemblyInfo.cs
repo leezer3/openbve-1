@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 
 namespace OpenBve {
 	internal static partial class Program {
-		internal const bool IsDevelopmentVersion = false;
-		internal const string VersionSuffix = "";
+		internal const bool IsDevelopmentVersion = true;
+		internal const string VersionSuffix = "-dev";
 	}
 }

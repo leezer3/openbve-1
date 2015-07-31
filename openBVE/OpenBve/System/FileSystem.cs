@@ -9,7 +9,7 @@ namespace OpenBve {
 		
 		
 		// --- members ---
-		
+
 		/// <summary>The location of the application data, including, among others, Compatibility, Flags and Languages.</summary>
 		internal string DataFolder;
 		
@@ -30,7 +30,7 @@ namespace OpenBve {
 		
 		/// <summary>The arguments to supply to the process on restarting the program.</summary>
 		internal string RestartArguments;
-		
+
 		
 		// --- constructors ---
 		
@@ -55,18 +55,30 @@ namespace OpenBve {
 		/// <param name="args">The command line arguments.</param>
 		/// <returns>The file system information.</returns>
 		internal static FileSystem FromCommandLineArgs(string[] args) {
-			foreach (string arg in args) {
-				if (arg.StartsWith("/filesystem=", StringComparison.OrdinalIgnoreCase)) {
-					return FromConfigurationFile(arg.Substring(12));
+			for (int i = 0; i < args.Length; i++) {
+				if (args[i].StartsWith("/filesystem=", StringComparison.OrdinalIgnoreCase))
+					return FromConfigurationFile(args[i].Substring(12));
+				if (args[i].StartsWith("--filesystem=", StringComparison.OrdinalIgnoreCase))
+					return FromConfigurationFile(args[i].Substring(13));
+				if (args[i] == "--filesystem") {
+					try {
+						return FromConfigurationFile(args[i + 1]);
+					} catch (IndexOutOfRangeException) {}
 				}
 			}
 			string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			string configFile = OpenBveApi.Path.CombineFile(OpenBveApi.Path.CombineDirectory(OpenBveApi.Path.CombineDirectory(assemblyFolder, "UserData"), "Settings"), "filesystem.cfg");
-			if (File.Exists(configFile)) {
-				return FromConfigurationFile(configFile);
+			if (Configuration.FileSysCfgPaths.Length == 0) {
+				string configFile = OpenBveApi.Path.CombineFileParams(assemblyFolder, "UserData", "Settings", Configuration.FileSysCfg);
+				if (File.Exists(configFile))
+					return FromConfigurationFile(configFile);
 			} else {
-				return new FileSystem();
+				foreach(string path in Configuration.FileSysCfgPaths){
+					string configFile = OpenBveApi.Path.CombineFile(GetAbsolutePath(path,true),Configuration.FileSysCfg);
+					if (File.Exists(configFile))
+						return FromConfigurationFile(configFile);
+				}
 			}
+			return new FileSystem();
 		}
 		
 		/// <summary>Creates all folders in the file system that can later be written to.</summary>
@@ -109,6 +121,8 @@ namespace OpenBve {
 			try {
 				string[] lines = File.ReadAllLines(file, Encoding.UTF8);
 				foreach (string line in lines) {
+					if(line.Trim().StartsWith("#",StringComparison.OrdinalIgnoreCase))
+						continue;
 					int equals = line.IndexOf('=');
 					if (equals >= 0) {
 						string key = line.Substring(0, equals).Trim().ToLowerInvariant();
@@ -165,6 +179,5 @@ namespace OpenBve {
 			}
 			return folder;
 		}
-		
 	}
 }

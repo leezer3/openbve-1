@@ -4,16 +4,17 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using OpenTK;
-
+using System.Globalization;
 namespace OpenBve {
 	/// <summary>Provides methods for starting the program, including the Main procedure.</summary>
 	internal static partial class Program {
 
 		// --- members ---
-
+		/// <summary>The invariant culture.</summary>
+		internal static readonly CultureInfo InvariantCulture = CultureInfo.InvariantCulture;
 		/// <summary>Whether the program is currently running on Mono. This is of interest for the Windows Forms main menu which behaves differently on Mono than on Microsoft .NET.</summary>
 		internal static bool CurrentlyRunningOnMono = false;
-		
+
 		/// <summary>Whether the program is currently running on Microsoft Windows or compatible. This is of interest for whether running Win32 plugins is possible.</summary>
 		internal static bool CurrentlyRunningOnWindows = false;
 
@@ -32,10 +33,9 @@ namespace OpenBve {
 		/// <summary>The random number generator used by this program.</summary>
 		internal static Random RandomNumberGenerator = new Random();
 
-		internal static GameWindow UI;
-		
+
 		// --- functions ---
-		
+
 		/// <summary>Is executed when the program starts.</summary>
 		/// <param name="args">The command-line arguments.</param>
 		[STAThread]
@@ -44,7 +44,7 @@ namespace OpenBve {
 			Application.SetCompatibleTextRenderingDefault(false);
 			// --- determine the running environment ---
 			CurrentlyRunningOnMono = Type.GetType("Mono.Runtime") != null;
-			CurrentlyRunningOnWindows = Environment.OSVersion.Platform == PlatformID.Win32S | Environment.OSVersion.Platform == PlatformID.Win32Windows | Environment.OSVersion.Platform == PlatformID.Win32NT;
+			CurrentlyRunningOnWindows = Environment.OSVersion.Platform == PlatformID.Win32S || Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT;
 			CurrentHost = new Host();
 			try {
 				FileSystem = FileSystem.FromCommandLineArgs(args);
@@ -109,7 +109,7 @@ namespace OpenBve {
 				}
 			}
 			// --- if a route was provided but no train, try to use the route default ---
-			if (result.RouteFile != null & result.TrainFolder == null) {
+			if (result.RouteFile != null && result.TrainFolder == null) {
 				bool isRW = string.Equals(System.IO.Path.GetExtension(result.RouteFile), ".rw", StringComparison.OrdinalIgnoreCase);
 				CsvRwRouteParser.ParseRoute(result.RouteFile, isRW, result.RouteEncoding, null, null, null, true);
 				if (Game.TrainName != null && Game.TrainName.Length != 0) {
@@ -187,7 +187,7 @@ namespace OpenBve {
 			// --- restart the program if necessary ---
 			if (RestartArguments != null) {
 				string arguments;
-				if (FileSystem.RestartArguments.Length != 0 & RestartArguments.Length != 0) {
+				if (FileSystem.RestartArguments.Length != 0 && RestartArguments.Length != 0) {
 					arguments = FileSystem.RestartArguments + " " + RestartArguments;
 				} else {
 					arguments = FileSystem.RestartArguments + RestartArguments;
@@ -199,7 +199,7 @@ namespace OpenBve {
 				}
 			}
 		}
-		
+
 		/// <summary>Initializes the program. A matching call to deinitialize must be made when the program is terminated.</summary>
 		/// <returns>Whether the initialization was successful.</returns>
 		private static bool Initialize() {
@@ -224,7 +224,7 @@ namespace OpenBve {
 			ClearLogFile();
 			return true;
 		}
-		
+
 		/// <summary>Deinitializes the program.</summary>
 		private static void Deinitialize() {
 			Plugins.UnloadPlugins();
@@ -232,7 +232,7 @@ namespace OpenBve {
 			Joysticks.Deinitialize();
 			Screen.Deinitialize();
 		}
-		
+
 		/// <summary>Provides the API with lookup directories for all installed packages.</summary>
 		internal static void SetPackageLookupDirectories() {
 			int size = 16;
@@ -257,7 +257,7 @@ namespace OpenBve {
 			Array.Resize<string>(ref directories, count);
 			SetPackageLookupDirectoriesAuthentication = OpenBveApi.Path.SetPackageLookupDirectories(names, directories, SetPackageLookupDirectoriesAuthentication);
 		}
-		
+
 		/// <summary>Clears the log file.</summary>
 		internal static void ClearLogFile() {
 			try {
@@ -265,7 +265,7 @@ namespace OpenBve {
 				System.IO.File.WriteAllText(file, string.Empty, new System.Text.UTF8Encoding(true));
 			} catch { }
 		}
-		
+
 		/// <summary>Appends the specified text to the log file.</summary>
 		/// <param name="text">The text.</param>
 		internal static void AppendToLogFile(string text) {

@@ -41,7 +41,7 @@ namespace OpenBve {
 													values[j] = values[j].Trim();
 													if (values[j].Length != 0) {
 														int bracket = Math.Max(values[j].IndexOf('('), values[j].IndexOf('['));
-														if (bracket >= 0 && (values[j][values[j].Length - 1] == ')' | values[j][values[j].Length - 1] == ']')) {
+														if (bracket >= 0 && (values[j][values[j].Length - 1] == ')' || values[j][values[j].Length - 1] == ']')) {
 															values[j] = values[j].Substring(0, bracket).TrimEnd();
 														}
 														add = packages.Exists(item => item != null && item.Equals(values[j], StringComparison.OrdinalIgnoreCase)) ||
@@ -86,7 +86,7 @@ namespace OpenBve {
 												string key = line.Substring(0, equals).Trim();
 												if (key.Equals("type", StringComparison.OrdinalIgnoreCase)) {
 													string value = line.Substring(equals + 1).Trim();
-													if (value.Equals("library", StringComparison.OrdinalIgnoreCase) | value.Equals("shared library", StringComparison.OrdinalIgnoreCase)) {
+													if (value.Equals("library", StringComparison.OrdinalIgnoreCase) || value.Equals("shared library", StringComparison.OrdinalIgnoreCase)) {
 														add = !dependencies.Exists(item => item != null && item.Equals(package, StringComparison.OrdinalIgnoreCase));
 														break;
 													}

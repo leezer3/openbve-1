@@ -97,11 +97,9 @@ namespace OpenBve {
 							if (type.IsSubclassOf(typeof(OpenBveApi.Objects.ObjectInterface))) {
 								plugin.Object = (OpenBveApi.Objects.ObjectInterface)assembly.CreateInstance(type.FullName);
 							}
-							if (typeof(OpenBveApi.Runtime.IRuntime).IsAssignableFrom(type)) {
-								iruntime = true;
-							}
+							iruntime = typeof(OpenBveApi.Runtime.IRuntime).IsAssignableFrom(type);
 						}
-						if (plugin.Texture != null | plugin.Sound != null | plugin.Object != null) {
+						if (plugin.Texture != null || plugin.Sound != null || plugin.Object != null) {
 							plugin.Load();
 							list.Add(plugin);
 						} else if (!iruntime) {

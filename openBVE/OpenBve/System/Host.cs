@@ -51,7 +51,7 @@ namespace OpenBve {
 				                     "No plugin found that is capable of loading texture " + path
 				                    );
 			} else {
-				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path.ToString());
+				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path);
 			}
 			width = 0;
 			height = 0;
@@ -91,10 +91,9 @@ namespace OpenBve {
 					}
 				}
 				Debug.AddMessage(Debug.MessageType.Error, false,
-				                     "No plugin found that is capable of loading texture " + path.ToString()
-				                    );
+				                     "No plugin found that is capable of loading texture " + path);
 			} else {
-				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path.ToString());
+				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path);
 			}
 			texture = null;
 			return false;
@@ -113,7 +112,7 @@ namespace OpenBve {
 					return true;
 				}
 			} else {
-				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path.ToString());
+				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path);
 			}
 			handle = null;
 			return false;
@@ -164,10 +163,9 @@ namespace OpenBve {
 					}
 				}
 				Debug.AddMessage(Debug.MessageType.Error, false,
-				                     "No plugin found that is capable of loading sound " + path.ToString()
-				                    );
+				                     "No plugin found that is capable of loading sound " + path);
 			} else {
-				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path.ToString());
+				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path);
 			}
 			sound = null;
 			return false;
@@ -181,8 +179,11 @@ namespace OpenBve {
 			if (System.IO.File.Exists(path) || System.IO.Directory.Exists(path)) {
 				Sounds.SoundBuffer data;
 				data = Sounds.RegisterBuffer(path, 0.0); // TODO
+				if (data != null) {
+					handle = data;
+				}
 			} else {
-				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path.ToString());
+				ReportProblem(OpenBveApi.Hosts.ProblemType.PathNotFound, path);
 			}
 			handle = null;
 			return false;
