@@ -73,7 +73,7 @@ namespace OpenBve {
 		/// <returns>Whether initializing audio was successful.</returns>
 		internal static bool Initialize() {
 			Deinitialize();
-			switch (Options.Current.SoundRange) {
+			switch (Program.Options.SoundRange) {
 				case SoundRange.Low:
 					OuterRadiusFactorMinimum = 2.0;
 					OuterRadiusFactorMaximum = 8.0;

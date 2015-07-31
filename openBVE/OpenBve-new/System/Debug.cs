@@ -23,8 +23,8 @@ namespace OpenBve
 		}
 		internal static List<Message> Messages = null;
 		internal static void AddMessage(MessageType Type, bool FileNotFound, string Text) {
-			if (Type == MessageType.Warning & !Options.Current.ShowWarningMessages) return;
-			if (Type == MessageType.Error & !Options.Current.ShowErrorMessages) return;
+			if (Type == MessageType.Warning && !Program.Options.ShowWarningMessages) return;
+			if (Type == MessageType.Error && !Program.Options.ShowErrorMessages) return;
 			if (Messages == null) {
 				Messages = new List<Message>(16);
 			}
