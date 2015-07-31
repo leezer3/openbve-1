@@ -87,6 +87,7 @@
     <Compile Include="Audio\Sounds.Update.cs">
       <DependentUpon>..\..\OpenBve\Audio\Sounds.cs</DependentUpon>
     </Compile>
+    <Compile Include="System\Debug.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ManagedContent-format.txt" />
