@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 using OpenTK.Input;
 
@@ -11,7 +10,7 @@ namespace OpenBve
 		// --- structures ---
 		
 		/// <summary>Represents a joystick.</summary>
-		internal struct Joystick
+		internal class Joystick
 		{
 			// --- members ---
 			/// <summary>
@@ -40,7 +39,6 @@ namespace OpenBve
 			internal Joystick(string name, int index) {
 				this.Name = name;
 				this.Index = index;
-				var caps = OpenTK.Input.Joystick.GetCapabilities(index);
 				hats = new HatPosition[JoystickHat.Last+1];
 				hatsChanges = new bool[JoystickHat.Last+1];
 				axes = new float[JoystickAxis.Last+1];
@@ -71,6 +69,8 @@ namespace OpenBve
 					buttons[k] = newState;
 				}
 			}
+
+			// --- states ---
 			/// <summary>
 			/// Get the position of hat specified by it's index.
 			/// </summary>
@@ -125,11 +125,7 @@ namespace OpenBve
 				return buttons[EnumToIndex<JoystickButton>(button,"Button")];
 			}
 
-
-
-
-
-
+			// --- state changes ---
 			/// <summary>
 			/// Get if hat state changed in previous time-slice.
 			/// </summary>
@@ -184,12 +180,6 @@ namespace OpenBve
 				return buttonsChanges[EnumToIndex<JoystickButton>(button,"Button")];
 			}
 
-
-
-
-
-
-
 			// --- private helper methods ---
 			/// <summary>
 			/// Converts enum member name to instance of it.
@@ -198,7 +188,7 @@ namespace OpenBve
 			/// <param name="index">Index of member.</param>
 			/// <param name="basename">Base enum name (e.g. without index).</param>
 			/// <typeparam name="T">Type of enum.</typeparam>
-			private T EnumFromIndex<T>(int index, string basename) {
+			private static T EnumFromIndex<T>(int index, string basename) {
 				return (T)Enum.Parse(typeof(T), basename + index);
 			}
 			/// <summary>
@@ -208,7 +198,7 @@ namespace OpenBve
 			/// <param name="enumVal">Enum member instance.</param>
 			/// <param name="basename">Base enum name (e.g. without index).</param>
 			/// <typeparam name="T">Type of enum.</typeparam>
-			private int EnumToIndex<T>(T enumVal, string basename) {
+			private static int EnumToIndex<T>(T enumVal, string basename) {
 				return Int32.Parse(Enum.GetName(typeof(T), enumVal).Substring(basename.Length));
 			}
 		}
@@ -217,18 +207,19 @@ namespace OpenBve
 		// --- members ---
 
 		/// <summary>Whether joystick subsystem is initialized.</summary>
-		private static bool Initialized = false;
-		
+		internal static bool Initialized {
+			get { return AttachedJoysticks == null; }
+		}
+
 		/// <summary>Holds all joysticks currently attached to the computer.</summary>
-		internal static Joystick[] AttachedJoysticks = new Joystick[] { };
+		internal static Joystick[] AttachedJoysticks = null;
 		
 		
 		// --- functions ---
 		
 		/// <summary>Initializes joysticks. A call to Deinitialize should be made when terminating the program.</summary>
 		/// <returns>Whether initializing joysticks was successful.</returns>
-		internal static bool Initialize()
-		{
+		internal static bool Initialize() {
 			List<Joystick> joys = new List<Joystick>();
 			for (int i = 0; i < 8; i++) {
 				var state = OpenTK.Input.Joystick.GetState(i);
@@ -246,12 +237,8 @@ namespace OpenBve
 		}
 
 		/// <summary>Deinitializes joysticks.</summary>
-		internal static void Deinitialize()
-		{
-			if (Initialized) {
-				AttachedJoysticks = null;
-				Initialized = false;
-			}
+		internal static void Deinitialize() {
+			AttachedJoysticks = null;
 		}
 		
 	}

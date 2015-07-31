@@ -8,7 +8,7 @@ namespace OpenBve
     internal static class Configuration
     {
 		/// <summary>
-		/// List of paths for looking up the <see cref="FileSysCfg"/> file. If empty, the default location is used.
+		/// List of paths for looking up the <see cref="FileSysCfg"/> file. If empty, the [assemblyFolder]/UserData/Settings/<see cref="Configuration.FileSysCfg"/>); is used.
 		/// </summary>
 		internal static readonly string[] FileSysCfgPaths = {};
 		/// <summary>
