@@ -39,12 +39,12 @@ namespace OpenBve
 			internal Joystick(string name, int index) {
 				this.Name = name;
 				this.Index = index;
-				hats = new HatPosition[JoystickHat.Last+1];
-				hatsChanges = new bool[JoystickHat.Last+1];
-				axes = new float[JoystickAxis.Last+1];
-				axesChanges = new bool[JoystickAxis.Last+1];
-				buttons = new ButtonState[JoystickButton.Last+1];
-				buttonsChanges = new bool[JoystickButton.Last+1];
+				hats = new HatPosition[(int)JoystickHat.Last+1];
+				hatsChanges = new bool[(int)JoystickHat.Last+1];
+				axes = new float[(int)JoystickAxis.Last+1];
+				axesChanges = new bool[(int)JoystickAxis.Last+1];
+				buttons = new ButtonState[(int)JoystickButton.Last+1];
+				buttonsChanges = new bool[(int)JoystickButton.Last+1];
 			}
 
 			// --- public API methods ---
@@ -232,7 +232,6 @@ namespace OpenBve
 				}
 			}
 			AttachedJoysticks = joys.ToArray();
-			Initialized = true;
 			return true;
 		}
 

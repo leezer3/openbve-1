@@ -256,9 +256,9 @@ namespace OpenBveApi.Colors {
 		}
 		public override int GetHashCode() {
 			int result = 1;
-			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(R));
-			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(G));
-			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(B));
+			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(R),0);
+			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(G),0);
+			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(B),0);
 			return result;
 		}
 		// --- read-only fields ---
@@ -363,10 +363,10 @@ namespace OpenBveApi.Colors {
 		}
 		public override int GetHashCode() {
 			int result = 1;
-			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(R));
-			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(G));
-			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(B));
-			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(A));
+			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(R),0);
+			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(G),0);
+			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(B),0);
+			result = 31 * result + BitConverter.ToInt32(BitConverter.GetBytes(A),0);
 			return result;
 		}
 		// --- read-only fields ---

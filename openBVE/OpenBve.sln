@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBve", "OpenBve\OpenBve.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBveApi", "OpenBveApi\OpenBveApi.csproj", "{27134980-4415-4375-A564-40A9014DFA5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBve-new", "OpenBve-new\OpenBve-new.csproj", "{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,14 +75,6 @@ Global
 		{4B775819-3574-443E-95AD-B40BC6EA6469}.Release|Any CPU.Build.0 = Release|x86
 		{4B775819-3574-443E-95AD-B40BC6EA6469}.Release|x86.ActiveCfg = Release|x86
 		{4B775819-3574-443E-95AD-B40BC6EA6469}.Release|x86.Build.0 = Release|x86
-		{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}.Debug|x86.Build.0 = Debug|Any CPU
-		{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}.Release|Any CPU.Build.0 = Release|Any CPU
-		{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}.Release|x86.ActiveCfg = Release|Any CPU
-		{58A0FD99-F3ED-48A8-8061-1CB3F72A0642}.Release|x86.Build.0 = Release|Any CPU
 		{67418D38-1E2E-4944-A1B0-09E00FC2D055}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{67418D38-1E2E-4944-A1B0-09E00FC2D055}.Debug|Any CPU.Build.0 = Debug|x86
 		{67418D38-1E2E-4944-A1B0-09E00FC2D055}.Debug|x86.ActiveCfg = Debug|x86

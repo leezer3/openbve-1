@@ -57,9 +57,9 @@ namespace OpenBve {
 		/// <summary>Adds the user-specified proxy server to the client.</summary>
 		/// <param name="client">The web client.</param>
 		private static void AddWebClientProxy(WebClient client) {
-			if (Program.Options.ProxyUrl.Length != 0) {
-				WebProxy proxy = new WebProxy(Program.Options.ProxyUrl);
-				proxy.Credentials = new NetworkCredential(Program.Options.ProxyUserName, Program.Options.ProxyPassword);
+			if (Options.Current.ProxyUrl.Length != 0) {
+				WebProxy proxy = new WebProxy(Options.Current.ProxyUrl);
+				proxy.Credentials = new NetworkCredential(Options.Current.ProxyUserName, Options.Current.ProxyPassword);
 				client.Proxy = proxy;
 			}
 		}

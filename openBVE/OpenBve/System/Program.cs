@@ -33,7 +33,7 @@ namespace OpenBve {
 		/// <summary>The random number generator used by this program.</summary>
 		internal static Random RandomNumberGenerator = new Random();
 
-
+		internal static GameWindow UI;
 		// --- functions ---
 
 		/// <summary>Is executed when the program starts.</summary>
