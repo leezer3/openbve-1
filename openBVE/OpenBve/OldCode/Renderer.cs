@@ -5,7 +5,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenBve;
-using Vector3 = OpenBveApi.Math.Vector3;
+using Vector3 = OpenBveApi.Math.Vector3D;
 using Vector3f = OpenBveApi.Math.Vector3f;
 namespace OpenBve {
 	internal static partial class Renderer {
@@ -100,13 +100,13 @@ namespace OpenBve {
 			internal ObjectList List;
 			internal int OpenGlDisplayList;
 			internal bool OpenGlDisplayListAvailable;
-			internal Vector3 WorldPosition;
+			internal Vector3D WorldPosition;
 			internal bool Update;
 			internal ObjectGroup() {
 				this.List = new ObjectList();
 				this.OpenGlDisplayList = 0;
 				this.OpenGlDisplayListAvailable = false;
-				this.WorldPosition = new Vector3(0.0, 0.0, 0.0);
+				this.WorldPosition = new Vector3D(0.0, 0.0, 0.0);
 				this.Update = true;
 			}
 		}

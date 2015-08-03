@@ -152,7 +152,7 @@ namespace OpenBve {
 						int d = Train.DriverCar;
 						Sounds.SoundBuffer buffer = Train.Cars[d].Sounds.Halt.Buffer;
 						if (buffer != null) {
-							OpenBveApi.Math.Vector3 pos = Train.Cars[d].Sounds.Halt.Position;
+							OpenBveApi.Math.Vector3D pos = Train.Cars[d].Sounds.Halt.Position;
 							if (Train.Specs.PassAlarm == TrainManager.PassAlarmType.Single) {
 								Train.Cars[d].Sounds.Halt.Source = Sounds.PlaySound(buffer, 1.0, 1.0, pos, Train, d, false);
 							} else if (Train.Specs.PassAlarm == TrainManager.PassAlarmType.Loop) {
@@ -470,10 +470,10 @@ namespace OpenBve {
 			internal bool PlayerTrainOnly;
 			internal bool Once;
 			internal bool Dynamic;
-			internal Vector3 Position;
+			internal Vector3D Position;
 			internal double Speed;
 			/// <param name="SoundBuffer">HACK: Set to a null reference to indicate the train point sound.</param>
-			internal SoundEvent(double TrackPositionDelta, Sounds.SoundBuffer SoundBuffer, bool PlayerTrainOnly, bool Once, bool Dynamic, Vector3 Position, double Speed) {
+			internal SoundEvent(double TrackPositionDelta, Sounds.SoundBuffer SoundBuffer, bool PlayerTrainOnly, bool Once, bool Dynamic, Vector3D Position, double Speed) {
 				this.TrackPositionDelta = TrackPositionDelta;
 				this.DontTriggerAnymore = false;
 				this.SoundBuffer = SoundBuffer;
@@ -487,7 +487,7 @@ namespace OpenBve {
 				if (SuppressSoundEvents) return;
 				if (TriggerType == EventTriggerType.FrontCarFrontAxle | TriggerType == EventTriggerType.OtherCarFrontAxle | TriggerType == EventTriggerType.OtherCarRearAxle | TriggerType == EventTriggerType.RearCarRearAxle) {
 					if (!PlayerTrainOnly | Train == TrainManager.PlayerTrain) {
-						Vector3 p = this.Position;
+						Vector3D p = this.Position;
 						double pitch = 1.0;
 						double gain = 1.0;
 						Sounds.SoundBuffer buffer = this.SoundBuffer;
@@ -581,10 +581,10 @@ namespace OpenBve {
 			internal double CurveCantTangent;
 			internal double AdhesionMultiplier;
 			internal double CsvRwAccuracyLevel;
-			internal Vector3 WorldPosition;
-			internal Vector3 WorldDirection;
-			internal Vector3 WorldUp;
-			internal Vector3 WorldSide;
+			internal Vector3D WorldPosition;
+			internal Vector3D WorldDirection;
+			internal Vector3D WorldUp;
+			internal Vector3D WorldSide;
 			internal GeneralEvent[] Events;
 			internal TrackElement(double StartingTrackPosition) {
 				this.StartingTrackPosition = StartingTrackPosition;
@@ -593,10 +593,10 @@ namespace OpenBve {
 				this.CurveCantTangent = 0.0;
 				this.AdhesionMultiplier = 1.0;
 				this.CsvRwAccuracyLevel = 2.0;
-				this.WorldPosition = new Vector3(0.0, 0.0, 0.0);
-				this.WorldDirection = new Vector3(0.0, 0.0, 1.0);
-				this.WorldUp = new Vector3(0.0, 1.0, 0.0);
-				this.WorldSide = new Vector3(1.0, 0.0, 0.0);
+				this.WorldPosition = new Vector3D(0.0, 0.0, 0.0);
+				this.WorldDirection = new Vector3D(0.0, 0.0, 1.0);
+				this.WorldUp = new Vector3D(0.0, 1.0, 0.0);
+				this.WorldSide = new Vector3D(1.0, 0.0, 0.0);
 				this.Events = new GeneralEvent[] { };
 			}
 		}
@@ -611,10 +611,10 @@ namespace OpenBve {
 		internal struct TrackFollower {
 			internal int LastTrackElement;
 			internal double TrackPosition;
-			internal Vector3 WorldPosition;
-			internal Vector3 WorldDirection;
-			internal Vector3 WorldUp;
-			internal Vector3 WorldSide;
+			internal Vector3D WorldPosition;
+			internal Vector3D WorldDirection;
+			internal Vector3D WorldUp;
+			internal Vector3D WorldSide;
 			internal double CurveRadius;
 			internal double CurveCant;
 			internal double CantDueToInaccuracy;
@@ -661,7 +661,7 @@ namespace OpenBve {
 						double f = 2.0 * r * r * (1.0 - Math.Cos(b));
 						double c = (double)Math.Sign(db) * Math.Sqrt(f >= 0.0 ? f : 0.0);
 						double a = 0.5 * (double)Math.Sign(r) * b;
-						Vector3 D = new Vector3(CurrentTrack.Elements[i].WorldDirection.X, 0.0, CurrentTrack.Elements[i].WorldDirection.Z);
+						Vector3D D = new Vector3D(CurrentTrack.Elements[i].WorldDirection.X, 0.0, CurrentTrack.Elements[i].WorldDirection.Z);
 						World.Normalize(ref D.X, ref D.Y, ref D.Z);
 						double cosa = Math.Cos(a);
 						double sina = Math.Sin(a);

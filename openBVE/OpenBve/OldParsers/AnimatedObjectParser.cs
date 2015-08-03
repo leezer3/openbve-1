@@ -34,7 +34,7 @@ namespace OpenBve {
 						case "[include]":
 							{
 								i++;
-								Vector3 position = new Vector3(0.0, 0.0, 0.0);
+								Vector3D position = new Vector3D(0.0, 0.0, 0.0);
 								ObjectManager.UnifiedObject[] obj = new ObjectManager.UnifiedObject[4];
 								int objCount = 0;
 								while (i < Lines.Length && !(Lines[i].StartsWith("[", StringComparison.Ordinal) && Lines[i].EndsWith("]", StringComparison.Ordinal))) {
@@ -121,17 +121,17 @@ namespace OpenBve {
 								Result.Objects[ObjectCount] = new ObjectManager.AnimatedObject();
 								Result.Objects[ObjectCount].States = new ObjectManager.AnimatedObjectState[] { };
 								Result.Objects[ObjectCount].CurrentState = -1;
-								Result.Objects[ObjectCount].TranslateXDirection = new Vector3(1.0, 0.0, 0.0);
-								Result.Objects[ObjectCount].TranslateYDirection = new Vector3(0.0, 1.0, 0.0);
-								Result.Objects[ObjectCount].TranslateZDirection = new Vector3(0.0, 0.0, 1.0);
-								Result.Objects[ObjectCount].RotateXDirection = new Vector3(1.0, 0.0, 0.0);
-								Result.Objects[ObjectCount].RotateYDirection = new Vector3(0.0, 1.0, 0.0);
-								Result.Objects[ObjectCount].RotateZDirection = new Vector3(0.0, 0.0, 1.0);
-								Result.Objects[ObjectCount].TextureShiftXDirection = new Vector2(1.0, 0.0);
-								Result.Objects[ObjectCount].TextureShiftYDirection = new Vector2(0.0, 1.0);
+								Result.Objects[ObjectCount].TranslateXDirection = new Vector3D(1.0, 0.0, 0.0);
+								Result.Objects[ObjectCount].TranslateYDirection = new Vector3D(0.0, 1.0, 0.0);
+								Result.Objects[ObjectCount].TranslateZDirection = new Vector3D(0.0, 0.0, 1.0);
+								Result.Objects[ObjectCount].RotateXDirection = new Vector3D(1.0, 0.0, 0.0);
+								Result.Objects[ObjectCount].RotateYDirection = new Vector3D(0.0, 1.0, 0.0);
+								Result.Objects[ObjectCount].RotateZDirection = new Vector3D(0.0, 0.0, 1.0);
+								Result.Objects[ObjectCount].TextureShiftXDirection = new Vector2D(1.0, 0.0);
+								Result.Objects[ObjectCount].TextureShiftYDirection = new Vector2D(0.0, 1.0);
 								Result.Objects[ObjectCount].RefreshRate = 0.0;
 								Result.Objects[ObjectCount].ObjectIndex = -1;
-								Vector3 Position = new Vector3(0.0, 0.0, 0.0);
+								Vector3D Position = new Vector3D(0.0, 0.0, 0.0);
 								bool timetableUsed = false;
 								string[] StateFiles = null;
 								string StateFunctionRpn = null;
@@ -306,7 +306,7 @@ namespace OpenBve {
 									bool ForceTextureRepeatY = Result.Objects[ObjectCount].TextureShiftXFunction != null && Result.Objects[ObjectCount].TextureShiftXDirection.X != 0.0 ||
 										Result.Objects[ObjectCount].TextureShiftYFunction != null && Result.Objects[ObjectCount].TextureShiftYDirection.Y != 0.0;
 									for (int k = 0; k < StateFiles.Length; k++) {
-										Result.Objects[ObjectCount].States[k].Position = new Vector3(0.0, 0.0, 0.0);
+										Result.Objects[ObjectCount].States[k].Position = new Vector3D(0.0, 0.0, 0.0);
 										if (StateFiles[k] != null) {
 											Result.Objects[ObjectCount].States[k].Object = ObjectManager.LoadStaticObject(StateFiles[k], Encoding, LoadMode, false, ForceTextureRepeatX, ForceTextureRepeatY);
 											if (Result.Objects[ObjectCount].States[k].Object != null) {
@@ -343,7 +343,7 @@ namespace OpenBve {
 		/// <param name="field">Actual field name.</param>
 		/// <param name="file">File name.</param>
 		/// <param name="line">Actual line number string.</param>
-		private static void ParsePosition(string value, ref Vector3 position, string field, int line, string file){
+		private static void ParsePosition(string value, ref Vector3D position, string field, int line, string file){
 			string[] s = value.Split(',');
 			if (s.Length == 3) {
 				double x, y, z;
@@ -354,7 +354,7 @@ namespace OpenBve {
 				} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
 					Debug.AddMessage(Debug.MessageType.Error, false, "Z is invalid in " + field + " at line " + line + " in file " + file);
 				} else {
-					position = new Vector3(x, y, z);
+					position = new Vector3D(x, y, z);
 				}
 			} else {
 				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + file);
@@ -404,7 +404,7 @@ namespace OpenBve {
 		/// <param name="field">Actual field name.</param>
 		/// <param name="file">File name.</param>
 		/// <param name="line">Actual line number string.</param>
-		private static void ParseTranslateDirection(string value, ref Vector3 transDir, string field, int line, string file){
+		private static void ParseTranslateDirection(string value, ref Vector3D transDir, string field, int line, string file){
 			string[] s = value.Split(',');
 			if (s.Length == 3) {
 				double x, y, z;
@@ -415,7 +415,7 @@ namespace OpenBve {
 				} else if (!double.TryParse(s[2], System.Globalization.NumberStyles.Float, Culture, out z)) {
 					Debug.AddMessage(Debug.MessageType.Error, false, "Z is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + file);
 				} else {
-					transDir = new Vector3(x, y, z);
+					transDir = new Vector3D(x, y, z);
 				}
 			} else {
 				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + file);
@@ -462,7 +462,7 @@ namespace OpenBve {
 		/// <param name="field">Actual field name.</param>
 		/// <param name="filename">File name.</param>
 		/// <param name="line">Actual line number string.</param>
-		private static void ParseRotateDirection(string value, ref Vector3 rotDir, string field, int line, string filename){
+		private static void ParseRotateDirection(string value, ref Vector3D rotDir, string field, int line, string filename){
 			string[] s = value.Split(',');
 			if (s.Length == 3) {
 				double x, y, z;
@@ -475,7 +475,7 @@ namespace OpenBve {
 				} else if (x == 0.0 && y == 0.0 && z == 0.0) {
 					Debug.AddMessage(Debug.MessageType.Error, false, "The direction indicated by X, Y and Z is expected to be non-zero in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else {
-					rotDir = new Vector3(x, y, z);
+					rotDir = new Vector3D(x, y, z);
 				}
 			} else {
 				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 3 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
@@ -518,7 +518,7 @@ namespace OpenBve {
 		/// <param name="field">Actual field name.</param>
 		/// <param name="filename">File name.</param>
 		/// <param name="line">Actual line number string.</param>
-		private static void ParseTextureShift(string value, ref Vector2 shift, string field, int line, string filename){
+		private static void ParseTextureShift(string value, ref Vector2D shift, string field, int line, string filename){
 			string[] s = value.Split(',');
 			if (s.Length == 2) {
 				double x, y;
@@ -527,7 +527,7 @@ namespace OpenBve {
 				} else if (!double.TryParse(s[1], System.Globalization.NumberStyles.Float, Culture, out y)) {
 					Debug.AddMessage(Debug.MessageType.Error, false, "Y is invalid in " + field + " at line " + line.ToString(Culture) + " in file " + filename);
 				} else {
-					shift = new Vector2(x, y);
+					shift = new Vector2D(x, y);
 				}
 			} else {
 				Debug.AddMessage(Debug.MessageType.Error, false, "Exactly 2 arguments are expected in " + field + " at line " + line.ToString(Culture) + " in file " + filename);

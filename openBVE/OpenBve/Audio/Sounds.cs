@@ -233,7 +233,7 @@ namespace OpenBve {
 		/// <param name="position">The position. If a train and car are specified, the position is relative to the car, otherwise absolute.</param>
 		/// <param name="looped">Whether to play the sound in a loop.</param>
 		/// <returns>The sound source.</returns>
-		internal static SoundSource PlaySound(SoundBuffer buffer, double pitch, double volume, OpenBveApi.Math.Vector3 position, bool looped) {
+		internal static SoundSource PlaySound(SoundBuffer buffer, double pitch, double volume, OpenBveApi.Math.Vector3D position, bool looped) {
 			if (Sources.Length == SourceCount) {
 				Array.Resize<SoundSource>(ref Sources, Sources.Length << 1);
 			}
@@ -251,7 +251,7 @@ namespace OpenBve {
 		/// <param name="car">The car in the train the sound is attached to.</param>
 		/// <param name="looped">Whether to play the sound in a loop.</param>
 		/// <returns>The sound source.</returns>
-		internal static SoundSource PlaySound(SoundBuffer buffer, double pitch, double volume, OpenBveApi.Math.Vector3 position, TrainManager.Train train, int car, bool looped) {
+		internal static SoundSource PlaySound(SoundBuffer buffer, double pitch, double volume, OpenBveApi.Math.Vector3D position, TrainManager.Train train, int car, bool looped) {
 			if (Sources.Length == SourceCount) {
 				Array.Resize<SoundSource>(ref Sources, Sources.Length << 1);
 			}

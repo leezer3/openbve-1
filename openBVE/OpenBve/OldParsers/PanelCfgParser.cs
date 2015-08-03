@@ -34,8 +34,8 @@ namespace OpenBve {
 				WorldHeight = 2.0 * Math.Tan(0.5 * World.VerticalViewingAngle) * EyeDistance;
 				WorldWidth = WorldHeight * AspectRatio;
 			}
-			World.CameraRestrictionBottomLeft = new Vector3(-0.5 * WorldWidth, -0.5 * WorldHeight, EyeDistance);
-			World.CameraRestrictionTopRight = new Vector3(0.5 * WorldWidth, 0.5 * WorldHeight, EyeDistance);
+			World.CameraRestrictionBottomLeft = new Vector3D(-0.5 * WorldWidth, -0.5 * WorldHeight, EyeDistance);
+			World.CameraRestrictionTopRight = new Vector3D(0.5 * WorldWidth, 0.5 * WorldHeight, EyeDistance);
 			double WorldLeft = Train.Cars[Train.DriverCar].DriverX - 0.5 * WorldWidth;
 			double WorldTop = Train.Cars[Train.DriverCar].DriverY + 0.5 * WorldHeight;
 			double WorldZ = Train.Cars[Train.DriverCar].DriverZ;
@@ -342,9 +342,9 @@ namespace OpenBve {
 												double w = (double)t.Width;
 												double h = (double)t.Height;
 												int j = CreateElement(Train, CenterX - Radius * w / h, CenterY + SemiHeight - Radius, 2.0 * Radius * w / h, 2.0 * Radius, FullWidth, FullHeight, WorldLeft, WorldTop, WorldWidth, WorldHeight, WorldZ + EyeDistance - (double)(4 + k) * StackDistance, Train.Cars[Train.DriverCar].DriverX, Train.Cars[Train.DriverCar].DriverY, Train.Cars[Train.DriverCar].DriverZ, t, NeedleColor[k], false);
-												Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3(0.0, 0.0, -1.0);
-												Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3(1.0, 0.0, 0.0);
-												Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
+												Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3D(0.0, 0.0, -1.0);
+												Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3D(1.0, 0.0, 0.0);
+												Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3D.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
 												double c0 = (Angle * (Maximum - Minimum) - 2.0 * Minimum * Math.PI) / (Maximum - Minimum) + Math.PI;
 												double c1 = 2.0 * (Math.PI - Angle) / (Maximum - Minimum);
 												string Variable = "0";
@@ -389,12 +389,12 @@ namespace OpenBve {
 											Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDClockwiseWinding = true;
 											Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDInitialAngle = Angle - 2.0 * Math.PI;
 											Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDLastAngle = 2.0 * Math.PI - Angle;
-											Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDVectors = new Vector3[] {
-												new Vector3(x0, y0, z0),
-												new Vector3(x1, y1, z1),
-												new Vector3(x2, y2, z2),
-												new Vector3(x3, y3, z3),
-												new Vector3(cx, cy, cz)
+											Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDVectors = new Vector3D[] {
+												new Vector3D(x0, y0, z0),
+												new Vector3D(x1, y1, z1),
+												new Vector3D(x2, y2, z2),
+												new Vector3D(x3, y3, z3),
+												new Vector3D(cx, cy, cz)
 											};
 											double c0 = (Angle * (Maximum - Minimum) - 2.0 * Minimum * Math.PI) / (Maximum - Minimum);
 											double c1 = 2.0 * (Math.PI - Angle) / (Maximum - Minimum);
@@ -603,9 +603,9 @@ namespace OpenBve {
 										double w = (double)t.Width;
 										double h = (double)t.Height;
 										int j = CreateElement(Train, CenterX - Radius * w / h, CenterY + SemiHeight - Radius, 2.0 * Radius * w / h, 2.0 * Radius, FullWidth, FullHeight, WorldLeft, WorldTop, WorldWidth, WorldHeight, WorldZ + EyeDistance - 5.0 * StackDistance, Train.Cars[Train.DriverCar].DriverX, Train.Cars[Train.DriverCar].DriverY, Train.Cars[Train.DriverCar].DriverZ, t, Needle, false);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3(0.0, 0.0, -1.0);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3(1.0, 0.0, 0.0);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3D(0.0, 0.0, -1.0);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3D(1.0, 0.0, 0.0);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3D.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
 										double c0 = Angle + Math.PI;
 										double c1 = 2.0 * (Math.PI - Angle) / Maximum;
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation("speedometer abs " + c1.ToString(Culture) + " " + c0.ToString(Culture) + " fma");
@@ -640,12 +640,12 @@ namespace OpenBve {
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDClockwiseWinding = true;
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDInitialAngle = Angle - 2.0 * Math.PI;
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDLastAngle = 2.0 * Math.PI - Angle;
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDVectors = new Vector3[] {
-											new Vector3(x0, y0, z0),
-											new Vector3(x1, y1, z1),
-											new Vector3(x2, y2, z2),
-											new Vector3(x3, y3, z3),
-											new Vector3(cx, cy, cz)
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].LEDVectors = new Vector3D[] {
+											new Vector3D(x0, y0, z0),
+											new Vector3D(x1, y1, z1),
+											new Vector3D(x2, y2, z2),
+											new Vector3D(x3, y3, z3),
+											new Vector3D(cx, cy, cz)
 										};
 										double c0 = Angle;
 										double c1 = 2.0 * (Math.PI - Angle) / Maximum;
@@ -930,9 +930,9 @@ namespace OpenBve {
 										double w = (double)t.Width;
 										double h = (double)t.Height;
 										int j = CreateElement(Train, CenterX - Radius * w / h, CenterY + SemiHeight - Radius, 2.0 * Radius * w / h, 2.0 * Radius, FullWidth, FullHeight, WorldLeft, WorldTop, WorldWidth, WorldHeight, WorldZ + EyeDistance - 4.0 * StackDistance, Train.Cars[Train.DriverCar].DriverX, Train.Cars[Train.DriverCar].DriverY, Train.Cars[Train.DriverCar].DriverZ, t, Needle, false);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3(0.0, 0.0, -1.0);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3(1.0, 0.0, 0.0);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3D(0.0, 0.0, -1.0);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3D(1.0, 0.0, 0.0);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3D.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation("time 0.000277777777777778 * floor 0.523598775598298 *");
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDamping = new ObjectManager.Damping(20.0, 0.4);
 									}
@@ -944,9 +944,9 @@ namespace OpenBve {
 										double w = (double)t.Width;
 										double h = (double)t.Height;
 										int j = CreateElement(Train, CenterX - Radius * w / h, CenterY + SemiHeight - Radius, 2.0 * Radius * w / h, 2.0 * Radius, FullWidth, FullHeight, WorldLeft, WorldTop, WorldWidth, WorldHeight, WorldZ + EyeDistance - 5.0 * StackDistance, Train.Cars[Train.DriverCar].DriverX, Train.Cars[Train.DriverCar].DriverY, Train.Cars[Train.DriverCar].DriverZ, t, Needle, false);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3(0.0, 0.0, -1.0);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3(1.0, 0.0, 0.0);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3D(0.0, 0.0, -1.0);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3D(1.0, 0.0, 0.0);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3D.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation("time 0.0166666666666667 * floor 0.10471975511966 *");
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDamping = new ObjectManager.Damping(20.0, 0.4);
 									}
@@ -958,9 +958,9 @@ namespace OpenBve {
 										double w = (double)t.Width;
 										double h = (double)t.Height;
 										int j = CreateElement(Train, CenterX - Radius * w / h, CenterY + SemiHeight - Radius, 2.0 * Radius * w / h, 2.0 * Radius, FullWidth, FullHeight, WorldLeft, WorldTop, WorldWidth, WorldHeight, WorldZ + EyeDistance - 6.0 * StackDistance, Train.Cars[Train.DriverCar].DriverX, Train.Cars[Train.DriverCar].DriverY, Train.Cars[Train.DriverCar].DriverZ, t, Needle, false);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3(0.0, 0.0, -1.0);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3(1.0, 0.0, 0.0);
-										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection = new Vector3D(0.0, 0.0, -1.0);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection = new Vector3D(1.0, 0.0, 0.0);
+										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateYDirection = Vector3D.Cross(Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDirection, Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateXDirection);
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZFunction = FunctionScripts.GetFunctionScriptFromPostfixNotation("time floor 0.10471975511966 *");
 										Train.Cars[Train.DriverCar].CarSections[0].Elements[j].RotateZDamping = new ObjectManager.Damping(20.0, 0.4);
 									}
@@ -1084,13 +1084,13 @@ namespace OpenBve {
 		private static int CreateElement(TrainManager.Train Train, double Left, double Top, double Width, double Height, double FullWidth, double FullHeight, double WorldLeft, double WorldTop, double WorldWidth, double WorldHeight, double WorldZ, double DriverX, double DriverY, double DriverZ, Textures.Texture Texture, Color32 Color, bool AddStateToLastElement) {
 			// create object
 			ObjectManager.StaticObject Object = new ObjectManager.StaticObject();
-			Vector3[] v = new Vector3[4];
+			Vector3D[] v = new Vector3D[4];
 			double sx = 0.5 * WorldWidth * Width / FullWidth;
 			double sy = 0.5 * WorldHeight * Height / FullHeight;
-			v[0] = new Vector3(-sx, -sy, 0);
-			v[1] = new Vector3(-sx, sy, 0);
-			v[2] = new Vector3(sx, sy, 0);
-			v[3] = new Vector3(sx, -sy, 0);
+			v[0] = new Vector3D(-sx, -sy, 0);
+			v[1] = new Vector3D(-sx, sy, 0);
+			v[2] = new Vector3D(sx, sy, 0);
+			v[3] = new Vector3D(sx, -sy, 0);
 			World.Vertex t0 = new World.Vertex(v[0], new Vector2f(0.0f, 1.0f));
 			World.Vertex t1 = new World.Vertex(v[1], new Vector2f(0.0f, 0.0f));
 			World.Vertex t2 = new World.Vertex(v[2], new Vector2f(1.0f, 0.0f));
@@ -1105,7 +1105,7 @@ namespace OpenBve {
 			Object.Mesh.Materials[0].NighttimeTexture = null;
 			Object.Dynamic = true;
 			// calculate offset
-			Vector3 o;
+			Vector3D o;
 			o.X = WorldLeft + sx + WorldWidth * Left / FullWidth;
 			o.Y = WorldTop - sy - WorldHeight * Top / FullHeight;
 			o.Z = WorldZ;

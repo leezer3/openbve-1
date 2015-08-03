@@ -412,6 +412,14 @@ namespace OpenBveApi.Math {
 		}
 
 
+		/// <summary>Returns a normalized vector based on a 2D vector in the XZ plane and an additional Y-coordinate.</summary>
+		/// <param name="Vector">The vector in the XZ-plane. The X and Y components in Vector represent the X- and Z-coordinates, respectively.</param>
+		/// <param name="Y">The Y-coordinate.</param>
+		internal static Vector3f GetVector3f(Vector2f Vector, float Y) {
+			float t = 1.0f / (float)System.Math.Sqrt(Vector.X * Vector.X + Vector.Y * Vector.Y + Y * Y);
+			return new Vector3f(t * Vector.X, t * Y, t * Vector.Y);
+		}
+
 		// --- read-only fields ---
 
 		/// <summary>Represents a null vector.</summary>

@@ -265,7 +265,7 @@ namespace OpenBve {
 		internal SoundHandleEx PlaySound(int index, double volume, double pitch, bool looped) {
 			if (index >= 0 && index < this.Train.Cars[this.Train.DriverCar].Sounds.Plugin.Length && this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Buffer != null) {
 				Sounds.SoundBuffer buffer = this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Buffer;
-				OpenBveApi.Math.Vector3 position = this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Position;
+				OpenBveApi.Math.Vector3D position = this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Position;
 				Sounds.SoundSource source = Sounds.PlaySound(buffer, pitch, volume, position, this.Train, this.Train.DriverCar, looped);
 				if (this.SoundHandlesCount == this.SoundHandles.Length) {
 					Array.Resize<SoundHandleEx>(ref this.SoundHandles, this.SoundHandles.Length << 1);

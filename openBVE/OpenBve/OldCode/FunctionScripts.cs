@@ -37,7 +37,7 @@ namespace OpenBve {
 			internal double[] Stack;
 			internal double[] Constants;
 			internal double LastResult;
-			internal double Perform(TrainManager.Train Train, int CarIndex, Vector3 Position, double TrackPosition, int SectionIndex, bool IsPartOfTrain, double TimeElapsed) {
+			internal double Perform(TrainManager.Train Train, int CarIndex, Vector3D Position, double TrackPosition, int SectionIndex, bool IsPartOfTrain, double TimeElapsed) {
 				ExecuteFunctionScript(this, Train, CarIndex, Position, TrackPosition, SectionIndex, IsPartOfTrain, TimeElapsed);
 				return this.LastResult;
 			}
@@ -47,7 +47,7 @@ namespace OpenBve {
 		}
 
 		// execute function script
-		private static void ExecuteFunctionScript(FunctionScript Function, TrainManager.Train Train, int CarIndex, Vector3 Position, double TrackPosition, int SectionIndex, bool IsPartOfTrain, double TimeElapsed) {
+		private static void ExecuteFunctionScript(FunctionScript Function, TrainManager.Train Train, int CarIndex, Vector3D Position, double TrackPosition, int SectionIndex, bool IsPartOfTrain, double TimeElapsed) {
 			int s = 0, c = 0;
 			for (int i = 0; i < Function.Instructions.Length; i++) {
 				switch (Function.Instructions[i]) {

@@ -5,8 +5,8 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.Collections.Generic;
 using OpenTK;
-using Vector3 = OpenBveApi.Math.Vector3;
-using Vector2 = OpenBveApi.Math.Vector2;
+using Vector3 = OpenBveApi.Math.Vector3D;
+using Vector2 = OpenBveApi.Math.Vector2D;
 
 namespace OpenBve {
 	internal static class MainLoop {
@@ -198,8 +198,8 @@ namespace OpenBve {
 			TrackManager.UpdateTrackFollower(ref World.CameraTrackFollower, -1.0, true, false);
 			ObjectManager.UpdateVisibility(World.CameraTrackFollower.TrackPosition + World.CameraCurrentAlignment.Position.Z);
 			World.CameraSavedInterior = new World.CameraAlignment();
-			World.CameraSavedExterior = new World.CameraAlignment(new Vector3(-2.5, 1.5, -15.0), 0.3, -0.2, 0.0, PlayerFirstStationPosition, 1.0);
-			World.CameraSavedTrack = new World.CameraAlignment(new Vector3(-3.0, 2.5, 0.0), 0.3, 0.0, 0.0, TrainManager.PlayerTrain.Cars[0].FrontAxle.Follower.TrackPosition - 10.0, 1.0);
+			World.CameraSavedExterior = new World.CameraAlignment(new Vector3D(-2.5, 1.5, -15.0), 0.3, -0.2, 0.0, PlayerFirstStationPosition, 1.0);
+			World.CameraSavedTrack = new World.CameraAlignment(new Vector3D(-3.0, 2.5, 0.0), 0.3, 0.0, 0.0, TrainManager.PlayerTrain.Cars[0].FrontAxle.Follower.TrackPosition - 10.0, 1.0);
 			// timer
 			Timers.Initialize();
 			// framerate display
@@ -602,7 +602,7 @@ namespace OpenBve {
 							World.MouseGrabEnabled = !World.MouseGrabEnabled;
 							if (World.MouseGrabEnabled) {
 								Program.UI.CursorVisible = false;
-								World.MouseGrabTarget = new Vector2(0.0, 0.0);
+								World.MouseGrabTarget = new Vector2D(0.0, 0.0);
 								Game.AddMessage(Strings.GetInterfaceString("notification_mousegrab_on"), Game.MessageDependency.None, Options.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 5.0);
 							} else {
 								Program.UI.CursorVisible = true;
@@ -624,7 +624,7 @@ namespace OpenBve {
 			if (World.MouseGrabIgnoreOnce) {
 				World.MouseGrabIgnoreOnce = false;
 			} else if (World.MouseGrabEnabled) {
-				World.MouseGrabTarget = new Vector2(((double)Program.UI.Mouse.X - Screen.Width / 2)/-10, 
+				World.MouseGrabTarget = new Vector2D(((double)Program.UI.Mouse.X - Screen.Width / 2)/-10, 
 					((double)Program.UI.Mouse.Y - Screen.Height / 2)/10);
 			}
 		}
@@ -1162,7 +1162,7 @@ namespace OpenBve {
 												Game.AddMessage(Strings.GetInterfaceString("notification_track"), Game.MessageDependency.None, Options.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 2.0);
 											}
 											double z = World.CameraCurrentAlignment.Position.Z;
-											World.CameraCurrentAlignment.Position = new Vector3(World.CameraCurrentAlignment.Position.X, World.CameraCurrentAlignment.Position.Y, 0.0);
+											World.CameraCurrentAlignment.Position = new Vector3D(World.CameraCurrentAlignment.Position.X, World.CameraCurrentAlignment.Position.Y, 0.0);
 											World.CameraCurrentAlignment.Zoom = 0.0;
 											World.CameraAlignmentDirection = new World.CameraAlignment();
 											World.CameraAlignmentSpeed = new World.CameraAlignment();
@@ -1195,7 +1195,7 @@ namespace OpenBve {
 												Game.AddMessage(Strings.GetInterfaceString("notification_track"), Game.MessageDependency.None, Options.GameMode.Expert, Game.MessageColor.Blue, Game.SecondsSinceMidnight + 2.0);
 											}
 											double z = World.CameraCurrentAlignment.Position.Z;
-											World.CameraCurrentAlignment.Position = new Vector3(World.CameraCurrentAlignment.Position.X, World.CameraCurrentAlignment.Position.Y, 0.0);
+											World.CameraCurrentAlignment.Position = new Vector3D(World.CameraCurrentAlignment.Position.X, World.CameraCurrentAlignment.Position.Y, 0.0);
 											World.CameraCurrentAlignment.Zoom = 0.0;
 											World.CameraAlignmentDirection = new World.CameraAlignment();
 											World.CameraAlignmentSpeed = new World.CameraAlignment();
@@ -1223,7 +1223,7 @@ namespace OpenBve {
 									case Controls.Command.CameraReset:
 										// camera: reset
 										if (World.CameraMode == World.CameraViewMode.Interior | World.CameraMode == World.CameraViewMode.InteriorLookAhead) {
-											World.CameraCurrentAlignment.Position = new Vector3(0.0, 0.0, 0.0);
+											World.CameraCurrentAlignment.Position = new Vector3D(0.0, 0.0, 0.0);
 										}
 										World.CameraCurrentAlignment.Yaw = 0.0;
 										World.CameraCurrentAlignment.Pitch = 0.0;
@@ -1432,7 +1432,7 @@ namespace OpenBve {
 											if (TrainManager.PlayerTrain.Cars[d].Sounds.Horns.Length > j) {
 												Sounds.SoundBuffer buffer = TrainManager.PlayerTrain.Cars[d].Sounds.Horns[j].Sound.Buffer;
 												if (buffer != null) {
-													Vector3 pos = TrainManager.PlayerTrain.Cars[d].Sounds.Horns[j].Sound.Position;
+													Vector3D pos = TrainManager.PlayerTrain.Cars[d].Sounds.Horns[j].Sound.Position;
 													if (TrainManager.PlayerTrain.Cars[d].Sounds.Horns[j].Loop) {
 														if (Sounds.IsPlaying(TrainManager.PlayerTrain.Cars[d].Sounds.Horns[j].Sound.Source)) {
 															Sounds.StopSound(TrainManager.PlayerTrain.Cars[d].Sounds.Horns[j].Sound.Source);

@@ -254,7 +254,7 @@ namespace OpenBve {
 								TrainManager.Trains[k].Cars[i].CarSections[j].Elements = new ObjectManager.AnimatedObject[1];
 								TrainManager.Trains[k].Cars[i].CarSections[j].Elements[0] = new ObjectManager.AnimatedObject();
 								TrainManager.Trains[k].Cars[i].CarSections[j].Elements[0].States = new ObjectManager.AnimatedObjectState[1];
-								TrainManager.Trains[k].Cars[i].CarSections[j].Elements[0].States[0].Position = new Vector3(0.0, 0.0, 0.0);
+								TrainManager.Trains[k].Cars[i].CarSections[j].Elements[0].States[0].Position = new Vector3D(0.0, 0.0, 0.0);
 								TrainManager.Trains[k].Cars[i].CarSections[j].Elements[0].States[0].Object = s;
 								TrainManager.Trains[k].Cars[i].CarSections[j].Elements[0].CurrentState = 0;
 								TrainManager.Trains[k].Cars[i].CarSections[j].Elements[0].ObjectIndex = ObjectManager.CreateDynamicObject();
