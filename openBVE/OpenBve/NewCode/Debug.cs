@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 namespace OpenBve
 {
 	internal static class Debug
@@ -11,31 +11,31 @@ namespace OpenBve
 			Critical
 		}
 		internal struct Message {
-			internal MessageType Type;
-			internal bool FileNotFound;
-			internal string Text;
+			public Message(MessageType type, bool filenotfound, string text){
+				this.Type = type;
+				this.FileNotFound = filenotfound;
+				this.Text = text;
+			}
+			internal readonly MessageType Type;
+			internal readonly bool FileNotFound;
+			internal readonly string Text;
 		}
-		internal static Message[] Messages = new Message[] { };
-		internal static int MessageCount = 0;
+		internal static LinkedList<Message> Messages = new LinkedList<Message>();
+		internal static int MessageCount {
+			get{
+				return Messages != null ? Messages.Count : 0;
+			}
+		}
 		internal static void AddMessage(MessageType Type, bool FileNotFound, string Text) {
 			if (Type == MessageType.Warning & !Options.Current.ShowWarningMessages) return;
 			if (Type == MessageType.Error & !Options.Current.ShowErrorMessages) return;
-			if (MessageCount == 0) {
-				Messages = new Message[16];
-			} else if (MessageCount >= Messages.Length) {
-				Array.Resize<Message>(ref Messages, Messages.Length << 1);
-			}
-			Messages[MessageCount].Type = Type;
-			Messages[MessageCount].FileNotFound = FileNotFound;
-			Messages[MessageCount].Text = Text;
-			MessageCount++;
+			Message msg = new Message(Type,FileNotFound,Text);
+			Messages.AddLast(msg);
 
 			Program.AppendToLogFile(Text);
-
 		}
 		internal static void ClearMessages() {
-			Messages = new Message[] { };
-			MessageCount = 0;
+			Messages.Clear();
 		}
     }
 }

@@ -43,9 +43,9 @@ namespace OpenBve {
 			Program.UI.SwapBuffers();
 			Loading.LoadSynchronously(result.RouteFile, result.RouteEncoding, result.TrainFolder, result.TrainEncoding);
 			Timetable.CreateTimetable();
-			for (int i = 0; i < Debug.MessageCount; i++) {
-				if (Debug.Messages[i].Type == Debug.MessageType.Critical) {
-					MessageBox.Show("A critical error has occured:\n\n" + Debug.Messages[i].Text + "\n\nPlease inspect the error log file for further information.", "Load", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+			foreach (var message in Debug.Messages) {
+				if (message.Type == Debug.MessageType.Critical) {
+					MessageBox.Show("A critical error has occured:\n\n" + message.Text + "\n\nPlease inspect the error log file for further information.", "Load", MessageBoxButtons.OK, MessageBoxIcon.Hand);
 					return;
 				}
 			}
@@ -251,12 +251,12 @@ namespace OpenBve {
 				int filesNotFound = 0;
 				int errors = 0;
 				int warnings = 0;
-				for (int i = 0; i < Debug.MessageCount; i++) {
-					if (Debug.Messages[i].FileNotFound) {
+				foreach (var message in Debug.Messages) {
+					if (message.FileNotFound) {
 						filesNotFound++;
-					} else if (Debug.Messages[i].Type == Debug.MessageType.Error) {
+					} else if (message.Type == Debug.MessageType.Error) {
 						errors++;
-					} else if (Debug.Messages[i].Type == Debug.MessageType.Warning) {
+					} else if (message.Type == Debug.MessageType.Warning) {
 						warnings++;
 					}
 				}
