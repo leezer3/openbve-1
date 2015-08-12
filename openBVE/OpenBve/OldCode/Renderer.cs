@@ -280,7 +280,7 @@ namespace OpenBve {
 			GL.Enable(EnableCap.CullFace); CullEnabled = true;
 			GL.Disable(EnableCap.Lighting); LightingEnabled = false;
 			GL.Disable(EnableCap.Texture2D); TexturingEnabled = false;
-			GL.BlendFunc(BlendingFactorSrc.SrcAlpha,BlendingFactorDest.OneMinusDstAlpha);
+			GL.BlendFunc(BlendingFactorSrc.SrcAlpha,BlendingFactorDest.OneMinusSrcAlpha);
 			GL.Disable(EnableCap.Blend); BlendEnabled = false;
 			GL.Enable(EnableCap.DepthTest);
 			GL.DepthMask(true);

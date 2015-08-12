@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using Vector2 = OpenBveApi.Math.Vector2D;
+using Vector2D = OpenBveApi.Math.Vector2D;
 namespace OpenBve {
 	internal static class Screen {
 		

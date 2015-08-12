@@ -1169,7 +1169,7 @@ namespace OpenBve {
 					} else if (n == 1) {
 						return a[0];
 					} else if (n == 2) {
-						if (a[1].EndsWith(" *")) {
+						if (a[1].EndsWith(" *", StringComparison.InvariantCulture)) {
 							return a[1] + " " + a[0] + " +";
 						} else {
 							return a[0] + " " + a[1] + " +";
