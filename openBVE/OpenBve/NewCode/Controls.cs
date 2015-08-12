@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using OpenTK.Input;
-
+using VirtualKeys = OpenBveApi.Runtime.VirtualKeys;
 namespace OpenBve
 {
 	internal static class Controls
-    {
+	{
+		/// <remarks>OpenBve.Controls.SecurityToVirtualKey function requires the naming of security commands to be Security+short code (SecurityS,SecurityA1,...).</remarks>
 		internal enum Command {
 			None = 0,
 			PowerIncrease, PowerDecrease, PowerHalfAxis, PowerFullAxis,
@@ -17,6 +18,8 @@ namespace OpenBve
 			DeviceConstSpeed,
 			SecurityS, SecurityA1, SecurityA2, SecurityB1, SecurityB2, SecurityC1, SecurityC2,
 			SecurityD, SecurityE, SecurityF, SecurityG, SecurityH, SecurityI, SecurityJ, SecurityK, SecurityL,
+			SecurityM, SecurityN, SecurityO, SecurityP, SecurityQ, SecurityR, SecurityT, SecurityU, SecurityV,
+			SecurityW, SecurityX, SecurityY, SecurityZ,
 			CameraInterior, CameraExterior, CameraTrack, CameraFlyBy,
 			CameraMoveForward, CameraMoveBackward, CameraMoveLeft, CameraMoveRight, CameraMoveUp, CameraMoveDown,
 			CameraRotateLeft, CameraRotateRight, CameraRotateUp, CameraRotateDown, CameraRotateCCW, CameraRotateCW,
@@ -26,6 +29,21 @@ namespace OpenBve
 			MiscTimeFactor, MiscPause, MiscMute, MiscFullscreen, MiscQuit,
 			MenuActivate, MenuUp, MenuDown, MenuEnter, MenuBack,
 			DebugWireframe, DebugNormals, DebugBrakeSystems
+		}
+		/// <summary>
+		/// Converts the specified security command to a virtual key.
+		/// </summary>
+		/// <returns>Virtual key for plugins.</returns>
+		/// <param name="cmd">Security command. If this isn't security command, ArgumentException will be thrown.</param>
+		internal static VirtualKeys SecurityToVirtualKey(Command cmd){
+			string cmdname = Enum.GetName(typeof(Command),cmd);
+			if (!cmdname.StartsWith("Security", StringComparison.InvariantCulture))
+				throw new ArgumentException("Command is not a security command.","cmd");
+			string ending = cmdname.Substring(8).ToUpperInvariant();
+			VirtualKeys key;
+			if (!Enum.TryParse(ending, out key))
+				throw new ArgumentException("VirtualKeys does not contain following security key: " + ending, "cmd");
+			return key;
 		}
 		internal enum CommandType { Digital, AnalogHalf, AnalogFull }
 		internal struct CommandInfo {
@@ -262,6 +280,19 @@ namespace OpenBve
 			new CommandInfo(Command.SecurityJ, CommandType.Digital, "SECURITY_J"),
 			new CommandInfo(Command.SecurityK, CommandType.Digital, "SECURITY_K"),
 			new CommandInfo(Command.SecurityL, CommandType.Digital, "SECURITY_L"),
+			new CommandInfo(Command.SecurityM, CommandType.Digital, "SECURITY_M"),
+			new CommandInfo(Command.SecurityN, CommandType.Digital, "SECURITY_N"),
+			new CommandInfo(Command.SecurityO, CommandType.Digital, "SECURITY_O"),
+			new CommandInfo(Command.SecurityP, CommandType.Digital, "SECURITY_P"),
+			new CommandInfo(Command.SecurityQ, CommandType.Digital, "SECURITY_Q"),
+			new CommandInfo(Command.SecurityR, CommandType.Digital, "SECURITY_R"),
+			new CommandInfo(Command.SecurityT, CommandType.Digital, "SECURITY_T"),
+			new CommandInfo(Command.SecurityU, CommandType.Digital, "SECURITY_U"),
+			new CommandInfo(Command.SecurityV, CommandType.Digital, "SECURITY_V"),
+			new CommandInfo(Command.SecurityW, CommandType.Digital, "SECURITY_W"),
+			new CommandInfo(Command.SecurityX, CommandType.Digital, "SECURITY_X"),
+			new CommandInfo(Command.SecurityY, CommandType.Digital, "SECURITY_Y"),
+			new CommandInfo(Command.SecurityZ, CommandType.Digital, "SECURITY_Z"),
 			new CommandInfo(Command.CameraInterior, CommandType.Digital, "CAMERA_INTERIOR"),
 			new CommandInfo(Command.CameraExterior, CommandType.Digital, "CAMERA_EXTERIOR"),
 			new CommandInfo(Command.CameraTrack, CommandType.Digital, "CAMERA_TRACK"),

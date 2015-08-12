@@ -1471,83 +1471,36 @@ namespace OpenBve {
 											}
 										} break;
 									case Controls.Command.SecurityS:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.S);
-										}
-										break;
 									case Controls.Command.SecurityA1:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.A1);
-										}
-										break;
 									case Controls.Command.SecurityA2:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.A2);
-										}
-										break;
 									case Controls.Command.SecurityB1:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.B1);
-										}
-										break;
 									case Controls.Command.SecurityB2:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.B2);
-										}
-										break;
 									case Controls.Command.SecurityC1:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.C1);
-										}
-										break;
 									case Controls.Command.SecurityC2:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.C2);
-										}
-										break;
 									case Controls.Command.SecurityD:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.D);
-										}
-										break;
 									case Controls.Command.SecurityE:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.E);
-										}
-										break;
 									case Controls.Command.SecurityF:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.F);
-										}
-										break;
 									case Controls.Command.SecurityG:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.G);
-										}
-										break;
 									case Controls.Command.SecurityH:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.H);
-										}
-										break;
 									case Controls.Command.SecurityI:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.I);
-										}
-										break;
 									case Controls.Command.SecurityJ:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.J);
-										}
-										break;
 									case Controls.Command.SecurityK:
-										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.K);
-										}
-										break;
 									case Controls.Command.SecurityL:
+									case Controls.Command.SecurityM:
+									case Controls.Command.SecurityN:
+									case Controls.Command.SecurityO:
+									case Controls.Command.SecurityP:
+									case Controls.Command.SecurityQ:
+									case Controls.Command.SecurityR:
+									case Controls.Command.SecurityT:
+									case Controls.Command.SecurityU:
+									case Controls.Command.SecurityV:
+									case Controls.Command.SecurityW:
+									case Controls.Command.SecurityX:
+									case Controls.Command.SecurityY:
+									case Controls.Command.SecurityZ:
 										if (TrainManager.PlayerTrain.Plugin != null) {
-											TrainManager.PlayerTrain.Plugin.KeyDown(OpenBveApi.Runtime.VirtualKeys.L);
+											TrainManager.PlayerTrain.Plugin.KeyDown(Controls.SecurityToVirtualKey(Controls.CurrentControls[i].Command));
 										}
 										break;
 									case Controls.Command.TimetableToggle:
