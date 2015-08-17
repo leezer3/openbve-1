@@ -74,7 +74,7 @@
       <HintPath>..\..\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="SDL2-CS">
-      <HintPath>..\..\..\..\SDL2-CS\bin\release\SDL2-CS.dll</HintPath>
+      <HintPath>..\..\SDL2-CS.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
