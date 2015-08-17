@@ -124,7 +124,8 @@ namespace OpenBve
 								case "keys":
 									{
 										for (int k = 0; k < Controls.Keys.Length; k++) {
-											if (string.Compare(Controls.Keys[k].Name, a, StringComparison.OrdinalIgnoreCase) == 0) {
+											if (Controls.Keys[k].Scancode != SDL2.SDL.SDL_Scancode.SDL_SCANCODE_UNKNOWN &&
+												string.Compare(Controls.Keys[k].Name, a, StringComparison.OrdinalIgnoreCase) == 0) {
 												Controls.Keys[k].Description = b;
 												break;
 											}

@@ -1,22 +1,22 @@
 ﻿using System;
-
+using System.Diagnostics;
 namespace OpenBve {
 	internal static class Timers {
 
 		// members
-		private static double SdlTime = 0.0;
+		private static Stopwatch timer;
 
 		// initialize
 		internal static void Initialize() {
-			SdlTime = 0.001 * (double)Environment.TickCount;
+			timer = new Stopwatch();
+			timer.Start();
 		}
 
 		// get elapsed time
 		internal static double GetElapsedTime() {
-			double a = 0.001 * (double)Environment.TickCount;
-			double d = a - SdlTime;
-			SdlTime = a;
-			return d;
+			long actual = timer.ElapsedMilliseconds;
+			timer.Restart();
+			return actual*0.001;
 		}
 
 	}

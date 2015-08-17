@@ -375,6 +375,7 @@ namespace OpenBve {
 			Automatic = 1,
 			Manual = 2
 		}
+		[Flags]
 		internal enum DefaultSafetySystems {
 			AtsSn = 1,
 			AtsP = 2,
@@ -1842,6 +1843,7 @@ namespace OpenBve {
 				}
 			}
 		}
+		[Flags]
 		/// <summary>Specifies enumerated constants that can be combined to represent doors states.</summary>
 		internal enum TrainDoorState {
 			None = 0,

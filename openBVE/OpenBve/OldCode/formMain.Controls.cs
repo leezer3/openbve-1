@@ -2,8 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using OpenTK;
-using OpenTK.Input;
-
+using SDL2;
 namespace OpenBve {
 	internal partial class formMain : Form {
 		
@@ -40,7 +39,8 @@ namespace OpenBve {
 					panelKeyboard.Enabled = radiobuttonKeyboard.Checked;
 					if (radiobuttonKeyboard.Checked) {
 						int j; for (j = 0; j < OpenBve.Controls.Keys.Length; j++) {
-							if (OpenBve.Controls.Keys[j].Value == (Key)OpenBve.Controls.CurrentControls[i].Element) {
+							if (OpenBve.Controls.Keys[j].Scancode != SDL.SDL_Scancode.SDL_SCANCODE_UNKNOWN && 
+								OpenBve.Controls.Keys[j].Scancode == (SDL.SDL_Scancode)OpenBve.Controls.CurrentControls[i].Element) {
 								comboboxKeyboardKey.SelectedIndex = j;
 								break;
 							}
@@ -123,11 +123,12 @@ namespace OpenBve {
 				if ((OpenBve.Controls.CurrentControls[Index].Modifier & OpenBve.Controls.KeyboardModifier.Ctrl) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_ctrl");
 				if ((OpenBve.Controls.CurrentControls[Index].Modifier & OpenBve.Controls.KeyboardModifier.Alt) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_alt");
 				int j; for (j = 0; j < OpenBve.Controls.Keys.Length; j++) {
-					if (OpenBve.Controls.Keys[j].Value == (Key)OpenBve.Controls.CurrentControls[Index].Element) {
+					if (OpenBve.Controls.Keys[j].Scancode != SDL.SDL_Scancode.SDL_SCANCODE_UNKNOWN && 
+						OpenBve.Controls.Keys[j].Scancode == (SDL.SDL_Scancode)OpenBve.Controls.CurrentControls[Index].Element) {
 						t += OpenBve.Controls.Keys[j].Description;
 						break;
 					}
-				} if (j == OpenBve.Controls.Keys.Length) {
+				} if (j == OpenBve.Controls.Keys.Length || OpenBve.Controls.Keys[j].Scancode == SDL.SDL_Scancode.SDL_SCANCODE_UNKNOWN) {
 					t += "{" + OpenBve.Controls.CurrentControls[Index].Element.ToString(Culture) + "}";
 				}
 				return t;
@@ -149,22 +150,22 @@ namespace OpenBve {
 						break;
 					case OpenBve.Controls.JoystickComponent.Hat:
 						t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat").Replace("[index]", (OpenBve.Controls.CurrentControls[Index].Element + 1).ToString(Culture));
-						JoystickHatState state = (JoystickHatState)OpenBve.Controls.CurrentControls[Index].Direction;
-						if (state.Position == HatPosition.Left) {
+						int state = (int)OpenBve.Controls.CurrentControls[Index].Direction;
+						if (state == SDL.SDL_HAT_LEFT) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_left");
-						} else if (state.Position == HatPosition.UpLeft) {
+						} else if (state == SDL.SDL_HAT_LEFTUP) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_upleft");
-						} else if (state.Position == HatPosition.Up) {
+						} else if (state == SDL.SDL_HAT_UP) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_up");
-						} else if (state.Position == HatPosition.UpRight) {
+						} else if (state == SDL.SDL_HAT_RIGHTUP) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_upright");
-						} else if (state.Position == HatPosition.Right) {
+						} else if (state == SDL.SDL_HAT_RIGHT) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_right");
-						} else if (state.Position == HatPosition.DownRight) {
+						} else if (state == SDL.SDL_HAT_RIGHTDOWN) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_downright");
-						} else if (state.Position == HatPosition.Down) {
+						} else if (state == SDL.SDL_HAT_DOWN) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_down");
-						} else if (state.Position == HatPosition.DownLeft) {
+						} else if (state == SDL.SDL_HAT_LEFTDOWN) {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_downleft");
 						} else {
 							t += Separator + Strings.GetInterfaceString("controls_assignment_joystick_hat_invalid");
@@ -269,7 +270,7 @@ namespace OpenBve {
 				int i = listviewControls.SelectedIndices[0];
 				int j = comboboxKeyboardKey.SelectedIndex;
 				if (j >= 0) {
-					OpenBve.Controls.CurrentControls[i].Element = (int)OpenBve.Controls.Keys[j].Value;
+					OpenBve.Controls.CurrentControls[i].Element = (int)OpenBve.Controls.Keys[j].Scancode;
 				}
 				UpdateControlListElement(listviewControls.Items[i], i, true);
 			}
@@ -398,7 +399,7 @@ namespace OpenBve {
 			int device = -1;
 			OpenBve.Controls.JoystickComponent component = OpenBve.Controls.JoystickComponent.Invalid;
 			int element = -1;
-			object direction = new JoystickHatState();
+			int direction = SDL.SDL_HAT_CENTERED;
 			OpenBve.Controls.CommandType type = OpenBve.Controls.CommandType.Digital;
 			if (this.Tag == null & listviewControls.SelectedIndices.Count == 1) {
 				int j = listviewControls.SelectedIndices[0];
@@ -406,7 +407,7 @@ namespace OpenBve {
 					device = OpenBve.Controls.CurrentControls[j].Device;
 					component = OpenBve.Controls.CurrentControls[j].Component;
 					element = OpenBve.Controls.CurrentControls[j].Element;
-					direction = OpenBve.Controls.CurrentControls[j].Direction;
+					direction = (int)OpenBve.Controls.CurrentControls[j].Direction;
 					type = OpenBve.Controls.CurrentControls[j].InheritedType;
 				}
 			}
@@ -416,7 +417,8 @@ namespace OpenBve {
 			Font f = new Font(this.Font.Name, 0.875f * this.Font.Size);
 			float x = 2.0f, y = 2.0f;
 			float threshold = ((float)trackbarJoystickAxisThreshold.Value - (float)trackbarJoystickAxisThreshold.Minimum) / (float)(trackbarJoystickAxisThreshold.Maximum - trackbarJoystickAxisThreshold.Minimum);
-			for (int i = 0; i < Joysticks.AttachedJoysticks.Length; i++) {
+			int i = 0;
+			foreach(var joystick in Joysticks.AttachedJoysticks) {
 				float w, h;
 				if (JoystickImage != null) {
 					e.Graphics.DrawImage(JoystickImage, x, y);
@@ -435,12 +437,10 @@ namespace OpenBve {
 					e.Graphics.DrawString(t, f, Brushes.Black, x + w - 8.0f - 0.5f * s.Width, y + 8.0f - 0.5f * s.Height);
 				}
 				{ // joystick name
-					e.Graphics.DrawString(Joysticks.AttachedJoysticks[i].Name, this.Font, Brushes.Black, x + w + 8.0f, y);
+					e.Graphics.DrawString(joystick.Name, this.Font, Brushes.Black, x + w + 8.0f, y);
 				}
 				float m;
 				if (groupboxJoysticks.Enabled) {
-					var caps = Joystick.GetCapabilities(Joysticks.AttachedJoysticks[i].Index);
-					var state = Joystick.GetState(i);
 					m = x;
 					Pen p = new Pen(Color.DarkGoldenrod, 2.0f);
 					Pen ps = new Pen(Color.Firebrick, 2.0f);
@@ -448,10 +448,22 @@ namespace OpenBve {
 						float u = x + w + 8.0f;
 						float v = y + 24.0f;
 						float g = h - 24.0f;
-						{ // hats
-							int n = caps.HatCount;
+						{ // trackballs
+							int n = SDL.SDL_JoystickNumBalls(joystick.Handle);
 							for (int j = 0; j < n; j++) {
-								if (device == i & component == OpenBve.Controls.JoystickComponent.Hat & element == j) {
+								e.Graphics.DrawEllipse(Pens.Gray, u, v, g, g);
+								string t = "L" + (j + 1).ToString(Culture);
+								SizeF s = e.Graphics.MeasureString(t, f);
+								e.Graphics.DrawString(t, f, Brushes.Gray, u + 0.5f * (g - s.Width), v + 0.5f * (g - s.Height));
+								int dx, dy;
+								SDL.SDL_JoystickGetBall(joystick.Handle, j, out dx, out dy);
+								u += g + 8.0f;
+							}
+						}
+						{ // hats
+							int n = SDL.SDL_JoystickNumHats(joystick.Handle);
+							for (int j = 0; j < n; j++) {
+								if (device == joystick.Index & component == OpenBve.Controls.JoystickComponent.Hat & element == j) {
 									e.Graphics.DrawEllipse(ps, u, v, g, g);
 								} else {
 									e.Graphics.DrawEllipse(p, u, v, g, g);
@@ -459,10 +471,10 @@ namespace OpenBve {
 								string t = "H" + (j + 1).ToString(Culture);
 								SizeF s = e.Graphics.MeasureString(t, f);
 								e.Graphics.DrawString(t, f, Brushes.Black, u + 0.5f * (g - s.Width), v + 0.5f * (g - s.Height));
-								var a = state.GetHat((JoystickHat)Enum.Parse(typeof(JoystickHat), "Hat" + j));
-								if (a.Position != HatPosition.Centered) {
-									double rx = a.IsLeft ? -1.0 : a.IsRight ? 1.0 : 0.0;
-									double ry = a.IsUp   ? -1.0 : a.IsDown  ? 1.0 : 0.0;
+								int pos = SDL.SDL_JoystickGetHat(joystick.Handle, j);
+								if (pos != SDL.SDL_HAT_CENTERED) {
+									double rx = (pos & SDL.SDL_HAT_LEFT)!=0 ? -1.0 : (pos & SDL.SDL_HAT_RIGHT)!=0 ? 1.0 : 0.0;
+									double ry = (pos & SDL.SDL_HAT_UP)!=0   ? -1.0 : (pos & SDL.SDL_HAT_DOWN)!=0  ? 1.0 : 0.0;
 									double rt = rx * rx + ry * ry;
 									rt = 1.0 / Math.Sqrt(rt);
 									rx *= rt; ry *= rt;
@@ -471,10 +483,10 @@ namespace OpenBve {
 									e.Graphics.FillEllipse(Brushes.White, u + 0.5f * g + dx - 4.0f, v + 0.5f * g + dy - 4.0f, 8.0f, 8.0f);
 									e.Graphics.DrawEllipse(new Pen(Color.Firebrick, 2.0f), u + 0.5f * g + dx - 4.0f, v + 0.5f * g + dy - 4.0f, 8.0f, 8.0f);
 								}
-								var hatState = ((JoystickHatState)direction);
-								if (device == i & component == OpenBve.Controls.JoystickComponent.Hat & element == j) {
-									double rx = hatState.IsLeft ? -1.0 : hatState.IsRight ? 1.0 : 0.0;
-									double ry = hatState.IsUp   ? -1.0 : hatState.IsDown  ? 1.0 : 0.0;
+								int hatState = direction;
+								if (device == joystick.Index & component == OpenBve.Controls.JoystickComponent.Hat & element == j) {
+									double rx = (hatState & SDL.SDL_HAT_LEFT)!=0 ? -1.0 : (hatState & SDL.SDL_HAT_RIGHT)!=0 ? 1.0 : 0.0;
+									double ry = (hatState & SDL.SDL_HAT_UP)!=0 ? -1.0 : (hatState & SDL.SDL_HAT_DOWN)!=0 ? 1.0 : 0.0;
 									double rt = rx * rx + ry * ry;
 									rt = 1.0 / Math.Sqrt(rt);
 									rx *= rt; ry *= rt;
@@ -491,10 +503,10 @@ namespace OpenBve {
 						float u = x;
 						float v = y + h + 8.0f;
 						{ // axes
-							int n = caps.AxisCount;
+							int n = SDL.SDL_JoystickNumAxes(joystick.Handle);
 							float g = (float)pictureboxJoysticks.ClientRectangle.Height - v - 2.0f;
 							for (int j = 0; j < n; j++) {
-								float r = state.GetAxis((JoystickAxis)Enum.Parse(typeof(JoystickAxis), "Axis" + j));
+								float r = SDL.SDL_JoystickGetAxis(joystick.Handle, j);
 								float r0 = r < 0.0f ? r : 0.0f;
 								float r1 = r > 0.0f ? r : 0.0f;
 								if ((float)Math.Abs((double)r) < threshold) {
@@ -503,7 +515,7 @@ namespace OpenBve {
 									e.Graphics.FillRectangle(Brushes.Firebrick, u, v + 0.5f * g - 0.5f * r1 * g, 16.0f, 0.5f * g * (r1 - r0));
 								}
 							float pos = (float)direction;
-								if (device == i & component == OpenBve.Controls.JoystickComponent.Axis & element == j) {
+								if (device == joystick.Index & component == OpenBve.Controls.JoystickComponent.Axis & element == j) {
 									if (pos == -1 & type != OpenBve.Controls.CommandType.AnalogFull) {
 										e.Graphics.DrawRectangle(p, u, v, 16.0f, g);
 										e.Graphics.DrawRectangle(ps, u, v + 0.5f * g, 16.0f, 0.5f * g);
@@ -525,13 +537,13 @@ namespace OpenBve {
 							}
 						}
 						{ // buttons
-							int n = caps.ButtonCount;
+							int n = SDL.SDL_JoystickNumButtons(joystick.Handle);
 							float g = (float)0.5f * (pictureboxJoysticks.ClientRectangle.Height - v - 10.0f);
 							for (int j = 0; j < n; j++) {
-								bool q = state.GetButton((JoystickButton)Enum.Parse(typeof(JoystickButton), "Button" + j)) == OpenTK.Input.ButtonState.Pressed;
+								bool q = SDL.SDL_JoystickGetButton(joystick.Handle, j)==1;
 								float dv = (float)(j & 1) * (g + 8.0f);
 								if (q) e.Graphics.FillRectangle(Brushes.Firebrick, u, v + dv, g, g);
-								if (device == i & component == OpenBve.Controls.JoystickComponent.Button & element == j) {
+								if (device == joystick.Index & component == OpenBve.Controls.JoystickComponent.Button & element == j) {
 									e.Graphics.DrawRectangle(ps, u, v + dv, g, g);
 								} else {
 									e.Graphics.DrawRectangle(p, u, v + dv, g, g);
@@ -548,10 +560,8 @@ namespace OpenBve {
 					m = x + w + 64.0f;
 				}
 				x = m + 8.0f;
+				i++;
 			}
-		}
-
-		
-		
+		}		
 	}
 }

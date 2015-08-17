@@ -21,6 +21,7 @@
     <RunSourceAnalysis>False</RunSourceAnalysis>
     <ApplicationIcon>..\icon.ico</ApplicationIcon>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <StartupObject>OpenBve.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,6 +72,9 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="OpenTK">
       <HintPath>..\..\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="SDL2-CS">
+      <HintPath>..\..\..\..\SDL2-CS\bin\release\SDL2-CS.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

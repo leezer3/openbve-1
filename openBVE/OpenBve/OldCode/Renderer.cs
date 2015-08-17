@@ -188,8 +188,8 @@ namespace OpenBve {
 		internal static void Initialize() {
 			// opengl
 			GL.ShadeModel(ShadingModel.Smooth);
+			GL.ClearColor(Color4.Black);
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			GL.Enable(EnableCap.DepthTest);
 			GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 			GL.DepthFunc(DepthFunction.Lequal);
@@ -209,21 +209,23 @@ namespace OpenBve {
 			string Path = Program.FileSystem.GetDataFolder("In-game");
 			Textures.RegisterTexture(OpenBveApi.Path.CombineFile(Path, "logo.png"), out TextureLogo);
 			// opengl
-			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-			GL.PushMatrix();
-			GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			//GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			//GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+			GL.MatrixMode(MatrixMode.Modelview);
+			//GL.PushMatrix();
 			Matrix4d lookat = Matrix4d.LookAt(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0);
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.LoadMatrix(ref lookat);
-			GL.PopMatrix();
+			//GL.PopMatrix();
 			// prepare rendering logo
 			GL.BlendFunc(BlendingFactorSrc.SrcAlpha,BlendingFactorDest.OneMinusSrcAlpha);
 			GL.Enable(EnableCap.Blend); BlendEnabled = true;
-			GL.Disable(EnableCap.Lighting); LightingEnabled = false;
+			GL.Disable(EnableCap.Lighting); LightingEnabled = false;/*
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.PushMatrix();
 			GL.LoadIdentity();
-			GL.Ortho(0.0, (double)Screen.Width, 0.0, (double)Screen.Height, -1.0, 1.0);
+			//GL.Ortho(0.0, (double)Screen.Width, 0.0, (double)Screen.Height, -1.0, 1.0);
+			GL.Ortho(0.0, (double)Screen.Width, (double)Screen.Height,0.0, -1.0, 1.0);
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.PushMatrix();
 			GL.LoadIdentity();
@@ -234,7 +236,7 @@ namespace OpenBve {
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.PopMatrix();
 			GL.MatrixMode(MatrixMode.Modelview);
-			GL.Disable(EnableCap.Blend);
+			GL.Disable(EnableCap.Blend); BlendEnabled = false;*/
 		}
 		
 		// deinitialize
@@ -1231,7 +1233,7 @@ namespace OpenBve {
 								Game.MessagesRendererSize.X += 16.0 * TimeElapsed * ((double)totalwidth - Game.MessagesRendererSize.X);
 								totalwidth = (float)Game.MessagesRendererSize.X;
 								double lcrh = 0.0;
-								/// left width/height
+								// left width/height
 								double lw = 0.0;
 								if (Hud.CurrentHudElements[i].TopLeft.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopLeft.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -1257,7 +1259,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// center height
+								// center height
 								if (Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 										double v = (double)Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture.Height;
@@ -1276,7 +1278,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// right width/height
+								// right width/height
 								double rw = 0.0;
 								if (Hud.CurrentHudElements[i].TopRight.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopRight.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -1302,7 +1304,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// start
+								// start
 								double w = totalwidth + lw + rw;
 								double h = Hud.CurrentHudElements[i].Value2 * n;
 								double x = Hud.CurrentHudElements[i].Alignment.X < 0 ? 0.0 : Hud.CurrentHudElements[i].Alignment.X > 0 ? Screen.Width - w : 0.5 * (Screen.Width - w);
@@ -1380,11 +1382,11 @@ namespace OpenBve {
 									double px = Game.Messages[j].RendererPosition.X + (double)j * (double)Hud.CurrentHudElements[i].Value1;
 									double py = Game.Messages[j].RendererPosition.Y;
 									float alpha = (float)(Game.Messages[j].RendererAlpha * Game.Messages[j].RendererAlpha);
-									/// graphics
+									// graphics
 									Hud.HudImage Left = j == 0 ? Hud.CurrentHudElements[i].TopLeft : j < n - 1 ? Hud.CurrentHudElements[i].CenterLeft : Hud.CurrentHudElements[i].BottomLeft;
 									Hud.HudImage Middle = j == 0 ? Hud.CurrentHudElements[i].TopMiddle : j < n - 1 ? Hud.CurrentHudElements[i].CenterMiddle : Hud.CurrentHudElements[i].BottomMiddle;
 									Hud.HudImage Right = j == 0 ? Hud.CurrentHudElements[i].TopRight : j < n - 1 ? Hud.CurrentHudElements[i].CenterRight : Hud.CurrentHudElements[i].BottomRight;
-									/// left background
+									// left background
 									if (Left.BackgroundTexture != null) {
 										if (Textures.LoadTexture(Left.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double u = (double)Left.BackgroundTexture.Width;
@@ -1393,7 +1395,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Left.BackgroundTexture, px, py, px + u, py + v);
 										}
 									}
-									/// right background
+									// right background
 									if (Right.BackgroundTexture != null) {
 										if (Textures.LoadTexture(Right.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double u = (double)Right.BackgroundTexture.Width;
@@ -1402,7 +1404,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Right.BackgroundTexture, px + w - u, py, px + w, py + v);
 										}
 									}
-									/// middle background
+									// middle background
 									if (Middle.BackgroundTexture != null) {
 										if (Textures.LoadTexture(Middle.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double v = (double)Middle.BackgroundTexture.Height;
@@ -1410,7 +1412,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Middle.BackgroundTexture, px + lw, py, px + w - rw, py + v);
 										}
 									}
-									{ /// text
+									{ // text
 										string t = Game.Messages[j].DisplayText;
 										double u = widths[j];
 										double v = heights[j];
@@ -1420,7 +1422,7 @@ namespace OpenBve {
 										q += Hud.CurrentHudElements[i].TextPosition.Y;
 										DrawString(Hud.CurrentHudElements[i].Font, t, new System.Drawing.Point((int)p, (int)q), TextAlignment.TopLeft, new Color128(tr, tg, tb, ta * alpha), Hud.CurrentHudElements[i].TextShadow);
 									}
-									/// left overlay
+									// left overlay
 									if (Left.OverlayTexture != null) {
 										if (Textures.LoadTexture(Left.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double u = (double)Left.OverlayTexture.Width;
@@ -1429,7 +1431,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Left.OverlayTexture, px, py, px + u, py + v);
 										}
 									}
-									/// right overlay
+									// right overlay
 									if (Right.OverlayTexture != null) {
 										if (Textures.LoadTexture(Right.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double u = (double)Right.OverlayTexture.Width;
@@ -1438,7 +1440,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Right.OverlayTexture, px + w - u, py, px + w, py + v);
 										}
 									}
-									/// middle overlay
+									// middle overlay
 									if (Middle.OverlayTexture != null) {
 										if (Textures.LoadTexture(Middle.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double v = (double)Middle.OverlayTexture.Height;
@@ -1465,7 +1467,7 @@ namespace OpenBve {
 								Game.ScoreMessagesRendererSize.X += 16.0 * TimeElapsed * ((double)totalwidth - Game.ScoreMessagesRendererSize.X);
 								totalwidth = (float)Game.ScoreMessagesRendererSize.X;
 								double lcrh = 0.0;
-								/// left width/height
+								// left width/height
 								double lw = 0.0;
 								if (Hud.CurrentHudElements[i].TopLeft.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopLeft.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -1491,7 +1493,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// center height
+								// center height
 								if (Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 										double v = (double)Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture.Height;
@@ -1510,7 +1512,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// right width/height
+								// right width/height
 								double rw = 0.0;
 								if (Hud.CurrentHudElements[i].TopRight.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopRight.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -1536,7 +1538,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// start
+								// start
 								double w = Hud.CurrentHudElements[i].Alignment.X == 0 ? lw + rw + 128 : totalwidth + lw + rw;
 								double h = Hud.CurrentHudElements[i].Value2 * n;
 								double x = Hud.CurrentHudElements[i].Alignment.X < 0 ? 0.0 : Hud.CurrentHudElements[i].Alignment.X > 0 ? Screen.Width - w : 0.5 * (Screen.Width - w);
@@ -1614,11 +1616,11 @@ namespace OpenBve {
 									double px = Game.ScoreMessages[j].RendererPosition.X + (double)j * (double)Hud.CurrentHudElements[i].Value1;
 									double py = Game.ScoreMessages[j].RendererPosition.Y;
 									float alpha = (float)(Game.ScoreMessages[j].RendererAlpha * Game.ScoreMessages[j].RendererAlpha);
-									/// graphics
+									// graphics
 									Hud.HudImage Left = j == 0 ? Hud.CurrentHudElements[i].TopLeft : j < n - 1 ? Hud.CurrentHudElements[i].CenterLeft : Hud.CurrentHudElements[i].BottomLeft;
 									Hud.HudImage Middle = j == 0 ? Hud.CurrentHudElements[i].TopMiddle : j < n - 1 ? Hud.CurrentHudElements[i].CenterMiddle : Hud.CurrentHudElements[i].BottomMiddle;
 									Hud.HudImage Right = j == 0 ? Hud.CurrentHudElements[i].TopRight : j < n - 1 ? Hud.CurrentHudElements[i].CenterRight : Hud.CurrentHudElements[i].BottomRight;
-									/// left background
+									// left background
 									if (Left.BackgroundTexture != null) {
 										if (Textures.LoadTexture(Left.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double u = (double)Left.BackgroundTexture.Width;
@@ -1627,7 +1629,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Left.BackgroundTexture, px, py, px + u, py + v);
 										}
 									}
-									/// right background
+									// right background
 									if (Right.BackgroundTexture != null) {
 										if (Textures.LoadTexture(Right.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double u = (double)Right.BackgroundTexture.Width;
@@ -1636,7 +1638,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Right.BackgroundTexture, px + w - u, py, px + w, py + v);
 										}
 									}
-									/// middle background
+									// middle background
 									if (Middle.BackgroundTexture != null) {
 										if (Textures.LoadTexture(Middle.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double v = (double)Middle.BackgroundTexture.Height;
@@ -1644,7 +1646,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Middle.BackgroundTexture, px + lw, py, px + w - rw, py + v);
 										}
 									}
-									{ /// text
+									{ // text
 										string t = Game.ScoreMessages[j].Text;
 										double u = widths[j];
 										double v = heights[j];
@@ -1654,7 +1656,7 @@ namespace OpenBve {
 										q += Hud.CurrentHudElements[i].TextPosition.Y;
 										DrawString(Hud.CurrentHudElements[i].Font, t, new System.Drawing.Point((int)p, (int)q), TextAlignment.TopLeft, new Color128(tr, tg, tb, ta * alpha), Hud.CurrentHudElements[i].TextShadow);
 									}
-									/// left overlay
+									// left overlay
 									if (Left.OverlayTexture != null) {
 										if (Textures.LoadTexture(Left.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double u = (double)Left.OverlayTexture.Width;
@@ -1663,7 +1665,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Left.OverlayTexture, px, py, px + u, py + v);
 										}
 									}
-									/// right overlay
+									// right overlay
 									if (Right.OverlayTexture != null) {
 										if (Textures.LoadTexture(Right.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double u = (double)Right.OverlayTexture.Width;
@@ -1672,7 +1674,7 @@ namespace OpenBve {
 											RenderOverlayTexture(Right.OverlayTexture, px + w - u, py, px + w, py + v);
 										}
 									}
-									/// middle overlay
+									// middle overlay
 									if (Middle.OverlayTexture != null) {
 										if (Textures.LoadTexture(Middle.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 											double v = (double)Middle.OverlayTexture.Height;
@@ -1689,7 +1691,7 @@ namespace OpenBve {
 									InitializeLamps();
 								}
 								double lcrh = 0.0;
-								/// left width/height
+								// left width/height
 								double lw = 0.0;
 								if (Hud.CurrentHudElements[i].TopLeft.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopLeft.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -1715,7 +1717,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// center height
+								// center height
 								if (Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 										double v = (double)Hud.CurrentHudElements[i].TopMiddle.BackgroundTexture.Height;
@@ -1734,7 +1736,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// right width/height
+								// right width/height
 								double rw = 0.0;
 								if (Hud.CurrentHudElements[i].TopRight.BackgroundTexture != null) {
 									if (Textures.LoadTexture(Hud.CurrentHudElements[i].TopRight.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
@@ -1760,7 +1762,7 @@ namespace OpenBve {
 										if (v > lcrh) lcrh = v;
 									}
 								}
-								/// start
+								// start
 								int n = CurrentLampCollection.Lamps.Length;
 								double w = (double)CurrentLampCollection.Width + lw + rw;
 								double h = Hud.CurrentHudElements[i].Value2 * n;
@@ -1846,14 +1848,14 @@ namespace OpenBve {
 													} break;
 											}
 										}
-										/// colors
+										// colors
 										float br, bg, bb, ba;
 										CreateBackColor(Hud.CurrentHudElements[i].BackgroundColor, sc, out br, out bg, out bb, out ba);
 										float tr, tg, tb, ta;
 										CreateTextColor(Hud.CurrentHudElements[i].TextColor, sc, out tr, out tg, out tb, out ta);
 										float or, og, ob, oa;
 										CreateBackColor(Hud.CurrentHudElements[i].OverlayColor, sc, out or, out og, out ob, out oa);
-										/// left background
+										// left background
 										if (Left.BackgroundTexture != null) {
 											if (Textures.LoadTexture(Left.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 												double u = (double)Left.BackgroundTexture.Width;
@@ -1862,7 +1864,7 @@ namespace OpenBve {
 												RenderOverlayTexture(Left.BackgroundTexture, x, y, x + u, y + v);
 											}
 										}
-										/// right background
+										// right background
 										if (Right.BackgroundTexture != null) {
 											if (Textures.LoadTexture(Right.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 												double u = (double)Right.BackgroundTexture.Width;
@@ -1871,7 +1873,7 @@ namespace OpenBve {
 												RenderOverlayTexture(Right.BackgroundTexture, x + w - u, y, x + w, y + v);
 											}
 										}
-										/// middle background
+										// middle background
 										if (Middle.BackgroundTexture != null) {
 											if (Textures.LoadTexture(Middle.BackgroundTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 												double v = (double)Middle.BackgroundTexture.Height;
@@ -1879,7 +1881,7 @@ namespace OpenBve {
 												RenderOverlayTexture(Middle.BackgroundTexture, x + lw, y, x + w - rw, y + v);
 											}
 										}
-										{ /// text
+										{ // text
 											string t = CurrentLampCollection.Lamps[j].Text;
 											double u = CurrentLampCollection.Lamps[j].Width;
 											double v = CurrentLampCollection.Lamps[j].Height;
@@ -1889,7 +1891,7 @@ namespace OpenBve {
 											q += Hud.CurrentHudElements[i].TextPosition.Y;
 											DrawString(Hud.CurrentHudElements[i].Font, t, new System.Drawing.Point((int)p, (int)q), TextAlignment.TopLeft, new Color128(tr, tg, tb, ta), Hud.CurrentHudElements[i].TextShadow);
 										}
-										/// left overlay
+										// left overlay
 										if (Left.OverlayTexture != null) {
 											if (Textures.LoadTexture(Left.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 												double u = (double)Left.OverlayTexture.Width;
@@ -1898,7 +1900,7 @@ namespace OpenBve {
 												RenderOverlayTexture(Left.OverlayTexture, x, y, x + u, y + v);
 											}
 										}
-										/// right overlay
+										// right overlay
 										if (Right.OverlayTexture != null) {
 											if (Textures.LoadTexture(Right.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 												double u = (double)Right.OverlayTexture.Width;
@@ -1907,7 +1909,7 @@ namespace OpenBve {
 												RenderOverlayTexture(Right.OverlayTexture, x + w - u, y, x + w, y + v);
 											}
 										}
-										/// middle overlay
+										// middle overlay
 										if (Middle.OverlayTexture != null) {
 											if (Textures.LoadTexture(Middle.OverlayTexture, Textures.OpenGlTextureWrapMode.ClampClamp)) {
 												double v = (double)Middle.OverlayTexture.Height;
@@ -1937,7 +1939,7 @@ namespace OpenBve {
 								double y = Hud.CurrentHudElements[i].Alignment.Y < 0 ? 0.0 : Hud.CurrentHudElements[i].Alignment.Y == 0 ? 0.5 * (Screen.Height - h) : Screen.Height - h;
 								x += Hud.CurrentHudElements[i].Position.X;
 								y += Hud.CurrentHudElements[i].Position.Y;
-								/// command
+								// command
 								const double speed = 1.0;
 								Game.MessageColor sc = Game.MessageColor.None;
 								string t;
@@ -2178,7 +2180,7 @@ namespace OpenBve {
 								} else if (Hud.CurrentHudElements[i].Transition == Hud.HudTransition.None) {
 									alpha = (float)(1.0 - Hud.CurrentHudElements[i].TransitionState);
 								}
-								/// render
+								// render
 								if (alpha != 0.0f) {
 									// background
 									if (Hud.CurrentHudElements[i].CenterMiddle.BackgroundTexture != null) {

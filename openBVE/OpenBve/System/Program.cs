@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using OpenTK;
 using System.Globalization;
+using SDL2;
 namespace OpenBve {
 	/// <summary>Provides methods for starting the program, including the Main procedure.</summary>
 	internal static partial class Program {
@@ -33,7 +30,7 @@ namespace OpenBve {
 		/// <summary>The random number generator used by this program.</summary>
 		internal static Random RandomNumberGenerator = new Random();
 
-		internal static GameWindow UI;
+		//internal static GameWindow UI;
 		// --- functions ---
 
 		/// <summary>Is executed when the program starts.</summary>
@@ -143,8 +140,6 @@ namespace OpenBve {
 				}
 				Game.Reset(false);
 			}
-			Screen.Initialize();
-			SetupEvents();
 			// --- show the main menu if necessary ---
 			if (result.RouteFile == null || result.TrainFolder == null) {
 				// begin HACK //
@@ -206,6 +201,10 @@ namespace OpenBve {
 			if (!Plugins.LoadPlugins()) {
 				return false;
 			}
+			if (!Screen.Initialize()) {
+				MessageBox.Show("SDL failed to initialize the video subsystem.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+				return false;
+			}
 			if (!Joysticks.Initialize()) {
 				MessageBox.Show("SDL failed to initialize the joystick subsystem.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 				return false;
@@ -231,6 +230,7 @@ namespace OpenBve {
 			Sounds.Deinitialize();
 			Joysticks.Deinitialize();
 			Screen.Deinitialize();
+			SDL.SDL_Quit();
 		}
 
 		/// <summary>Provides the API with lookup directories for all installed packages.</summary>
@@ -273,14 +273,6 @@ namespace OpenBve {
 				string file = System.IO.Path.Combine(Program.FileSystem.SettingsFolder, "log.txt");
 				System.IO.File.AppendAllText(file, text + "\n", new System.Text.UTF8Encoding(false));
 			} catch { }
-		}
-		internal static void SetupEvents(){
-			UI.KeyDown += MainLoop.KeyDown;
-			UI.KeyUp += MainLoop.KeyUp;
-			UI.Closing += MainLoop.Closing;
-			UI.Resize += MainLoop.Resize;
-			UI.MouseDown += MainLoop.MouseDown;
-			UI.MouseMove += MainLoop.MouseMove;
 		}
 	}
 }
