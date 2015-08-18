@@ -35,7 +35,7 @@ namespace OpenBve {
 			} catch {
 				Debug.AddMessage(Debug.MessageType.Warning,false,"Malfolmed HTTP user agent (code error)");
 			}
-			if (url.StartsWith("http://",true,Program.InvariantCulture)) {
+			if (url.StartsWith("http://",StringComparison.InvariantCultureIgnoreCase)) {
 				int index = url.IndexOf('/', 7);
 				if (index >= 7) {
 					string referer = url.Substring(0, index + 1);
@@ -43,7 +43,7 @@ namespace OpenBve {
 						client.Headers.Add(HttpRequestHeader.Referer, referer);
 					} catch { }
 				}
-			} else if(url.StartsWith("https://",true,Program.InvariantCulture)){
+			} else if(url.StartsWith("https://",StringComparison.InvariantCultureIgnoreCase)){
 				int index = url.IndexOf('/', 8);
 				if (index >= 8) {
 					string referer = url.Substring(0, index + 1);
@@ -94,16 +94,17 @@ namespace OpenBve {
 						bytes = new byte[contentLength];
 						int now;
 						do {
-							now = stream.Read(bytes, count, chunkSize);
+							int remain = contentLength - count < chunkSize ? contentLength - count : chunkSize;
+							now = stream.Read(bytes, count, remain);
 							if (now != 0) {
 								count += now;
 								Interlocked.Add(ref size, now);
 							}
-						} while (count > 0);
+						} while (contentLength < count);
 					}
 				}
 				return true;
-			} catch {
+			} catch (Exception e) {
 				Interlocked.Add(ref size, -count);
 				bytes = null;
 				return false;
