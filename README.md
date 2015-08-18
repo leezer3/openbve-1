@@ -17,7 +17,7 @@ Here are some of the goals of this repository (they're not ordered):
 * Implement multiplayer (after multi-track)
 * Implement OpenGL menu *(cross-platformness)*
 * Implement gamepad support
-* Bring managed content back to life
+* *Bring managed content back to life* **- Probably not, see [this thread on BVEWorldWide](http://bveworldwide.unlimitedboard.com/t439p120-development-discontinued-discussing-the-direction-to-go)**
 
 And maybe in distant future:
 
