@@ -397,7 +397,7 @@ namespace OpenBve {
 			radiobuttonControls.Text = Strings.GetInterfaceString("panel_controls");
 			radiobuttonOptions.Text = Strings.GetInterfaceString("panel_options");
 			linkHomepage.Text = Strings.GetInterfaceString("panel_homepage");
-			linkUpdates.Text = Strings.GetInterfaceString("panel_updates");
+			//linkUpdates.Text = Strings.GetInterfaceString("panel_updates");
 			buttonClose.Text = Strings.GetInterfaceString("panel_close");
 			// options
 			labelOptionsTitle.Text = Strings.GetInterfaceString("options_title");
@@ -982,7 +982,7 @@ namespace OpenBve {
 				MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 			}
 		}
-
+		/*
 		// updates
 		private static bool CurrentlyCheckingForUpdates = false;
 		private void linkUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -1062,12 +1062,12 @@ namespace OpenBve {
 			this.Cursor = Cursors.Default;
 			CurrentlyCheckingForUpdates = false;
 		}
+		*/
 
 		// close
 		private void buttonClose_Click(object sender, EventArgs e) {
 			this.Close();
 		}
-
 
 
 		// ======

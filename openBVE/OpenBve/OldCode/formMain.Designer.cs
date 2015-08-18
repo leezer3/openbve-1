@@ -239,7 +239,7 @@
         	this.labelVersion = new System.Windows.Forms.Label();
         	this.labelInfoBottom = new System.Windows.Forms.Label();
         	this.labelInfoTop = new System.Windows.Forms.Label();
-        	this.linkUpdates = new System.Windows.Forms.LinkLabel();
+        	//this.linkUpdates = new System.Windows.Forms.LinkLabel();
         	this.panelGetAddOns = new System.Windows.Forms.Panel();
         	this.panelPackages = new System.Windows.Forms.Panel();
         	this.checkboxFilterNoWIPs = new System.Windows.Forms.CheckBox();
@@ -3017,7 +3017,8 @@
         	this.labelInfoTop.TabIndex = 0;
         	// 
         	// linkUpdates
-        	// 
+        	//
+			/*
         	this.linkUpdates.ActiveLinkColor = System.Drawing.Color.Crimson;
         	this.linkUpdates.AutoEllipsis = true;
         	this.linkUpdates.DisabledLinkColor = System.Drawing.Color.Silver;
@@ -3034,6 +3035,7 @@
         	this.linkUpdates.Visible = false;
         	this.linkUpdates.VisitedLinkColor = System.Drawing.Color.Gold;
         	this.linkUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkUpdates_LinkClicked);
+        	*/
         	// 
         	// panelGetAddOns
         	// 
@@ -3368,7 +3370,7 @@
         	this.ClientSize = new System.Drawing.Size(800, 584);
         	this.Controls.Add(this.labelVerticalSeparator);
         	this.Controls.Add(this.radiobuttonGetAddOns);
-        	this.Controls.Add(this.linkUpdates);
+        	//this.Controls.Add(this.linkUpdates);
         	this.Controls.Add(this.panelInfo);
         	this.Controls.Add(this.panelPanels);
         	this.Controls.Add(this.buttonClose);
@@ -3723,7 +3725,7 @@
         private System.Windows.Forms.Button buttonControlsExport;
         private System.Windows.Forms.Button buttonControlsImport;
         private System.Windows.Forms.Label labelTransparency;
-        private System.Windows.Forms.LinkLabel linkUpdates;
+        //private System.Windows.Forms.LinkLabel linkUpdates;
         private System.Windows.Forms.RadioButton radiobuttonStart;
         private System.Windows.Forms.RadioButton radiobuttonOptions;
         private System.Windows.Forms.RadioButton radiobuttonControls;
