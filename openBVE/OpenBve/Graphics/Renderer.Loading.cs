@@ -11,6 +11,8 @@ namespace OpenBve {
 		 * This file contains the drawing routines for the loading screen
 		 * -------------------------------------------------------------- */
 		internal static bool DrawLoad = true;
+		internal static readonly object LoadingLock = new object();
+		internal static bool LoadingRemakeCurrent = false;
 		internal static void DrawLoadingScreenLoop(){
 			Screen.MakeCurrent();
 			GL.Disable(EnableCap.Fog);
@@ -22,12 +24,19 @@ namespace OpenBve {
 			GL.PushMatrix();
 			GL.LoadIdentity();
 			GL.ClearColor(Color.Black);
+
 			SDL.SDL_Event ev;
 			while (DrawLoad) {
 				Timers.GetElapsedTime();
-				GL.Viewport(0,0,Screen.Width,Screen.Height);
-				DrawLoadingScreen();
-				Screen.SwapBuffers();
+				lock (LoadingLock) {
+					if (LoadingRemakeCurrent) {
+						Screen.MakeCurrent();
+						LoadingRemakeCurrent = false;
+					}
+					GL.Viewport(0, 0, Screen.Width, Screen.Height);
+					DrawLoadingScreen();
+					Screen.SwapBuffers();
+				}
 				while (SDL.SDL_PollEvent(out ev) != 0) {
 					switch (ev.type) {
 						case SDL.SDL_EventType.SDL_QUIT:
