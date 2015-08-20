@@ -476,24 +476,21 @@ namespace OpenBve {
 				World.CameraRestriction = World.CameraRestrictionMode.NotAvailable;
 			} else {
 				File = OpenBveApi.Path.CombineFile(TrainPath, "panel2.cfg");
-				if (System.IO.File.Exists(File)) {
-					lock (Renderer.LoadingLock) {
-						Screen.MakeCurrent();
-						Panel2CfgParser.ParsePanel2Config(TrainPath, Encoding, Train);
-						Renderer.LoadingRemakeCurrent = true;
-					}
-					World.CameraRestriction = World.CameraRestrictionMode.On;
-				} else {
-					File = OpenBveApi.Path.CombineFile(TrainPath, "panel.cfg");
+				lock (Renderer.LoadingLock) {
+					Screen.MakeCurrent();
 					if (System.IO.File.Exists(File)) {
-						lock (Renderer.LoadingLock) {
-							PanelCfgParser.ParsePanelConfig(TrainPath, Encoding, Train);
-							Renderer.LoadingRemakeCurrent = true;
-						}
+						Panel2CfgParser.ParsePanel2Config(TrainPath, Encoding, Train);
 						World.CameraRestriction = World.CameraRestrictionMode.On;
 					} else {
-						World.CameraRestriction = World.CameraRestrictionMode.NotAvailable;
+						File = OpenBveApi.Path.CombineFile(TrainPath, "panel.cfg");
+						if (System.IO.File.Exists(File)) {
+							PanelCfgParser.ParsePanelConfig(TrainPath, Encoding, Train);
+							World.CameraRestriction = World.CameraRestrictionMode.On;
+						} else {
+							World.CameraRestriction = World.CameraRestrictionMode.NotAvailable;
+						}
 					}
+					Renderer.LoadingRemakeCurrent = true;
 				}
 			}
 		}

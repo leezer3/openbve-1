@@ -24,6 +24,9 @@ namespace OpenBve {
 
 		internal static IntPtr Window{ get; private set;}
 		internal static IntPtr GLContext { get; private set;}
+		private static IntPtr iconSurface = IntPtr.Zero;
+		private static System.Drawing.Imaging.BitmapData iconData = null;
+		private static System.Drawing.Bitmap iconBmp = null;
 		internal static System.Drawing.Size Size {
 			get {
 				return new System.Drawing.Size(Width, Height);
@@ -76,10 +79,16 @@ namespace OpenBve {
 					GraphicsContext ctx = new GraphicsContext(new ContextHandle(GLContext),
 						SDL.SDL_GL_GetProcAddress, () => new ContextHandle(SDL.SDL_GL_GetCurrentContext()));
 					// --- set up icon ---
-					string bitmapFile = OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, "icon.bmp");
-					IntPtr bitmap = SDL.SDL_LoadBMP(bitmapFile);
-					if (bitmap != IntPtr.Zero) {
-						SDL.SDL_SetWindowIcon(Window, bitmap);
+					string bitmapFile = OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, "icon.ico");
+					if (System.IO.File.Exists(bitmapFile)) {
+						iconBmp = new System.Drawing.Bitmap(bitmapFile); // load file
+						iconData = iconBmp.LockBits(new System.Drawing.Rectangle(0,0,iconBmp.Width,iconBmp.Height),
+							System.Drawing.Imaging.ImageLockMode.ReadOnly,
+							System.Drawing.Imaging.PixelFormat.Format32bppArgb); // lock data
+						iconSurface = SDL.SDL_CreateRGBSurfaceFrom(iconData.Scan0,iconBmp.Width,iconBmp.Height,32,iconData.Stride,
+							0x00FF0000,0x0000FF00,0x000000FF,0xFF000000); // upload to sdl
+						SDL.SDL_SetWindowIcon(Window,iconSurface); // use icon
+						// free in Deinitialize()
 					}
 					// --- set up anisotropic filtering ---
 					Options.Current.AnisotropicFilteringMaximum = 0;
@@ -108,6 +117,12 @@ namespace OpenBve {
 		/// <summary>Deinitializes the screen.</summary>
 		internal static void Deinitialize() {
 			if (Initialized) {
+				if (iconSurface != IntPtr.Zero)
+					SDL.SDL_FreeSurface(iconSurface); // free surface
+				if (iconBmp != null && iconData != null) {
+					iconBmp.UnlockBits(iconData); // free pixels
+					iconBmp.Dispose();
+				}
 				SDL.SDL_GL_DeleteContext(GLContext);
 				SDL.SDL_DestroyWindow(Window);
 				SDL.SDL_QuitSubSystem(SDL.SDL_INIT_VIDEO);
