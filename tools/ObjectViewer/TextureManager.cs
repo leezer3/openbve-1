@@ -352,49 +352,48 @@ namespace OpenBve {
 				GL.BindTexture(TextureTarget.Texture2D, a[0]);
 				switch (Interface.CurrentOptions.Interpolation) {
 					case InterpolationMode.NearestNeighbor:
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 						break;
 					case InterpolationMode.Bilinear:
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Linear);
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Linear);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 						break;
 					case InterpolationMode.NearestNeighborMipmapped:
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.NearestMipmapNearest);
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapNearest);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 						break;
 					case InterpolationMode.BilinearMipmapped:
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.NearestMipmapLinear);
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Linear);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapLinear);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 						break;
 					case InterpolationMode.TrilinearMipmapped:
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.LinearMipmapLinear);
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Linear);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 						break;
 					default:
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.LinearMipmapLinear);
-						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Linear);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+						GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 						break;
 				}
 				if (Interface.CurrentOptions.AnisotropicFilteringLevel > 0) {
 					GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, Interface.CurrentOptions.AnisotropicFilteringLevel);
 				}
 				if (Textures[TextureIndex].WrapModeX == TextureWrapMode.Repeat) {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.Repeat);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)OpenTK.Graphics.OpenGL.TextureWrapMode.Repeat);
 				} else {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.ClampToEdge);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge);
 				}
 				if (Textures[TextureIndex].WrapModeY == TextureWrapMode.Repeat) {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.Repeat);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)OpenTK.Graphics.OpenGL.TextureWrapMode.Repeat);
 				} else {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge);
 				}
 				byte[] Data = Textures[TextureIndex].Data;
 				int Width = Textures[TextureIndex].Width;
 				int Height = Textures[TextureIndex].Height;
-				if (Interface.CurrentOptions.Interpolation != InterpolationMode.NearestNeighbor && Interface.CurrentOptions.Interpolation != InterpolationMode.Bilinear) {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 1);
-				}
+				bool generateMipmap = Interface.CurrentOptions.Interpolation != InterpolationMode.NearestNeighbor && Interface.CurrentOptions.Interpolation != InterpolationMode.Bilinear;
+				GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, generateMipmap ? 1 : 0);
 				GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, Width, Height, 0, GLPixelFormat.Bgr, PixelType.UnsignedByte, Data);
 			}
 			Textures[TextureIndex].Loaded = true;
@@ -641,14 +640,14 @@ namespace OpenBve {
 					GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, Interface.CurrentOptions.AnisotropicFilteringLevel);
 				}
 				if (Textures[TextureIndex].WrapModeX == TextureWrapMode.Repeat) {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.Repeat);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)OpenTK.Graphics.OpenGL.TextureWrapMode.Repeat);
 				} else {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.ClampToEdge);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge);
 				}
 				if (Textures[TextureIndex].WrapModeY == TextureWrapMode.Repeat) {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.Repeat);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)OpenTK.Graphics.OpenGL.TextureWrapMode.Repeat);
 				} else {
-					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
+					GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)OpenTK.Graphics.OpenGL.TextureWrapMode.ClampToEdge);
 				}
 				byte[] Data = Textures[TextureIndex].Data;
 				int Width = Textures[TextureIndex].Width;
