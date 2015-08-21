@@ -128,11 +128,10 @@ namespace OpenBve {
 			}
 			LoadedPlugins = list.ToArray();
 			string message = builder.ToString().Trim();
-			if (message.Length != 0) {
-				return MessageBox.Show(message+"Do you want to continue loading?", Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Hand, MessageBoxDefaultButton.Button2) == DialogResult.Yes;
-			} else {
-				return true;
-			}
+			if (message.Length != 0)
+				return MessageBox.Show(message + "Do you want to continue loading?", Application.ProductName, 
+					MessageBoxButtons.YesNo, MessageBoxIcon.Hand, MessageBoxDefaultButton.Button2) == DialogResult.Yes;
+			return true;
 		}
 		
 		/// <summary>Unloads all non-runtime plugins.</summary>

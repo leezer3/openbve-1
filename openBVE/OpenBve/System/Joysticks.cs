@@ -11,7 +11,7 @@ namespace OpenBve
 		// --- structures ---
 		
 		/// <summary>Represents a joystick.</summary>
-		internal struct Joystick
+		internal class Joystick
 		{
 			// --- members ---
 			/// <summary>The textual representation of the joystick.</summary>
@@ -29,7 +29,7 @@ namespace OpenBve
 			// --- constructors ---
 			/// <summary>Creates a new joystick.</summary>
 			/// <param name="sdlHandle">The SDL handle to the joystick.</param>
-			/// <param name="sdlHandle">The SDL index of the joystick.</param>
+			/// <param name="index">The SDL index of the joystick.</param>
 			internal Joystick(IntPtr sdlHandle, int index)
 			{
 				this.Handle = sdlHandle;

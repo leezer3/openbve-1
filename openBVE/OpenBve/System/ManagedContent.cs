@@ -64,11 +64,9 @@ namespace OpenBve {
 			/// <summary>Gets the textual representation of this key-value pair.</summary>
 			/// <returns>The textual representation of this key-value pair</returns>
 			public override string ToString() {
-				if (this.Language != null) {
+				if (this.Language != null)
 					return this.Key + "[" + this.Language + "] = " + this.Value;
-				} else {
-					return this.Key + " = " + this.Value;
-				}
+				return this.Key + " = " + this.Value;
 			}
 		}
 		

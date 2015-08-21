@@ -785,7 +785,8 @@ namespace OpenBve {
 			}
 			if (j == -1) {
 				return Stations[StationIndex].Stops.Length - 1;
-			} else return j;
+			}
+			return j;
 		}
 		/// <summary>Indicates whether the player's train stops at a station.</summary>
 		internal static bool PlayerStopsAtStation(int StationIndex) {
@@ -873,11 +874,10 @@ namespace OpenBve {
 			}
 			internal TrainManager.Train GetFirstTrain(bool AllowBogusTrain) {
 				for (int i = 0; i < this.Trains.Length; i++) {
-					if (this.Trains[i].State == TrainManager.TrainState.Available) {
+					if (this.Trains[i].State == TrainManager.TrainState.Available)
 						return this.Trains[i];
-					} else if (AllowBogusTrain & this.Trains[i].State == TrainManager.TrainState.Bogus) {
+					if (AllowBogusTrain && this.Trains[i].State == TrainManager.TrainState.Bogus)
 						return this.Trains[i];
-					}
 				}
 				return null;
 			}
@@ -915,9 +915,8 @@ namespace OpenBve {
 						train = Sections[l].GetFirstTrain(false);
 						if (train != null) {
 							break;
-						} else {
-							l = Sections[l].PreviousSection;
 						}
+						l = Sections[l].PreviousSection;
 					} else {
 						break;
 					}
@@ -967,9 +966,7 @@ namespace OpenBve {
 				}
 			}
 			// train in block
-			if (!Sections[SectionIndex].IsFree()) {
-				settored = true;
-			}
+			settored |= !Sections[SectionIndex].IsFree();
 			// free sections
 			int newaspect = -1;
 			if (settored) {
@@ -1916,7 +1913,8 @@ namespace OpenBve {
 			internal string Text;
 		}
 		internal static PointOfInterest[] PointsOfInterest = new PointOfInterest[] { };
-		internal static bool ApplyPointOfInterest(int Value, bool Relative) {
+		internal static bool ApplyPointOfInterest(int Value, bool Relative)
+		{
 			double t = 0.0;
 			int j = -1;
 			if (Relative) {
@@ -1949,22 +1947,20 @@ namespace OpenBve {
 				j = Value >= 0 & Value < PointsOfInterest.Length ? Value : -1;
 			}
 			// process poi
-			if (j >= 0) {
-				TrackManager.UpdateTrackFollower(ref World.CameraTrackFollower, t, true, false);
-				World.CameraCurrentAlignment.Position = PointsOfInterest[j].TrackOffset;
-				World.CameraCurrentAlignment.Yaw = PointsOfInterest[j].TrackYaw;
-				World.CameraCurrentAlignment.Pitch = PointsOfInterest[j].TrackPitch;
-				World.CameraCurrentAlignment.Roll = PointsOfInterest[j].TrackRoll;
-				World.CameraCurrentAlignment.TrackPosition = t;
-				World.UpdateAbsoluteCamera(0.0);
-				if (PointsOfInterest[j].Text != null) {
-					double n = 3.0 + 0.5 * Math.Sqrt((double)PointsOfInterest[j].Text.Length);
-					Game.AddMessage(PointsOfInterest[j].Text, Game.MessageDependency.None, Options.GameMode.Expert, Game.MessageColor.White, Game.SecondsSinceMidnight + n);
-				}
-				return true;
-			} else {
+			if (j < 0)
 				return false;
+			TrackManager.UpdateTrackFollower(ref World.CameraTrackFollower, t, true, false);
+			World.CameraCurrentAlignment.Position = PointsOfInterest[j].TrackOffset;
+			World.CameraCurrentAlignment.Yaw = PointsOfInterest[j].TrackYaw;
+			World.CameraCurrentAlignment.Pitch = PointsOfInterest[j].TrackPitch;
+			World.CameraCurrentAlignment.Roll = PointsOfInterest[j].TrackRoll;
+			World.CameraCurrentAlignment.TrackPosition = t;
+			World.UpdateAbsoluteCamera(0.0);
+			if (PointsOfInterest[j].Text != null) {
+				double n = 3.0 + 0.5 * Math.Sqrt((double)PointsOfInterest[j].Text.Length);
+				Game.AddMessage(PointsOfInterest[j].Text, Game.MessageDependency.None, Options.GameMode.Expert, Game.MessageColor.White, Game.SecondsSinceMidnight + n);
 			}
+			return true;
 		}
 
 

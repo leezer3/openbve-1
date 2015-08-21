@@ -443,7 +443,8 @@ namespace OpenBve
 		} else {
 			// file not found
 			string Code = CultureInfo.CurrentUICulture.Name;
-			if (Code == null || Code.Length == 0) Code = "en-US";
+			if (string.IsNullOrEmpty(Code))
+				Code = "en-US";
 			File = OpenBveApi.Path.CombineFile(Program.FileSystem.GetDataFolder("Languages"), Code + ".cfg");
 			if (System.IO.File.Exists(File)) {
 				Current.LanguageCode = Code;

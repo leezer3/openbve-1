@@ -79,7 +79,7 @@ namespace OpenBve
 			QuickReferences.Score = "Score: ";
 			for (int i = 0; i < Lines.Length; i++) {
 				Lines[i] = Lines[i].Trim();
-				if (!Lines[i].StartsWith(";")) {
+				if (!Lines[i].StartsWith(";", StringComparison.Ordinal)) {
 					if (Lines[i].StartsWith("[", StringComparison.Ordinal) & Lines[i].EndsWith("]", StringComparison.Ordinal)) {
 						Section = Lines[i].Substring(1, Lines[i].Length - 2).Trim().ToLowerInvariant();
 					} else {

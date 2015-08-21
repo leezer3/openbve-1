@@ -107,12 +107,12 @@ namespace OpenBve {
 		/// <param name="handle">The handle to the registered texture.</param>
 		/// <param name="wrap">The texture type indicating the clamp mode.</param>
 		/// <returns>Whether loading the texture was successful.</returns>
-		internal static bool LoadTexture(Texture handle, OpenGlTextureWrapMode wrap) {
-			if (handle.OpenGlTextures[(int)wrap].Valid) {
+		internal static bool LoadTexture(Texture handle, OpenGlTextureWrapMode wrap){
+			if (handle.OpenGlTextures[(int)wrap].Valid)
 				return true;
-			} else if (handle.Ignore) {
+			if (handle.Ignore)
 				return false;
-			} else {
+			else {
 				OpenBveApi.Textures.Texture texture;
 				if (handle.Origin.GetTexture(out texture)) {
 					if (texture.BitsPerPixel == 32) {
@@ -142,7 +142,7 @@ namespace OpenBve {
 								break;
 							case Options.InterpolationMode.NearestNeighborMipmapped:
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.NearestMipmapNearest);
-								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,(float)TextureMagFilter.Nearest);
+								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
 								break;
 							case Options.InterpolationMode.BilinearMipmapped:
 								GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.NearestMipmapLinear);
@@ -158,7 +158,7 @@ namespace OpenBve {
 								break;
 						}
 						if ((wrap & OpenGlTextureWrapMode.RepeatClamp) != 0) {
-							GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureWrapS, (float)TextureWrapMode.Repeat);
+							GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.Repeat);
 						} else {
 							GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.ClampToEdge);
 						}
@@ -274,12 +274,12 @@ namespace OpenBve {
 		/// <param name="height">The new height.</param>
 		/// <returns>The resize texture, or the original if already of the specified size.</returns>
 		/// <exception cref="System.NotSupportedException">The bits per pixel in the texture is not supported.</exception>
-		internal static OpenBveApi.Textures.Texture Resize(OpenBveApi.Textures.Texture texture, int width, int height) {
-			if (width == texture.Width && height == texture.Height) {
+		internal static OpenBveApi.Textures.Texture Resize(OpenBveApi.Textures.Texture texture, int width, int height){
+			if (width == texture.Width && height == texture.Height)
 				return texture;
-			} else if (texture.BitsPerPixel != 32) {
+			if (texture.BitsPerPixel != 32)
 				throw new NotSupportedException("The number of bits per pixel is not supported.");
-			} else {
+			else {
 				OpenBveApi.Textures.TextureTransparencyType type = texture.GetTransparencyType();
 				/*
 				 * Convert the texture into a bitmap.

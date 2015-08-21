@@ -32,11 +32,10 @@ namespace OpenBve {
 			for (int i = 0; i < length; i++) {
 				int digitA = i < digitsA.Length ? digitsA[i] : 0;
 				int digitB = i < digitsB.Length ? digitsB[i] : 0;
-				if (digitA < digitB) {
+				if (digitA < digitB)
 					return -1;
-				} else if (digitA > digitB) {
+				if (digitA > digitB)
 					return 1;
-				}
 			}
 			return Math.Sign(string.Compare(suffixA, suffixB, StringComparison.OrdinalIgnoreCase));
 		}

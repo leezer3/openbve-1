@@ -18,11 +18,12 @@ namespace OpenBve
 			internal Textures.Texture BackgroundTexture;
 			internal Textures.Texture OverlayTexture;
 		}
+		[Flags]
 		internal enum HudTransition {
 			None = 0,
 			Move = 1,
 			Fade = 2,
-			MoveAndFade = 3
+			MoveAndFade = 3, // Move | Fade
 		}
 		internal class HudElement {
 			internal string Subject;
@@ -259,10 +260,11 @@ namespace OpenBve
 													b = b < 0 ? 0 : b > 255 ? 255 : b;
 													a = a < 0 ? 0 : a > 255 ? 255 : a;
 													CurrentHudElements[Length - 1].BackgroundColor = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-												} break;
-											} else {
-												System.Windows.Forms.MessageBox.Show("Incorrect number of arguments supplied in " + Command + " at line " + (i + 1).ToString(Culture) + " in " + File);
-											} break;
+												}
+												break;
+											}
+											System.Windows.Forms.MessageBox.Show("Incorrect number of arguments supplied in " + Command + " at line " + (i + 1).ToString(Culture) + " in " + File);
+											break;
 										case "overlaycolor":
 											if (Arguments.Length == 4) {
 												int r, g, b, a;
@@ -280,10 +282,11 @@ namespace OpenBve
 													b = b < 0 ? 0 : b > 255 ? 255 : b;
 													a = a < 0 ? 0 : a > 255 ? 255 : a;
 													CurrentHudElements[Length - 1].OverlayColor = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-												} break;
-											} else {
-												System.Windows.Forms.MessageBox.Show("Incorrect number of arguments supplied in " + Command + " at line " + (i + 1).ToString(Culture) + " in " + File);
-											} break;
+												}
+												break;
+											}
+											System.Windows.Forms.MessageBox.Show("Incorrect number of arguments supplied in " + Command + " at line " + (i + 1).ToString(Culture) + " in " + File);
+											break;
 										case "textcolor":
 											if (Arguments.Length == 4) {
 												int r, g, b, a;
@@ -301,10 +304,11 @@ namespace OpenBve
 													b = b < 0 ? 0 : b > 255 ? 255 : b;
 													a = a < 0 ? 0 : a > 255 ? 255 : a;
 													CurrentHudElements[Length - 1].TextColor = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-												} break;
-											} else {
-												System.Windows.Forms.MessageBox.Show("Incorrect number of arguments supplied in " + Command + " at line " + (i + 1).ToString(Culture) + " in " + File);
-											} break;
+												}
+												break;
+											}
+											System.Windows.Forms.MessageBox.Show("Incorrect number of arguments supplied in " + Command + " at line " + (i + 1).ToString(Culture) + " in " + File);
+											break;
 										case "textposition":
 											if (Arguments.Length == 2) {
 												float x, y;

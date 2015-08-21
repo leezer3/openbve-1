@@ -413,7 +413,7 @@ namespace OpenBve
 				Builder.Append(Info.Name + ", ");
 				switch (CurrentControls[i].Method) {
 					case ControlMethod.Keyboard:
-						int sdl = (int)LookupScancode((Scancode)CurrentControls[i].Element);
+						int sdl = LookupScancode((Scancode)CurrentControls[i].Element);
 						Builder.AppendFormat("keyboard, {0}, {1}", sdl, ((int)CurrentControls[i].Modifier).ToString(Culture));
 						break;
 					case ControlMethod.Joystick:
@@ -440,11 +440,7 @@ namespace OpenBve
 				Builder.Append("\n");
 			}
 			string File;
-			if (FileOrNull == null) {
-				File = OpenBveApi.Path.CombineFile(Program.FileSystem.SettingsFolder, "controls.cfg");
-			} else {
-				File = FileOrNull;
-			}
+			File = FileOrNull ?? OpenBveApi.Path.CombineFile(Program.FileSystem.SettingsFolder, "controls.cfg");
 			System.IO.File.WriteAllText(File, Builder.ToString(), new System.Text.UTF8Encoding(true));
 		}
 

@@ -104,7 +104,7 @@ namespace OpenBve {
 					}
 				}
 				return true;
-			} catch (Exception e) {
+			} catch {
 				Interlocked.Add(ref size, -count);
 				bytes = null;
 				return false;

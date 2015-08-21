@@ -44,26 +44,26 @@ namespace OpenBve {
 			internal Damping(double NaturalFrequency, double DampingRatio) {
 				if (NaturalFrequency < 0.0) {
 					throw new ArgumentException("NaturalFrequency must be non-negative in the constructor of the Damping class.");
-				} else if (DampingRatio < 0.0) {
-					throw new ArgumentException("DampingRatio must be non-negative in the constructor of the Damping class.");
-				} else {
-					this.NaturalFrequency = NaturalFrequency;
-					this.NaturalTime = NaturalFrequency != 0.0 ? 1.0 / NaturalFrequency : 0.0;
-					this.DampingRatio = DampingRatio;
-					if (DampingRatio < 1.0) {
-						this.NaturalDampingFrequency = NaturalFrequency * Math.Sqrt(1.0 - DampingRatio * DampingRatio);
-					} else if (DampingRatio == 1.0) {
-						this.NaturalDampingFrequency = NaturalFrequency;
-					} else {
-						this.NaturalDampingFrequency = NaturalFrequency * Math.Sqrt(DampingRatio * DampingRatio - 1.0);
-					}
-					this.OriginalAngle = 0.0;
-					this.OriginalDerivative = 0.0;
-					this.TargetAngle = 0.0;
-					this.CurrentAngle = 0.0;
-					this.CurrentValue = 1.0;
-					this.CurrentTimeDelta = 0.0;
 				}
+				if (DampingRatio < 0.0) {
+					throw new ArgumentException("DampingRatio must be non-negative in the constructor of the Damping class.");
+				}
+				this.NaturalFrequency = NaturalFrequency;
+				this.NaturalTime = NaturalFrequency != 0.0 ? 1.0 / NaturalFrequency : 0.0;
+				this.DampingRatio = DampingRatio;
+				if (DampingRatio < 1.0) {
+					this.NaturalDampingFrequency = NaturalFrequency * Math.Sqrt(1.0 - DampingRatio * DampingRatio);
+				} else if (DampingRatio == 1.0) {
+					this.NaturalDampingFrequency = NaturalFrequency;
+				} else {
+					this.NaturalDampingFrequency = NaturalFrequency * Math.Sqrt(DampingRatio * DampingRatio - 1.0);
+				}
+				this.OriginalAngle = 0.0;
+				this.OriginalDerivative = 0.0;
+				this.TargetAngle = 0.0;
+				this.CurrentAngle = 0.0;
+				this.CurrentValue = 1.0;
+				this.CurrentTimeDelta = 0.0;
 			}
 			internal Damping Clone() {
 				return (Damping)this.MemberwiseClone();
@@ -677,14 +677,14 @@ namespace OpenBve {
 			bool anyfree = false;
 			for (int i = 0; i < Prototypes.Length; i++) {
 				free[i] = Prototypes[i].IsFreeOfFunctions();
-				if (free[i]) anyfree = true;
+				anyfree |= free[i];
 			}
 			if (anyfree) {
 				for (int i = 0; i < Prototypes.Length; i++) {
 					if (Prototypes[i].States.Length != 0) {
 						if (free[i]) {
 							Vector3D p = Position;
-							World.Transformation t = new OpenBve.World.Transformation(BaseTransformation, AuxTransformation);
+							World.Transformation t = new World.Transformation(BaseTransformation, AuxTransformation);
 							Vector3D s = t.X;
 							Vector3D u = t.Y;
 							Vector3D d = t.Z;
@@ -1352,10 +1352,11 @@ namespace OpenBve {
 		}
 
 		// join objects
-		internal static void JoinObjects(ref StaticObject Base, StaticObject Add) {
-			if (Base == null & Add == null) {
+		internal static void JoinObjects(ref StaticObject Base, StaticObject Add)
+		{
+			if (Base == null && Add == null)
 				return;
-			} else if (Base == null) {
+			if (Base == null) {
 				Base = CloneObject(Add);
 			} else if (Add != null) {
 				int mf = Base.Mesh.Faces.Length;
@@ -1524,8 +1525,7 @@ namespace OpenBve {
 
 		// clone object
 		internal static StaticObject CloneObject(StaticObject Prototype) {
-			if (Prototype == null) return null;
-			return CloneObject(Prototype, null, null);
+			return Prototype == null ? null : CloneObject(Prototype, null, null);
 		}
 		/// <summary>Creates a clone of the specified object.</summary>
 		/// <param name="Prototype">The prototype.</param>
@@ -1557,16 +1557,9 @@ namespace OpenBve {
 			Result.Mesh.Materials = new World.MeshMaterial[Prototype.Mesh.Materials.Length];
 			for (int j = 0; j < Prototype.Mesh.Materials.Length; j++) {
 				Result.Mesh.Materials[j] = Prototype.Mesh.Materials[j];
-				if (DaytimeTexture != null) {
-					Result.Mesh.Materials[j].DaytimeTexture = DaytimeTexture;
-				} else {
-					Result.Mesh.Materials[j].DaytimeTexture = Prototype.Mesh.Materials[j].DaytimeTexture;
-				}
-				if (DaytimeTexture != null) {
-					Result.Mesh.Materials[j].NighttimeTexture = NighttimeTexture;
-				} else {
-					Result.Mesh.Materials[j].NighttimeTexture = Prototype.Mesh.Materials[j].NighttimeTexture;
-				}
+				Result.Mesh.Materials[j].DaytimeTexture = DaytimeTexture ?? Prototype.Mesh.Materials[j].DaytimeTexture;
+				// TODO nighttime texture is used now for null check instead of daytime texture
+				Result.Mesh.Materials[j].NighttimeTexture = NighttimeTexture ?? Prototype.Mesh.Materials[j].NighttimeTexture;
 			}
 			return Result;
 		}

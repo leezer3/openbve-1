@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OpenBve
+﻿namespace OpenBve
 {
 	/// <summary>
 	/// Compile-time configuration.

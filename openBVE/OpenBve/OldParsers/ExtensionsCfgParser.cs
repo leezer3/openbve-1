@@ -9,7 +9,7 @@ namespace OpenBve {
 			CarObjects = new ObjectManager.UnifiedObject[Train.Cars.Length];
 			bool[] CarObjectsReversed = new bool[Train.Cars.Length];
 			System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
-			string FileName = OpenBveApi.Path.CombineFile(TrainPath, "extensions.cfg");
+			string FileName = Path.CombineFile(TrainPath, "extensions.cfg");
 			if (System.IO.File.Exists(FileName)) {
 				// load file
 				string[] Lines = System.IO.File.ReadAllLines(FileName, Encoding);
@@ -39,7 +39,7 @@ namespace OpenBve {
 													if (Path.ContainsInvalidPathChars(b)) {
 														Debug.AddMessage(Debug.MessageType.Error, false, "File contains illegal characters at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 													} else {
-														string File = OpenBveApi.Path.CombineFile(TrainPath, b);
+														string File = Path.CombineFile(TrainPath, b);
 														if (System.IO.File.Exists(File)) {
 															CarObjects[n] = ObjectManager.LoadObject(File, Encoding, ObjectManager.ObjectLoadMode.Normal, false, false, false);
 														} else {
@@ -80,7 +80,7 @@ namespace OpenBve {
 																if (Path.ContainsInvalidPathChars(b)) {
 																	Debug.AddMessage(Debug.MessageType.Error, false, "File contains illegal characters at line " + (i + 1).ToString(Culture) + " in file " + FileName);
 																} else {
-																	string File = OpenBveApi.Path.CombineFile(TrainPath, b);
+																	string File = Path.CombineFile(TrainPath, b);
 																	if (System.IO.File.Exists(File)) {
 																		CarObjects[n] = ObjectManager.LoadObject(File, Encoding, ObjectManager.ObjectLoadMode.Normal, false, false, false);
 																	} else {

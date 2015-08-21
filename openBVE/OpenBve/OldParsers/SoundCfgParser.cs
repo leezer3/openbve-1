@@ -173,10 +173,10 @@ namespace OpenBve {
 			Vector3D front = new Vector3D(0.0, 0.0, 0.5 * train.Cars[train.DriverCar].Length);
 			Vector3D cab = new Vector3D(-train.Cars[train.DriverCar].DriverX, train.Cars[train.DriverCar].DriverY, train.Cars[train.DriverCar].DriverZ - 0.5);
 			Vector3D panel = new Vector3D(train.Cars[train.DriverCar].DriverX, train.Cars[train.DriverCar].DriverY, train.Cars[train.DriverCar].DriverZ + 1.0);
-			double large = 30.0;
-			double medium = 10.0;
-			double small = 5.0;
-			double tiny = 2.0;
+			const double large = 30.0;
+			const double medium = 10.0;
+			const double small = 5.0;
+			const double tiny = 2.0;
 			LoadNoSound(train);
 			// parse configuration file
 			System.Globalization.CultureInfo Culture = System.Globalization.CultureInfo.InvariantCulture;
@@ -203,7 +203,7 @@ namespace OpenBve {
 				switch (Lines[i].ToLowerInvariant()) {
 					case "[run]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -232,7 +232,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[flange]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -261,7 +261,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[motor]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -288,7 +288,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[switch]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -308,7 +308,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[brake]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -345,7 +345,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[compressor]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -375,7 +375,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[suspension]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -401,7 +401,7 @@ namespace OpenBve {
 					case "[horn]":
 						i++;
 						while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -430,7 +430,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[door]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -463,7 +463,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[ats]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -492,7 +492,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[buzzer]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -512,7 +512,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[pilot lamp]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -535,7 +535,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[brake handle]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -564,7 +564,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[master controller]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -593,7 +593,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[reverser]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -616,7 +616,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[breaker]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();
@@ -639,7 +639,7 @@ namespace OpenBve {
 						} i--; break;
 					case "[others]":
 						i++; while (i < Lines.Length && !Lines[i].StartsWith("[", StringComparison.Ordinal)) {
-							int j = Lines[i].IndexOf("=");
+							int j = Lines[i].IndexOf("=", StringComparison.Ordinal);
 							if (j >= 0) {
 								string a = Lines[i].Substring(0, j).TrimEnd();
 								string b = Lines[i].Substring(j + 1).TrimStart();

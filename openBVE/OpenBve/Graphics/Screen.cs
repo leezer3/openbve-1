@@ -65,7 +65,7 @@ namespace OpenBve {
 				if (Fullscreen) {
 					flags |= SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP;
 				}
-				SDL.SDL_SetHint(SDL.SDL_HINT_RENDER_VSYNC,"true"); // TODO
+				SDL.SDL_SetHint(SDL.SDL_HINT_RENDER_VSYNC,"true");
 				SDL.SDL_SetHint(SDL.SDL_HINT_VIDEO_ALLOW_SCREENSAVER,"false");
 				//IntPtr video = Sdl.SDL_SetVideoMode(Width, Height, bits, flags);
 				Window = SDL.SDL_CreateWindow(Application.ProductName,SDL.SDL_WINDOWPOS_CENTERED,SDL.SDL_WINDOWPOS_CENTERED,Width,Height,flags);

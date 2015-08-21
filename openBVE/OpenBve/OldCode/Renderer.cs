@@ -1957,7 +1957,7 @@ namespace OpenBve {
 									case "power":
 										if (TrainManager.PlayerTrain.Specs.SingleHandle) {
 											continue;
-										} else if (TrainManager.PlayerTrain.Specs.CurrentPowerNotch.Driver == 0) {
+										} if (TrainManager.PlayerTrain.Specs.CurrentPowerNotch.Driver == 0) {
 											sc = Game.MessageColor.Gray; t = Strings.QuickReferences.HandlePowerNull;
 										} else {
 											sc = Game.MessageColor.Blue; t = Strings.QuickReferences.HandlePower + TrainManager.PlayerTrain.Specs.CurrentPowerNotch.Driver.ToString(Culture);
@@ -1967,7 +1967,7 @@ namespace OpenBve {
 									case "brake":
 										if (TrainManager.PlayerTrain.Specs.SingleHandle) {
 											continue;
-										} else if (TrainManager.PlayerTrain.Cars[TrainManager.PlayerTrain.DriverCar].Specs.BrakeType == TrainManager.CarBrakeType.AutomaticAirBrake) {
+										} if (TrainManager.PlayerTrain.Cars[TrainManager.PlayerTrain.DriverCar].Specs.BrakeType == TrainManager.CarBrakeType.AutomaticAirBrake) {
 											if (TrainManager.PlayerTrain.Specs.CurrentEmergencyBrake.Driver) {
 												sc = Game.MessageColor.Red; t = Strings.QuickReferences.HandleEmergency;
 											} else if (TrainManager.PlayerTrain.Specs.AirBrake.Handle.Driver == TrainManager.AirBrakeHandleState.Release) {
@@ -1993,7 +1993,7 @@ namespace OpenBve {
 									case "single":
 										if (!TrainManager.PlayerTrain.Specs.SingleHandle) {
 											continue;
-										} else if (TrainManager.PlayerTrain.Specs.CurrentEmergencyBrake.Driver) {
+										} if (TrainManager.PlayerTrain.Specs.CurrentEmergencyBrake.Driver) {
 											sc = Game.MessageColor.Red; t = Strings.QuickReferences.HandleEmergency;
 										} else if (TrainManager.PlayerTrain.Specs.CurrentHoldBrake.Driver) {
 											sc = Game.MessageColor.Green; t = Strings.QuickReferences.HandleHoldBrake;
@@ -2374,7 +2374,7 @@ namespace OpenBve {
 					"",
 					"=debug",
 					"train plugin status: " + (TrainManager.PlayerTrain.Plugin != null ? (TrainManager.PlayerTrain.Plugin.PluginValid ? "ok" : "error") : "n/a"),
-					"train plugin message: " + (TrainManager.PlayerTrain.Plugin != null ? (TrainManager.PlayerTrain.Plugin.PluginMessage != null ? TrainManager.PlayerTrain.Plugin.PluginMessage : "n/a") : "n/a"),
+					"train plugin message: " + (TrainManager.PlayerTrain.Plugin != null ? (TrainManager.PlayerTrain.Plugin.PluginMessage ?? "n/a") : "n/a"),
 					Game.InfoDebugString ?? ""
 				};
 				double x = 4.0;
@@ -2787,7 +2787,7 @@ namespace OpenBve {
 								OpenBveApi.Textures.TextureTransparencyType type = ObjectManager.Objects[ObjectIndex].Mesh.Materials[k].DaytimeTexture.Transparency;
 								if (type == OpenBveApi.Textures.TextureTransparencyType.Alpha) {
 									alpha = true;
-								} else if (type == OpenBveApi.Textures.TextureTransparencyType.Partial & Options.Current.TransparencyMode == TransparencyMode.Quality) {
+								} else if (type == OpenBveApi.Textures.TextureTransparencyType.Partial && Options.Current.TransparencyMode == TransparencyMode.Quality) {
 									alpha = true;
 								}
 							}
@@ -3062,30 +3062,31 @@ namespace OpenBve {
 
 		// get distance factor
 		private static double GetDistanceFactor(World.Vertex[] Vertices, ref World.MeshFace Face, ushort GlowAttenuationData, double CameraX, double CameraY, double CameraZ) {
-			if (Face.Vertices.Length != 0) {
-				World.GlowAttenuationMode mode; double halfdistance;
-				World.SplitGlowAttenuationData(GlowAttenuationData, out mode, out halfdistance);
-				int i = (int)Face.Vertices[0].Index;
-				double dx = Vertices[i].Coordinates.X - CameraX;
-				double dy = Vertices[i].Coordinates.Y - CameraY;
-				double dz = Vertices[i].Coordinates.Z - CameraZ;
-				switch (mode) {
-					case World.GlowAttenuationMode.DivisionExponent2:
-						{
-							double t = dx * dx + dy * dy + dz * dz;
-							return t / (t + halfdistance * halfdistance);
-						}
-					case World.GlowAttenuationMode.DivisionExponent4:
-						{
-							double t = dx * dx + dy * dy + dz * dz;
-							t *= t; halfdistance *= halfdistance;
-							return t / (t + halfdistance * halfdistance);
-						}
-					default:
-						return 1.0;
-				}
-			} else {
+			if (Face.Vertices.Length == 0) {
 				return 1.0;
+			}
+			World.GlowAttenuationMode mode;
+			double halfdistance;
+			World.SplitGlowAttenuationData(GlowAttenuationData, out mode, out halfdistance);
+			int i = (int)Face.Vertices[0].Index;
+			double dx = Vertices[i].Coordinates.X - CameraX;
+			double dy = Vertices[i].Coordinates.Y - CameraY;
+			double dz = Vertices[i].Coordinates.Z - CameraZ;
+			switch (mode) {
+				case World.GlowAttenuationMode.DivisionExponent2:
+					{
+						double t = dx * dx + dy * dy + dz * dz;
+						return t / (t + halfdistance * halfdistance);
+					}
+				case World.GlowAttenuationMode.DivisionExponent4:
+					{
+						double t = dx * dx + dy * dy + dz * dz;
+						t *= t;
+						halfdistance *= halfdistance;
+						return t / (t + halfdistance * halfdistance);
+					}
+				default:
+					return 1.0;
 			}
 		}
 	}

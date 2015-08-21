@@ -46,7 +46,8 @@ namespace OpenBve {
 		}
 		
 		// --- functions ---
-		internal override bool Load(VehicleSpecs specs, InitializationModes mode) {
+		internal override bool Load(VehicleSpecs specs, InitializationModes mode)
+		{
 			LoadProperties properties = new LoadProperties(this.PluginFolder, this.TrainFolder, this.PlaySound);
 			bool success;
 			#if !DEBUG
@@ -77,13 +78,13 @@ namespace OpenBve {
 				UpdateBrake();
 				UpdateReverser();
 				return true;
-			} else if (properties.FailureReason != null) {
+			}
+			if (properties.FailureReason != null) {
 				Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + base.PluginTitle + " failed to load for the following reason: " + properties.FailureReason);
 				return false;
-			} else {
-				Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + base.PluginTitle + " failed to load for an unspecified reason.");
-				return false;
 			}
+			Debug.AddMessage(Debug.MessageType.Error, false, "The train plugin " + base.PluginTitle + " failed to load for an unspecified reason.");
+			return false;
 		}
 		internal override void Unload() {
 			#if !DEBUG
@@ -262,20 +263,19 @@ namespace OpenBve {
 			}
 			#endif
 		}
-		internal SoundHandleEx PlaySound(int index, double volume, double pitch, bool looped) {
-			if (index >= 0 && index < this.Train.Cars[this.Train.DriverCar].Sounds.Plugin.Length && this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Buffer != null) {
-				Sounds.SoundBuffer buffer = this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Buffer;
-				OpenBveApi.Math.Vector3D position = this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Position;
-				Sounds.SoundSource source = Sounds.PlaySound(buffer, pitch, volume, position, this.Train, this.Train.DriverCar, looped);
-				if (this.SoundHandlesCount == this.SoundHandles.Length) {
-					Array.Resize<SoundHandleEx>(ref this.SoundHandles, this.SoundHandles.Length << 1);
-				}
-				this.SoundHandles[this.SoundHandlesCount] = new SoundHandleEx(volume, pitch, source);
-				this.SoundHandlesCount++;
-				return this.SoundHandles[this.SoundHandlesCount - 1];
-			} else {
+		internal SoundHandleEx PlaySound(int index, double volume, double pitch, bool looped)
+		{
+			if (index < 0 || index >= this.Train.Cars[this.Train.DriverCar].Sounds.Plugin.Length || this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Buffer == null)
 				return null;
+			Sounds.SoundBuffer buffer = this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Buffer;
+			OpenBveApi.Math.Vector3D position = this.Train.Cars[this.Train.DriverCar].Sounds.Plugin[index].Position;
+			Sounds.SoundSource source = Sounds.PlaySound(buffer, pitch, volume, position, this.Train, this.Train.DriverCar, looped);
+			if (this.SoundHandlesCount == this.SoundHandles.Length) {
+				Array.Resize<SoundHandleEx>(ref this.SoundHandles, this.SoundHandles.Length << 1);
 			}
+			this.SoundHandles[this.SoundHandlesCount] = new SoundHandleEx(volume, pitch, source);
+			this.SoundHandlesCount++;
+			return this.SoundHandles[this.SoundHandlesCount - 1];
 		}
 	}
 	

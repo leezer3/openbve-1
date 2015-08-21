@@ -30,7 +30,7 @@ namespace OpenBve {
 				GL.Vertex2(point.X, point.Y);
 				GL.End();
 				*/
-				GL.Begin(PrimitiveType.Quads);
+				GL.Begin(PrimitiveType.Quads); // FIXME immediate rendering! quads!
 				GL.Vertex2(point.X, point.Y);
 				GL.Vertex2(point.X + size.Width, point.Y);
 				GL.Vertex2(point.X + size.Width, point.Y + size.Height);
@@ -42,7 +42,7 @@ namespace OpenBve {
 				if (color.HasValue) {
 					GL.Color4(color.Value.R, color.Value.G, color.Value.B, color.Value.A);
 				}
-				GL.Begin(PrimitiveType.Quads);
+				GL.Begin(PrimitiveType.Quads);// FIXME immediate rendering! quads!
 				GL.TexCoord2(0.0f, 0.0f);
 				GL.Vertex2(point.X, point.Y);
 				GL.TexCoord2(1.0f, 0.0f);

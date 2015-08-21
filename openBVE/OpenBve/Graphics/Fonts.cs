@@ -142,9 +142,7 @@ namespace OpenBve {
 				int value = char.ConvertToUtf32(text, offset);
 				int hi = value >> 8;
 				int lo = value & 0xFF;
-				if (this.Tables[hi] == null) {
-					this.Tables[hi] = new OpenGlFontTable(this.Font, hi << 8);
-				}
+				this.Tables[hi] = this.Tables[hi] ?? new OpenGlFontTable(this.Font, hi << 8);
 				texture = this.Tables[hi].Texture;
 				data = this.Tables[hi].Characters[lo];
 				return value >= 0x10000 ? 2 : 1;
@@ -175,16 +173,15 @@ namespace OpenBve {
 		/// <summary>Rounds the specified value to the next-highest power of two.</summary>
 		/// <param name="value">The value.</param>
 		/// <returns>The value rounded to the next-highest power of two.</returns>
-		private static uint RoundToPowerOfTwo(uint value) {
+		private static uint RoundToPowerOfTwo(uint value){
 			if (value == 0) {
 				throw new ArgumentException();
-			} else {
-				value -= 1;
-				for (int i = 1; i < sizeof(int) << 3; i <<= 1) {
-					value |= value >> i;
-				}
-				return value + 1;
 			}
+			value -= 1;
+			for (int i = 1; i < sizeof(int) << 3; i <<= 1) {
+				value |= value >> i;
+			}
+			return value + 1;
 		}
 		
 	}

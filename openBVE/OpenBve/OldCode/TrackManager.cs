@@ -152,7 +152,7 @@ namespace OpenBve {
 						int d = Train.DriverCar;
 						Sounds.SoundBuffer buffer = Train.Cars[d].Sounds.Halt.Buffer;
 						if (buffer != null) {
-							OpenBveApi.Math.Vector3D pos = Train.Cars[d].Sounds.Halt.Position;
+							Vector3D pos = Train.Cars[d].Sounds.Halt.Position;
 							if (Train.Specs.PassAlarm == TrainManager.PassAlarmType.Single) {
 								Train.Cars[d].Sounds.Halt.Source = Sounds.PlaySound(buffer, 1.0, 1.0, pos, Train, d, false);
 							} else if (Train.Specs.PassAlarm == TrainManager.PassAlarmType.Loop) {
@@ -184,11 +184,7 @@ namespace OpenBve {
 						Train.LastStation = this.StationIndex;
 					}
 				} else if (TriggerType == EventTriggerType.RearCarRearAxle) {
-					if (Direction < 0) {
-						Train.StationRearCar = false;
-					} else {
-						Train.StationRearCar = true;
-					}
+					Train.StationRearCar = Direction >= 0;
 				}
 			}
 		}
@@ -400,7 +396,7 @@ namespace OpenBve {
 						}
 					}
 					if (Train.Plugin != null) {
-						Train.Plugin.UpdateBeacon((int)this.Type, s, this.Data);
+						Train.Plugin.UpdateBeacon(this.Type, s, this.Data);
 					}
 				}
 			}
@@ -631,7 +627,7 @@ namespace OpenBve {
 			int i = Follower.LastTrackElement;
 			while (i >= 0 && NewTrackPosition < CurrentTrack.Elements[i].StartingTrackPosition) {
 				double ta = Follower.TrackPosition - CurrentTrack.Elements[i].StartingTrackPosition;
-				double tb = -0.01;
+				const double tb = -0.01;
 				CheckEvents(ref Follower, i, -1, ta, tb);
 				i--;
 			}
@@ -718,11 +714,7 @@ namespace OpenBve {
 				}
 			} else {
 				if (db != 0.0) {
-					if (CurrentTrack.Elements[i].CurveRadius != 0.0) {
-						Follower.CurveRadius = CurrentTrack.Elements[i].CurveRadius;
-					} else {
-						Follower.CurveRadius = 0.0;
-					}
+					Follower.CurveRadius = CurrentTrack.Elements[i].CurveRadius/* != 0.0 ? CurrentTrack.Elements[i].CurveRadius : 0.0*/;
 					if (i < CurrentTrack.Elements.Length - 1) {
 						double t = db / (CurrentTrack.Elements[i + 1].StartingTrackPosition - CurrentTrack.Elements[i].StartingTrackPosition);
 						if (t < 0.0) {
