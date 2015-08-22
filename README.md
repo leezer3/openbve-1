@@ -1,8 +1,8 @@
-OpenBVE
+openBVE
 =======
 "A license-free, open source, free of charge train driving simulator. Runs most BVE content from third party providers."
 
-This is a continuation of OpenBVE 1.4.2 and 1.4.3 (managed content is hidden but source code is still alive).
+This is a continuation of openBVE 1.4.2 and 1.4.3 (managed content is hidden but source code is still alive).
 
 ------------
 New features
@@ -10,7 +10,7 @@ New features
 * SDL2# & OpenTK as replacement for deprecated Tao
 * New security (train plugin) keys (M-Z)
 * Uses SDL scancodes instead of SDL keycodes
-  * Note: WinForms controls editor doesn't yet convert keycodes to scancodes - on non-QWERTY keyboards you must not use keys that you see but you must use keys that you would see on an QWERTY keyboard.
+  * Note: WinForms controls editor now shows both physical and virtual keys.
 
 API changes
 -----------
@@ -20,7 +20,7 @@ API changes
   * Conversions - the TryParse... functions
   * Debug - program's error log
   * Hud
-  * Options
+  * Options - note: CurrentOptions is renamed to Current
   * Strings - Translation engine
 * Put all vectors to OpenBveApi
   * Double- and Single- precision vectors are provided by default
@@ -35,12 +35,12 @@ Here are some of the goals of this repository (they aren't sorted by priority an
 * Change internal representation of route to allow multi-track levels
   * Implement BVE 5 compatibility
   * Implement multiplayer
-  * Implement modular renderer + backends for different OpenGL versions
+  * Implement modular renderer + backends for different OpenGL versions (or for Direct3D)
     * *Getting rid of immediate mode rendering should offer a performance boost*
 * Improve documentation level
-* Implement OpenGL menu *(cross-platformness)*
-* Implement gamepad support and allow mouse buttons to be assigned too
-* *Bring managed content back to life* **- Probably not, see [this thread on BVEWorldWide](http://bveworldwide.unlimitedboard.com/t439p120-development-discontinued-discussing-the-direction-to-go)**
+* Implement OpenGL menu *(cross-platformness)* - complete GUI redesign
+* Implement gamepad+trackball support and allow mouse buttons to be assigned too
+* *Bring managed content back to life* **- Not in actual state, see [this thread on BVEWorldWide](http://bveworldwide.unlimitedboard.com/t439p120-development-discontinued-discussing-the-direction-to-go)**
 
 And maybe in distant future:
 
@@ -64,6 +64,6 @@ I'm not planning to leave this project at any time, but because I'm a student, I
 Homepage
 --------
 
-* Community webpages (OpenBVE Community): <https://sites.google.com/site/openbvesim/home>
+* Community webpages: <https://sites.google.com/site/openbvesim/home>
 * Official webpages (Odakyufan): <http://odakyufan.zxq.net/openbve/>
 * Unofficial webpages of this project (not yet created): <http://jakubvanekpc.jecool.net/openbve/>
