@@ -53,21 +53,17 @@ namespace OpenBve
 		/// <returns>Whether initializing joysticks was successful.</returns>
 		internal static bool Initialize()
 		{
-			if (!Initialized) {
-				if (SDL.SDL_Init(SDL.SDL_INIT_JOYSTICK) != 0) {
-					return false;
-				} else {
-					int count = SDL.SDL_NumJoysticks();
-					for (int i = 0; i < count; i++) {
-						IntPtr handle = SDL.SDL_JoystickOpen(i);
-						AttachedJoysticks.AddLast(new Joystick(handle,i));
-					}
-					Initialized = true;
-					return true;
-				}
-			} else {
+			if (Initialized)
 				return true;
+			if (SDL.SDL_InitSubSystem(SDL.SDL_INIT_JOYSTICK) != 0)
+				return false;
+			int count = SDL.SDL_NumJoysticks();
+			for (int i = 0; i < count; i++) {
+				IntPtr handle = SDL.SDL_JoystickOpen(i);
+				AttachedJoysticks.AddLast(new Joystick(handle, i));
 			}
+			Initialized = true;
+			return true;
 		}
 
 		/// <summary>Deinitializes joysticks.</summary>

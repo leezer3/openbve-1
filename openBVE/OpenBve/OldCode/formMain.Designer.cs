@@ -239,7 +239,6 @@
         	this.labelVersion = new System.Windows.Forms.Label();
         	this.labelInfoBottom = new System.Windows.Forms.Label();
         	this.labelInfoTop = new System.Windows.Forms.Label();
-        	//this.linkUpdates = new System.Windows.Forms.LinkLabel();
         	this.panelGetAddOns = new System.Windows.Forms.Panel();
         	this.panelPackages = new System.Windows.Forms.Panel();
         	this.checkboxFilterNoWIPs = new System.Windows.Forms.CheckBox();
@@ -3015,27 +3014,6 @@
         	this.labelInfoTop.Name = "labelInfoTop";
         	this.labelInfoTop.Size = new System.Drawing.Size(160, 2);
         	this.labelInfoTop.TabIndex = 0;
-        	// 
-        	// linkUpdates
-        	//
-			/*
-        	this.linkUpdates.ActiveLinkColor = System.Drawing.Color.Crimson;
-        	this.linkUpdates.AutoEllipsis = true;
-        	this.linkUpdates.DisabledLinkColor = System.Drawing.Color.Silver;
-        	this.linkUpdates.Enabled = false;
-        	this.linkUpdates.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
-        	this.linkUpdates.LinkColor = System.Drawing.Color.Gold;
-        	this.linkUpdates.Location = new System.Drawing.Point(8, 464);
-        	this.linkUpdates.Name = "linkUpdates";
-        	this.linkUpdates.Size = new System.Drawing.Size(128, 16);
-        	this.linkUpdates.TabIndex = 4;
-        	this.linkUpdates.TabStop = true;
-        	this.linkUpdates.Text = "Check for updates";
-        	this.linkUpdates.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-        	this.linkUpdates.Visible = false;
-        	this.linkUpdates.VisitedLinkColor = System.Drawing.Color.Gold;
-        	this.linkUpdates.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkUpdates_LinkClicked);
-        	*/
         	// 
         	// panelGetAddOns
         	// 

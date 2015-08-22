@@ -55,15 +55,9 @@ namespace OpenBve {
 		/// <param name="args">The command line arguments.</param>
 		/// <returns>The file system information.</returns>
 		internal static FileSystem FromCommandLineArgs(string[] args) {
-			for (int i = 0; i < args.Length; i++) {
-				if (args[i].StartsWith("/filesystem=", StringComparison.OrdinalIgnoreCase))
-					return FromConfigurationFile(args[i].Substring(12));
-				if (args[i].StartsWith("--filesystem=", StringComparison.OrdinalIgnoreCase))
-					return FromConfigurationFile(args[i].Substring(13));
-				if (args[i] == "--filesystem") {
-					try {
-						return FromConfigurationFile(args[i + 1]);
-					} catch (IndexOutOfRangeException) {}
+			foreach (string arg in args) {
+				if (arg.StartsWith("/filesystem=", StringComparison.OrdinalIgnoreCase)) {
+					return FromConfigurationFile(arg.Substring(12));
 				}
 			}
 			string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -121,7 +115,7 @@ namespace OpenBve {
 			try {
 				string[] lines = File.ReadAllLines(file, Encoding.UTF8);
 				foreach (string line in lines) {
-					if(line.Trim().StartsWith("#",StringComparison.OrdinalIgnoreCase))
+					if(line.Trim().StartsWith(";",StringComparison.OrdinalIgnoreCase))
 						continue;
 					int equals = line.IndexOf('=');
 					if (equals >= 0) {

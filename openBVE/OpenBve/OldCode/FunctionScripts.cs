@@ -1249,29 +1249,14 @@ namespace OpenBve {
 				case "lessequal":
 				case "greaterequal":
 					if (n == 2) {
-						string g;
-						switch (f.ToLowerInvariant()) {
-							case "equal":
-								g = "==";
-								break;
-							case "unequal":
-								g = "!=";
-								break;
-							case "less":
-								g = "<";
-								break;
-							case "greater":
-								g = ">";
-								break;
-							case "lessequal":
-								g = "<=";
-								break;
-							case "greaterequal":
-								g = ">=";
-								break;
-							default:
-								g = "halt";
-								break;
+						string g; switch (f.ToLowerInvariant()) {
+								case "equal": g = "=="; break;
+								case "unequal": g = "!="; break;
+								case "less": g = "<"; break;
+								case "greater": g = ">"; break;
+								case "lessequal": g = "<="; break;
+								case "greaterequal": g = ">="; break;
+								default: g = "halt"; break;
 						}
 						return a[0] + " " + a[1] + " " + g;
 					}

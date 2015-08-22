@@ -42,9 +42,9 @@ namespace OpenBve {
 		// load
 		private void formMain_Load(object sender, EventArgs e) {
 			this.MinimumSize = this.Size;
-			if (Options.Current.MainMenuWidth == -1 & Options.Current.MainMenuHeight == -1) {
+			if (Options.Current.MainMenuWidth == -1 && Options.Current.MainMenuHeight == -1) {
 				this.WindowState = FormWindowState.Maximized;
-			} else if (Options.Current.MainMenuWidth > 0 & Options.Current.MainMenuHeight > 0) {
+			} else if (Options.Current.MainMenuWidth > 0 && Options.Current.MainMenuHeight > 0) {
 				this.Size = new Size(Options.Current.MainMenuWidth, Options.Current.MainMenuHeight);
 				this.CenterToScreen();
 			}
@@ -580,8 +580,12 @@ namespace OpenBve {
 				}
 				comboboxKeyboardKey.Items.Clear();
 				for (int i = 0; i < OpenBve.Controls.Keys.Length; i++) {
-					if(OpenBve.Controls.Keys[i].Scancode != SDL2.SDL.SDL_Scancode.SDL_SCANCODE_UNKNOWN)
-						comboboxKeyboardKey.Items.Add(OpenBve.Controls.Keys[i].Description);
+					string sdlname = SDL.SDL_GetKeyName(SDL.SDL_GetKeyFromScancode(OpenBve.Controls.Keys[i].Scancode));
+					string bvename = OpenBve.Controls.Keys[i].Description;
+					string description = bvename;
+					if (Conversions.TrimInside(sdlname.ToLower()) != Conversions.TrimInside(bvename.ToLower()))
+						description += " (" + sdlname + ")";
+					comboboxKeyboardKey.Items.Add(description);
 				}
 				ListViewItem[] Items = new ListViewItem[OpenBve.Controls.CurrentControls.Length];
 				for (int i = 0; i < OpenBve.Controls.CurrentControls.Length; i++) {
@@ -982,87 +986,7 @@ namespace OpenBve {
 				MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 			}
 		}
-		/*
-		// updates
-		private static bool CurrentlyCheckingForUpdates = false;
-		private void linkUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			if (CurrentlyCheckingForUpdates) {
-				return;
-			}
-			const string url = "http://www.example.com";
-			CurrentlyCheckingForUpdates = true;
-			this.Cursor = Cursors.WaitCursor;
-			Application.DoEvents();
-			try {
-				byte[] bytes = Internet.DownloadBytesFromUrl(url);
-				System.Text.Encoding Encoding = new System.Text.UTF8Encoding();
-				string Text = Encoding.GetString(bytes);
-				string[] Lines = Text.Split(new char[] { '\r', '\n' });
-				if (Lines.Length == 0 || !Lines[0].Equals("$OpenBveVersionInformation", StringComparison.OrdinalIgnoreCase)) {
-					MessageBox.Show(Strings.GetInterfaceString("panel_updates_invalid"), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				} else {
-					string StableVersion = "0.0.0.0";
-					string StableDate = "0000-00-00";
-					string DevelopmentVersion = "0.0.0.0";
-					string DevelopmentDate = "0000-00-00";
-					int i; for (i = 1; i < Lines.Length; i++) {
-						if (Lines[i].Equals("----")) break;
-						int h = Lines[i].IndexOf('=');
-						if (h >= 0) {
-							string a = Lines[i].Substring(0, h).TrimEnd();
-							string b = Lines[i].Substring(h + 1).TrimStart();
-							if (a.Equals("version", StringComparison.OrdinalIgnoreCase)) {
-								StableVersion = b;
-							} else if (a.Equals("date", StringComparison.OrdinalIgnoreCase)) {
-								StableDate = b;
-							} else if (a.Equals("developmentversion", StringComparison.OrdinalIgnoreCase)) {
-								DevelopmentVersion = b;
-							} else if (a.Equals("developmentdate", StringComparison.OrdinalIgnoreCase)) {
-								DevelopmentDate = b;
-							}
-						}
-					}
-					StringBuilder StableText = new StringBuilder();
-					StringBuilder DevelopmentText = new StringBuilder();
-					int j; for (j = i + 1; j < Lines.Length; j++) {
-						if (Lines[j].Equals("----")) break;
-						StableText.AppendLine(Lines[j]);
-					}
-					for (int k = j + 1; k < Lines.Length; k++) {
-						if (Lines[k].Equals("----")) break;
-						DevelopmentText.AppendLine(Lines[k]);
-					}
-					bool Found = false;
-					if (ManagedContent.CompareVersions(Application.ProductVersion, StableVersion) < 0) {
-						string Message = Strings.GetInterfaceString("panel_updates_new") + StableText.ToString().Trim();
-						Message = Message.Replace("[version]", StableVersion);
-						Message = Message.Replace("[date]", StableDate);
-						MessageBox.Show(Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						Found = true;
-					}
-					#pragma warning disable 0162 // Unreachable code
-					if (Program.IsDevelopmentVersion) {
-						if (ManagedContent.CompareVersions(Application.ProductVersion, DevelopmentVersion) < 0) {
-							string Message = Strings.GetInterfaceString("panel_updates_new") + DevelopmentText.ToString().Trim();
-							Message = Message.Replace("[version]", DevelopmentVersion);
-							Message = Message.Replace("[date]", DevelopmentDate);
-							MessageBox.Show(Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-							Found = true;
-						}
-					}
-					#pragma warning restore 0162 // Unreachable code
-					if (!Found) {
-						string Message = Strings.GetInterfaceString("panel_updates_old");
-						MessageBox.Show(Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-					}
-				}
-			} catch (Exception ex) {
-				MessageBox.Show(ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
-			}
-			this.Cursor = Cursors.Default;
-			CurrentlyCheckingForUpdates = false;
-		}
-		*/
+
 
 		// close
 		private void buttonClose_Click(object sender, EventArgs e) {
@@ -1134,6 +1058,8 @@ namespace OpenBve {
 					}
 				}
 			}
+			SDL.SDL_Event Event;
+			while (SDL.SDL_PollEvent(out Event) != 0) { }
 			pictureboxJoysticks.Invalidate();
 		}
 

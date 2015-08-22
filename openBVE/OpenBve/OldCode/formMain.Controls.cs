@@ -122,16 +122,21 @@ namespace OpenBve {
 				if ((OpenBve.Controls.CurrentControls[Index].Modifier & OpenBve.Controls.KeyboardModifier.Shift) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_shift");
 				if ((OpenBve.Controls.CurrentControls[Index].Modifier & OpenBve.Controls.KeyboardModifier.Ctrl) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_ctrl");
 				if ((OpenBve.Controls.CurrentControls[Index].Modifier & OpenBve.Controls.KeyboardModifier.Alt) != 0) t += Strings.GetInterfaceString("controls_assignment_keyboard_alt");
-				int j; for (j = 0; j < OpenBve.Controls.Keys.Length; j++) {
+				int j; string bvename="";
+				for (j = 0; j < OpenBve.Controls.Keys.Length; j++) {
 					if (OpenBve.Controls.Keys[j].Scancode != SDL.SDL_Scancode.SDL_SCANCODE_UNKNOWN && 
 						OpenBve.Controls.Keys[j].Scancode == (SDL.SDL_Scancode)OpenBve.Controls.CurrentControls[Index].Element) {
-						t += OpenBve.Controls.Keys[j].Description;
+						t += (bvename = OpenBve.Controls.Keys[j].Description);
 						break;
 					}
 				} if (j == OpenBve.Controls.Keys.Length || OpenBve.Controls.Keys[j].Scancode == SDL.SDL_Scancode.SDL_SCANCODE_UNKNOWN) {
-					t += "{" + OpenBve.Controls.CurrentControls[Index].Element.ToString(Culture) + "}";
+					t += "{" + ((SDL.SDL_Scancode)OpenBve.Controls.CurrentControls[Index].Element).ToString().Substring(13) + "}";
+				} else {
+					string sdlname = SDL.SDL_GetKeyName(SDL.SDL_GetKeyFromScancode(OpenBve.Controls.Keys[j].Scancode));
+					if (Conversions.TrimInside(sdlname.ToLower()) != Conversions.TrimInside(bvename.ToLower()))
+						t += " (" + sdlname + ")";
 				}
-				return t;
+					return t;
 			} else if (OpenBve.Controls.CurrentControls[Index].Method == OpenBve.Controls.ControlMethod.Joystick) {
 				string t = Strings.GetInterfaceString("controls_assignment_joystick").Replace("[index]", (OpenBve.Controls.CurrentControls[Index].Device + 1).ToString(Culture));
 				switch (OpenBve.Controls.CurrentControls[Index].Component) {

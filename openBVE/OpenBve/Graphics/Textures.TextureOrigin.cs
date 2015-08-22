@@ -128,8 +128,7 @@ namespace OpenBve {
 			/// <summary>Gets the texture from this origin.</summary>
 			/// <param name="texture">Receives the texture.</param>
 			/// <returns>Whether the texture could be obtained successfully.</returns>
-			internal override bool GetTexture(out OpenBveApi.Textures.Texture texture)
-			{
+			internal override bool GetTexture(out OpenBveApi.Textures.Texture texture) {
 				Bitmap bitmap = this.Bitmap;
 				Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
 				/* 
@@ -169,12 +168,12 @@ namespace OpenBve {
 					return true;
 				}
 				/*
-					 * The stride is invalid. This indicates that the
-					 * CLI either does not implement the conversion to
-					 * 32-bit BGRA correctly, or that the CLI has
-					 * applied additional padding that we do not
-					 * support.
-					 * */
+				 * The stride is invalid. This indicates that the
+				 * CLI either does not implement the conversion to
+				 * 32-bit BGRA correctly, or that the CLI has
+				 * applied additional padding that we do not
+				 * support.
+				 * */
 				bitmap.UnlockBits(data);
 				texture = null;
 				return false;

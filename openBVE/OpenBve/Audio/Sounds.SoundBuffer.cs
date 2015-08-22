@@ -1,4 +1,5 @@
-﻿using OpenBveApi.Sounds;
+﻿using System;
+using OpenBveApi.Sounds;
 
 namespace OpenBve {
 	internal static partial class Sounds {

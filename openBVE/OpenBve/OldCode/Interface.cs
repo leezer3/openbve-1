@@ -1,5 +1,5 @@
 /*
- * DO NOT COMPILE - CLASS WAS SPLITTED
+ * DO NOT COMPILE - CLASS WAS DISINTEGRATED
 using System;
 using System.Globalization;
 using OpenBveApi.Colors;

@@ -1,5 +1,7 @@
 ﻿#pragma warning disable 0659, 0661
 
+using System;
+
 namespace OpenBve {
 	internal static partial class Sounds {
 		
@@ -63,7 +65,7 @@ namespace OpenBve {
 			/// <summary>Gets the sound from this origin.</summary>
 			/// <param name="sound">Receives the sound.</param>
 			/// <returns>Whether the sound could be obtained successfully.</returns>
-			internal override bool GetSound(out OpenBveApi.Sounds.Sound sound){
+			internal override bool GetSound(out OpenBveApi.Sounds.Sound sound) {
 				if (!Program.CurrentHost.LoadSound(this.Path, out sound)) {
 					sound = null;
 					return false;

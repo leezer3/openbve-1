@@ -8,14 +8,13 @@ namespace OpenBve {
 		/// <param name="sound">The sound.</param>
 		/// <returns>The mono mix in the same format as the original.</returns>
 		/// <exception cref="System.NotSupportedException">Raised when the bits per sample are not supported.</exception>
-		private static byte[] GetMonoMix(Sound sound){
+		private static byte[] GetMonoMix(Sound sound) {
+			if (sound.Bytes.Length == 1 || sound.Bytes[0].Length == 0)
+				return sound.Bytes[0];
 			/*
 			 * Convert integer samples to floating-point samples.
 			 */
 			float[][] samples;
-			if (sound.Bytes.Length == 1 || sound.Bytes[0].Length == 0) {
-				return sound.Bytes[0];
-			}
 			if (sound.BitsPerSample == 8) {
 				samples = new float[sound.Bytes.Length][];
 				for (int i = 0; i < sound.Bytes.Length; i++) {
@@ -63,7 +62,7 @@ namespace OpenBve {
 			return result;
 		}
 		
-		private static float[] GetNormalizedMonoMix(float[][] samples){
+		private static float[] GetNormalizedMonoMix(float[][] samples) {
 			/*
 			 * This mixer tries to find silent channels and discards them.
 			 * It then performs a mix to mono for all remaining channels
@@ -134,8 +133,7 @@ namespace OpenBve {
 			for (int j = 0; j < mix.Length; j++) {
 				mix[j] *= totalVolume / mixVolume;
 				float value = Math.Abs(mix[j]);
-				if (value > maximum)
-					maximum = value;
+				if (value > maximum) maximum = value;
 			}
 			// --- if the maximum value now created exceeds the
 			//     permissible range, normalize the mono mix further ---

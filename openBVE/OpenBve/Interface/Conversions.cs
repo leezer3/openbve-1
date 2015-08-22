@@ -178,7 +178,7 @@ namespace OpenBve
 		}
 
 		// trim inside
-		private static string TrimInside(string Expression) {
+		internal static string TrimInside(string Expression) {
 			System.Text.StringBuilder Builder = new System.Text.StringBuilder(Expression.Length);
 			for (int i = 0; i < Expression.Length; i++) {
 				char c = Expression[i];

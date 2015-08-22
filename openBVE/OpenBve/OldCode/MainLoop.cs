@@ -403,29 +403,6 @@ namespace OpenBve {
 				}
 			}
 		}
-		/*
-		private static void ReleaseModifiedControls(Controls.KeyboardModifier modifier){
-			for (int i = 0; i < Controls.CurrentControls.Length; i++) {
-				if ((Controls.CurrentControls[i].Modifier & modifier) != 0) {
-					ReleaseControl(i);
-				}
-				if (modifier == Controls.KeyboardModifier.Shift) {
-					if (Controls.CurrentControls[i].Element == (int)Key.LShift || Controls.CurrentControls[i].Element == (int)Key.RShift) {
-						ReleaseControl(i);
-					}
-				}
-				if (modifier == Controls.KeyboardModifier.Ctrl) {
-					if (Controls.CurrentControls[i].Element == (int)Key.LControl || Controls.CurrentControls[i].Element == (int)Key.RControl) {
-						ReleaseControl(i);
-					}
-				}
-				if (modifier == Controls.KeyboardModifier.Alt) {
-					if (Controls.CurrentControls[i].Element == (int)Key.LAlt || Controls.CurrentControls[i].Element == (int)Key.RAlt) {
-						ReleaseControl(i);
-					}
-				}
-			}
-		}*/
 		private static void ReleaseControl(int index){
 			Controls.CurrentControls[index].AnalogState = 0.0;
 			Controls.CurrentControls[index].DigitalState = Controls.DigitalControlState.Released;

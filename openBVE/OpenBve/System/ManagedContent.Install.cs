@@ -40,7 +40,7 @@ namespace OpenBve {
 			internal bool AddDependencies(List<Version> packages) {
 				/*
 				 * Add dependencies.
-				 */
+				 * */
 				for (int i = 0; i < packages.Count; i++) {
 					foreach (Dependency dependency in packages[i].Dependencies) {
 						Version find = packages.Find(item => item.Name.Equals(dependency.Name, StringComparison.OrdinalIgnoreCase));
@@ -67,7 +67,7 @@ namespace OpenBve {
 				/*
 				 * If the packages to be installed are already installed,
 				 * remove them from the list.
-				 */
+				 * */
 				for (int i = 0; i < packages.Count; i++) {
 					string version = GetInstalledPackageVersion(packages[i].Name);
 					if (version != null) {
@@ -89,7 +89,7 @@ namespace OpenBve {
 				try {
 					/*
 					 * Check whether the package is protected.
-					 */
+					 * */
 					if (IsInstalledPackageProtected(version.Name)) {
 						return false;
 					}
@@ -104,7 +104,7 @@ namespace OpenBve {
 					}
 					/*
 					 * Install the package.
-					 */
+					 * */
 					Source[] sources = version.Sources;
 					Shuffle(sources);
 					int attemps = sources.Length == 1 ? 3 : sources.Length == 2 ? 2 : 1;

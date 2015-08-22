@@ -30,9 +30,9 @@ namespace OpenBve {
 		/// <summary>The random number generator used by this program.</summary>
 		internal static Random RandomNumberGenerator = new Random();
 
-		//internal static GameWindow UI;
-		// --- functions ---
 
+		// --- functions ---
+		
 		/// <summary>Is executed when the program starts.</summary>
 		/// <param name="args">The command-line arguments.</param>
 		[STAThread]
@@ -140,9 +140,12 @@ namespace OpenBve {
 				}
 				Game.Reset(false);
 			}
+			SDL.SDL_Init(0);
 			// --- show the main menu if necessary ---
 			if (result.RouteFile == null || result.TrainFolder == null) {
 				// begin HACK //
+				if (SDL.SDL_InitSubSystem(SDL.SDL_INIT_VIDEO) != 0)
+					MessageBox.Show("Cannot initialize SDL!","openBVE");
 				if (!Joysticks.Initialize()) {
 					MessageBox.Show("SDL failed to initialize the joystick subsystem.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Hand);
 					return;
