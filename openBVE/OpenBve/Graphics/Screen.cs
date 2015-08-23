@@ -80,7 +80,7 @@ namespace OpenBve {
 				                        SDL.SDL_GL_GetProcAddress, 
 				() => new ContextHandle(SDL.SDL_GL_GetCurrentContext()));
 			// --- set up icon ---
-			string bitmapFile = OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, "icon.ico");
+			string bitmapFile = OpenBveApi.Path.CombineFile(Program.FileSystem.DataFolder, "icon.png");
 			if (System.IO.File.Exists(bitmapFile)) {
 				iconBmp = new System.Drawing.Bitmap(bitmapFile); // load file
 				iconData = iconBmp.LockBits(new System.Drawing.Rectangle(0, 0, iconBmp.Width, iconBmp.Height),
