@@ -11,6 +11,7 @@ New features
 * New security (train plugin) keys (M-Z)
 * Uses SDL scancodes instead of SDL keycodes
   * Note: WinForms controls editor now shows both physical and virtual keys.
+* Animated loading screen
 
 API changes
 -----------
@@ -35,8 +36,8 @@ Here are some of the goals of this repository (they aren't sorted by priority an
 * Change internal representation of route to allow multi-track levels
   * Implement BVE 5 compatibility
   * Implement multiplayer
-  * Implement modular renderer + backends for different OpenGL versions (or for Direct3D)
-    * *Getting rid of immediate mode rendering should offer a performance boost*
+* Implement modular renderer + backends for different OpenGL versions (or for Direct3D)
+  * *Getting rid of immediate mode rendering should offer a performance boost*
 * Improve documentation level
 * Implement OpenGL menu *(cross-platformness)* - complete GUI redesign
 * Implement gamepad+trackball support and allow mouse buttons to be assigned too
