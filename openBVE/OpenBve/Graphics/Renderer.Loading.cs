@@ -3,8 +3,6 @@ using System.Threading;
 using System.Drawing;
 using OpenBveApi.Colors;
 using OpenTK.Graphics.OpenGL;
-using System.Collections.Generic;
-
 
 namespace OpenBve {
 	internal static partial class Renderer {
