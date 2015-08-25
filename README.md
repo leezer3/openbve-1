@@ -4,7 +4,7 @@ openBVE
 
 This is a bleeding-edge continuation of openBVE 1.4.2 and 1.4.3 (managed content is hidden but source code is still alive).
 
-** NOTE: this repository IS NOT STABLE (e.g. it may contain many bugs and the program can even fail to start). If you're looking for relatively stable repository, go to <https://github.com/shadow93/openbve>.**
+**NOTE: this repository IS NOT STABLE (e.g. it may contain many bugs and the program can even fail to start). If you're looking for relatively stable repository, go to <https://github.com/shadow93/openbve>.**
 
 ------------
 New features
